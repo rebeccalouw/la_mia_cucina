@@ -1,0 +1,26 @@
+# Environment variables
+.env
+.env.*
+
+# Node modules
+node_modules/
+
+# Build output
+dist/
+
+# Logs
+*.log
+server_log.txt
+
+# SQLite database files
+*.sqlite
+*.sqlite-shm
+*.sqlite-wal
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE/editor
+.vscode/
+.idea/

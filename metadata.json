@@ -1,0 +1,6 @@
+{
+  "name": "La Mia Cucina",
+  "description": "A modern, responsive recipe management, meal planning, and freezer inventory application with SQLite storage and smart recipe importing.",
+  "requestFramePermissions": [],
+  "majorCapabilities": []
+}
