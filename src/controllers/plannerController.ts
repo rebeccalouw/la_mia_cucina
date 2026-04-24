@@ -54,7 +54,14 @@ export const getMealPlans = async (req: Request, res: Response) => {
   try {
     let query = `
       SELECT 
-        mp.*, 
+        mp.id,
+        mp.user_id,
+        mp.recipe_id,
+        mp.freezer_item_id,
+        TO_CHAR(mp.date, 'YYYY-MM-DD') as date,
+        mp.meal_type,
+        mp.notes,
+        mp.created_at,
         r.title as recipe_title, 
         r.image_url as recipe_image,
         fi.name as freezer_item_name
