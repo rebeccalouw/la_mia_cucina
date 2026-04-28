@@ -103,7 +103,10 @@ export default function Dashboard({ onNavigate }: DashboardProps) {
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-white p-3 md:p-10 rounded-3xl md:rounded-[3rem] border border-sage/5 shadow-xl shadow-sage/5 flex flex-col md:flex-row items-center md:items-start text-center md:text-left gap-2 md:gap-8 group md:aspect-auto justify-center md:justify-start"
+          onClick={() => onNavigate('recipes')}
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
+          className="bg-white p-3 md:p-10 rounded-3xl md:rounded-[3rem] border border-sage/5 shadow-xl shadow-sage/5 flex flex-col md:flex-row items-center md:items-start text-center md:text-left gap-2 md:gap-8 group md:aspect-auto justify-center md:justify-start cursor-pointer hover:border-ochre/20 transition-colors"
         >
           <div className="bg-ochre/10 p-2 md:p-5 rounded-xl md:rounded-3xl group-hover:bg-ochre group-hover:text-cream transition-all duration-500">
             <Utensils className="w-4 h-4 md:w-8 md:h-8 text-ochre group-hover:text-cream transition-colors" />
@@ -121,7 +124,10 @@ export default function Dashboard({ onNavigate }: DashboardProps) {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="bg-white p-3 md:p-10 rounded-3xl md:rounded-[3rem] border border-sage/5 shadow-xl shadow-sage/5 flex flex-col md:flex-row items-center md:items-start text-center md:text-left gap-2 md:gap-8 group md:aspect-auto justify-center md:justify-start"
+          onClick={() => onNavigate('planner')}
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
+          className="bg-white p-3 md:p-10 rounded-3xl md:rounded-[3rem] border border-sage/5 shadow-xl shadow-sage/5 flex flex-col md:flex-row items-center md:items-start text-center md:text-left gap-2 md:gap-8 group md:aspect-auto justify-center md:justify-start cursor-pointer hover:border-terracotta/20 transition-colors"
         >
           <div className="bg-terracotta/10 p-2 md:p-5 rounded-xl md:rounded-3xl group-hover:bg-terracotta group-hover:text-cream transition-all duration-500">
             <TrendingUp className="w-4 h-4 md:w-8 md:h-8 text-terracotta group-hover:text-cream transition-colors" />
