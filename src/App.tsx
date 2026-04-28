@@ -41,10 +41,38 @@ export default function App() {
     if (token) {
       setInitialResetToken(token);
       // Clean up URL
-      window.history.replaceState({}, document.title, '/');
+      window.history.replaceState({}, document.title, window.location.pathname + window.location.search.replace(/[?&]reset_token=[^&]+/, ''));
     }
     
+    // Initial navigation from hash
+    const hash = window.location.hash.slice(1);
+    if (hash) {
+      const [tab, id, edit] = hash.split('/');
+      setActiveTab(tab || 'dashboard');
+      if (id) {
+        const recipeId = parseInt(id);
+        if (!isNaN(recipeId)) {
+          setSelectedRecipeId(recipeId);
+          if (edit === 'edit') setIsEditingId(recipeId);
+        }
+      }
+    } else {
+      // Default initial state
+      window.history.replaceState({ activeTab: 'dashboard', selectedRecipeId: null, isEditingId: null }, '', '#dashboard');
+    }
+
+    const handlePopState = (event: PopStateEvent) => {
+      if (event.state) {
+        setActiveTab(event.state.activeTab || 'dashboard');
+        setSelectedRecipeId(event.state.selectedRecipeId || null);
+        setIsEditingId(event.state.isEditingId || null);
+      }
+    };
+
+    window.addEventListener('popstate', handlePopState);
     checkAuth();
+
+    return () => window.removeEventListener('popstate', handlePopState);
   }, []);
 
   async function checkAuth() {
@@ -84,18 +112,22 @@ export default function App() {
       });
       localStorage.removeItem('la_mia_cucina_token');
       setUser(null);
-      setActiveTab('dashboard');
-      setSelectedRecipeId(null);
-      setIsEditingId(null);
+      handleTabChange('dashboard');
     } catch (err) {
       console.error('Logout failed', err);
     }
   }
 
-  const handleTabChange = (tab: string) => {
+  const navigate = (tab: string, recipeId: number | null = null, editingId: number | null = null) => {
+    const hash = `#${tab}${recipeId ? `/${recipeId}` : ''}${editingId ? '/edit' : ''}`;
+    window.history.pushState({ activeTab: tab, selectedRecipeId: recipeId, isEditingId: editingId }, '', hash);
     setActiveTab(tab);
-    setSelectedRecipeId(null);
-    setIsEditingId(null);
+    setSelectedRecipeId(recipeId);
+    setIsEditingId(editingId);
+  };
+
+  const handleTabChange = (tab: string) => {
+    navigate(tab);
   };
 
   if (checkingAuth) {
@@ -135,8 +167,7 @@ export default function App() {
             <AnimatePresence mode="wait">
               {activeTab === 'dashboard' && (
                 <Dashboard onNavigate={(tab, id) => {
-                  setActiveTab(tab);
-                  if (id) setSelectedRecipeId(id);
+                  navigate(tab, id || null);
                 }} />
               )}
 
@@ -150,20 +181,19 @@ export default function App() {
                     <EditRecipe 
                       recipeId={isEditingId}
                       onSuccess={() => {
-                        setIsEditingId(null);
-                        setSelectedRecipeId(isEditingId);
+                        navigate('recipes', isEditingId);
                       }}
-                      onCancel={() => setIsEditingId(null)}
+                      onCancel={() => navigate('recipes', isEditingId)}
                     />
                   ) : selectedRecipeId ? (
                     <RecipeDetail 
                       recipeId={selectedRecipeId} 
-                      onBack={() => setSelectedRecipeId(null)} 
-                      onEdit={(id) => setIsEditingId(id)}
-                      onDelete={() => setSelectedRecipeId(null)}
+                      onBack={() => navigate('recipes')} 
+                      onEdit={(id) => navigate('recipes', id, id)}
+                      onDelete={() => navigate('recipes')}
                     />
                   ) : (
-                    <RecipeList onSelectRecipe={setSelectedRecipeId} />
+                    <RecipeList onSelectRecipe={(id) => navigate('recipes', id)} />
                   )}
                 </div>
               )}
