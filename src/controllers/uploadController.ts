@@ -7,8 +7,9 @@ export const uploadImage = (req: Request, res: Response) => {
     return res.status(400).json({ error: 'No file uploaded' });
   }
 
-  // The file is saved by multer. We return the URL/path.
-  // We'll serve the /uploads directory statically.
-  const filePath = `/uploads/${req.file.filename}`;
-  res.json({ url: filePath });
+  // Convert buffer to base64
+  const base64Image = req.file.buffer.toString('base64');
+  const dataUri = `data:${req.file.mimetype};base64,${base64Image}`;
+  
+  res.json({ url: dataUri });
 };

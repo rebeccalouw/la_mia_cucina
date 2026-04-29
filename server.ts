@@ -28,7 +28,6 @@ async function start() {
   app.use("/api/import", importRoutes);
   app.use("/api/planner", plannerRoutes);
   app.use("/api/freezer", freezerRoutes);
-  app.use("/uploads", express.static(path.resolve("uploads")));
 
   const vite = await createViteServer({
     server: { middlewareMode: true },
