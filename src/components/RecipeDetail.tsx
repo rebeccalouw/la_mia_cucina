@@ -87,6 +87,26 @@ export default function RecipeDetail({ recipeId, onBack, onEdit, onDelete }: Rec
     }
   };
 
+  const renderList = (text: string, type: 'bullet' | 'number' = 'bullet') => {
+    if (!text) return null;
+    const items = text.split('\n').filter(item => item.trim().length > 0);
+    const ListTag = type === 'number' ? 'ol' : 'ul';
+    
+    return (
+      <ListTag className={`${type === 'number' ? 'list-decimal' : 'list-disc'} list-outside space-y-4 ml-6`}>
+        {items.map((item, index) => {
+          // Remove existing bullets/numbers if present to avoid nesting
+          const cleanItem = item.trim().replace(/^[-*•]\s+/, '').replace(/^\d+\.\s+/, '');
+          return (
+            <li key={index} className="text-sage/70 font-medium leading-relaxed pl-2">
+              {cleanItem}
+            </li>
+          );
+        })}
+      </ListTag>
+    );
+  };
+
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center py-20 gap-4">
@@ -274,10 +294,8 @@ export default function RecipeDetail({ recipeId, onBack, onEdit, onDelete }: Rec
               </div>
               <h2 className="text-2xl md:text-3xl font-serif text-sage tracking-tight">Ingredients</h2>
             </div>
-            <div className="prose prose-sage max-w-none prose-sm lg:prose-base">
-              <div className="whitespace-pre-wrap text-sage/70 font-medium leading-[2]">
-                {recipe.ingredients}
-              </div>
+            <div className="prose prose-sage max-w-none">
+              {renderList(recipe.ingredients)}
             </div>
           </motion.div>
 
@@ -293,10 +311,8 @@ export default function RecipeDetail({ recipeId, onBack, onEdit, onDelete }: Rec
               </div>
               <h2 className="text-2xl md:text-3xl font-serif text-sage tracking-tight">Method</h2>
             </div>
-            <div className="prose prose-sage max-w-none prose-sm lg:prose-base">
-              <div className="whitespace-pre-wrap text-sage/70 leading-[1.8]">
-                {recipe.instructions}
-              </div>
+            <div className="prose prose-sage max-w-none">
+              {renderList(recipe.instructions)}
             </div>
           </motion.div>
         </div>

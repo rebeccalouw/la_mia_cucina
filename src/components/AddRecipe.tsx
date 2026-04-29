@@ -277,7 +277,7 @@ export default function AddRecipe({ onSuccess }: AddRecipeProps) {
               value={formData.ingredients}
               onChange={handleChange}
               className="w-full p-6 rounded-[2rem] bg-cream/50 border border-sage/10 focus:border-terracotta/50 focus:ring-4 focus:ring-terracotta/5 outline-none transition-all resize-none"
-              placeholder="List one ingredient per line..."
+              placeholder="List one ingredient per line (will be bulleted)..."
             />
           </div>
           <div className="space-y-2">
@@ -289,7 +289,7 @@ export default function AddRecipe({ onSuccess }: AddRecipeProps) {
               value={formData.instructions}
               onChange={handleChange}
               className="w-full p-6 rounded-[2rem] bg-cream/50 border border-sage/10 focus:border-terracotta/50 focus:ring-4 focus:ring-terracotta/5 outline-none transition-all resize-none"
-              placeholder="How do we make it?"
+              placeholder="Step-by-step method (each line becomes a bullet point)..."
             />
           </div>
         </div>

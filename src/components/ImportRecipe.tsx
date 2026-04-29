@@ -334,6 +334,7 @@ export default function ImportRecipe() {
                     onChange={(e) => setExtractedRecipe({...extractedRecipe, ingredients: e.target.value})}
                     rows={12}
                     className="w-full p-8 bg-cream/30 border border-sage/5 rounded-[2rem] text-sm text-sage/70 font-sans leading-relaxed outline-none focus:border-sage/20 resize-none"
+                    placeholder="Each line will become a bullet point..."
                   />
                 </div>
                 <div className="space-y-4">
@@ -346,6 +347,7 @@ export default function ImportRecipe() {
                     onChange={(e) => setExtractedRecipe({...extractedRecipe, instructions: e.target.value})}
                     rows={12}
                     className="w-full p-8 bg-cream/30 border border-sage/5 rounded-[2rem] text-sm text-sage/70 font-sans leading-relaxed outline-none focus:border-sage/20 resize-none"
+                    placeholder="Each line will be shown as a step..."
                   />
                 </div>
               </div>

@@ -23,6 +23,24 @@ const parseISO8601Duration = (duration: string): number => {
   return (hours * 60) + minutes;
 };
 
+const cleanText = (text: string): string => {
+  if (!text) return '';
+  // If it doesn't look like HTML, just trim it
+  if (!text.includes('<') && !text.includes('&')) return text.trim();
+  
+  // Use cheerio to strip tags and decode entities
+  const $ = cheerio.load(text);
+  // Replace common block elements with newlines to preserve some structure if it's a raw block
+  $('p, br, div, li').each((_, el) => {
+    $(el).after('\n');
+  });
+  return $.text()
+    .split('\n')
+    .map(line => line.trim())
+    .filter(line => line.length > 0)
+    .join('\n');
+};
+
 export const fetchUrlPreview = async (req: Request, res: Response) => {
   const { url } = req.body;
 
@@ -68,25 +86,39 @@ export const fetchUrlPreview = async (req: Request, res: Response) => {
 
         const recipeObj = findRecipe(json);
         if (recipeObj) {
-          // Flatten instructions
-          let instructions = '';
-          if (Array.isArray(recipeObj.recipeInstructions)) {
-            instructions = recipeObj.recipeInstructions.map((step: any) => {
-              if (typeof step === 'string') return step;
-              if (step.text) return step.text;
-              return '';
-            }).filter(Boolean).join('\n');
-          } else if (typeof recipeObj.recipeInstructions === 'string') {
-            instructions = recipeObj.recipeInstructions;
-          }
+          // Robust flattener for instructions (handles HowToStep, HowToSection, strings, etc.)
+          const flattenInstructions = (val: any): string[] => {
+            if (!val) return [];
+            if (typeof val === 'string') return [val];
+            if (Array.isArray(val)) {
+              return val.flatMap(item => flattenInstructions(item));
+            }
+            if (val.text) return [val.text];
+            if (val.itemListElement) return flattenInstructions(val.itemListElement);
+            if (val.name && val['@type'] === 'HowToSection') {
+              // Optionally include section name, but usually steps are enough
+              return flattenInstructions(val.itemListElement);
+            }
+            return [];
+          };
+
+          const rawInstructions = flattenInstructions(recipeObj.recipeInstructions);
+          const instructions = rawInstructions
+            .map(step => cleanText(step))
+            .filter(Boolean)
+            .join('\n');
 
           // Flatten ingredients
-          let ingredients = '';
+          let rawIngredients: string[] = [];
           if (Array.isArray(recipeObj.recipeIngredient)) {
-            ingredients = recipeObj.recipeIngredient.join('\n');
+            rawIngredients = recipeObj.recipeIngredient;
           } else if (typeof recipeObj.recipeIngredient === 'string') {
-            ingredients = recipeObj.recipeIngredient;
+            rawIngredients = [recipeObj.recipeIngredient];
           }
+          const ingredients = rawIngredients
+            .map(ing => cleanText(ing))
+            .filter(Boolean)
+            .join('\n');
 
           // Flatten image
           let image = '';
@@ -202,22 +234,23 @@ export const fetchUrlPreview = async (req: Request, res: Response) => {
 
     // 3. Merge Strategies
     // Determine which ingredient list is better (preferring original units like cups/tsp)
-    let finalIngredients = recipeData?.ingredients || heuristicData.ingredients;
+    let finalIngredients = recipeData?.ingredients || cleanText(heuristicData.ingredients);
     if (recipeData?.ingredients && heuristicData.ingredients) {
       const getImperialScore = (t: string) => (t.match(/cup|tsp|tbsp|oz|lb|inch|teaspoon|tablespoon/gi) || []).length;
-      if (getImperialScore(heuristicData.ingredients) > getImperialScore(recipeData.ingredients) + 5) {
+      const heuristicIngredients = cleanText(heuristicData.ingredients);
+      if (getImperialScore(heuristicIngredients) > getImperialScore(recipeData.ingredients) + 5) {
         // If the heuristic found significantly more "original" units than the JSON-LD, 
         // the JSON-LD might be a metric-converted SEO version.
-        finalIngredients = heuristicData.ingredients;
+        finalIngredients = heuristicIngredients;
       }
     }
 
     const finalRecipe: ExtractedRecipe = {
-      title: recipeData?.title || heuristicData.title,
+      title: cleanText(recipeData?.title || heuristicData.title),
       ingredients: finalIngredients,
-      instructions: recipeData?.instructions || heuristicData.instructions,
+      instructions: recipeData?.instructions || cleanText(heuristicData.instructions),
       image: recipeData?.image || heuristicData.image,
-      description: recipeData?.description || heuristicData.description,
+      description: cleanText(recipeData?.description || heuristicData.description),
       prepTime: recipeData?.prepTime || heuristicData.prepTime,
       cookTime: recipeData?.cookTime || heuristicData.cookTime,
       servings: recipeData?.servings || heuristicData.servings,
