@@ -51,6 +51,13 @@ export default function MealPlannerCalendar() {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
 
+  const toLocalDateString = (date: Date) => {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
+
   // Planning State
   const [selectedDate, setSelectedDate] = useState<string | null>(null); // YYYY-MM-DD
   const [editingPlanId, setEditingPlanId] = useState<number | null>(null);
@@ -115,8 +122,11 @@ export default function MealPlannerCalendar() {
 
   const fetchData = async () => {
     const token = localStorage.getItem('la_mia_cucina_token');
-    const firstDay = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1).toISOString().split('T')[0];
-    const lastDay = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0).toISOString().split('T')[0];
+    const firstDayDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
+    const lastDayDate = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
+    
+    const firstDay = toLocalDateString(firstDayDate);
+    const lastDay = toLocalDateString(lastDayDate);
 
     try {
       setLoading(true);
@@ -253,7 +263,7 @@ export default function MealPlannerCalendar() {
   };
 
   const renderDay = (dStr: string, label: string | number, isPadding = false) => {
-    const isToday = dStr === new Date().toISOString().split('T')[0];
+    const isToday = dStr === toLocalDateString(new Date());
     const plansForDay = mealPlans.filter(p => p.date === dStr);
     const dayDate = new Date(dStr);
     const dayName = dayDate.toLocaleDateString('default', { weekday: 'short' });
@@ -423,7 +433,7 @@ export default function MealPlannerCalendar() {
         </div>
         <div className="flex flex-col gap-3">
           {weekDays.map(date => {
-            const dStr = date.toISOString().split('T')[0];
+            const dStr = toLocalDateString(date);
             return renderDay(dStr, date.getDate());
           })}
         </div>
@@ -745,12 +755,12 @@ export default function MealPlannerCalendar() {
             <div>
               <p className="text-sage font-serif text-xl italic leading-none mb-1">Today's Kitchen Forecast</p>
               <p className="text-sage/40 text-[10px] font-bold uppercase tracking-widest">
-                {mealPlans.filter(p => p.date === new Date().toISOString().split('T')[0]).length} meals planned for today
+                {mealPlans.filter(p => p.date === toLocalDateString(new Date())).length} meals planned for today
               </p>
             </div>
           </div>
           <button 
-            onClick={() => setSelectedDate(new Date().toISOString().split('T')[0])}
+            onClick={() => setSelectedDate(toLocalDateString(new Date()))}
             className="px-8 py-4 bg-terracotta text-cream rounded-2xl text-xs font-bold uppercase tracking-widest shadow-lg shadow-terracotta/20 hover:scale-105 transition-all"
           >
             Quick Add
