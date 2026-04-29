@@ -74,7 +74,9 @@ export default function RecipeList({ onSelectRecipe }: RecipeListProps) {
       });
       if (!response.ok) throw new Error('Failed to fetch recipes');
       const data = await response.json();
-      setRecipes(data);
+      // Sort alphabetically by title
+      const sortedData = (data as Recipe[]).sort((a, b) => a.title.localeCompare(b.title));
+      setRecipes(sortedData);
     } catch (err: any) {
       setError(err.message);
     } finally {
