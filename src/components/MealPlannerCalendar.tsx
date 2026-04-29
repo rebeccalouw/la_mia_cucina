@@ -118,20 +118,31 @@ export default function MealPlannerCalendar() {
 
   useEffect(() => {
     fetchData();
-  }, [currentDate]);
+  }, [currentDate, weekOffset]);
 
   const fetchData = async () => {
     const token = localStorage.getItem('la_mia_cucina_token');
-    const firstDayDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
-    const lastDayDate = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
     
-    const firstDay = toLocalDateString(firstDayDate);
-    const lastDay = toLocalDateString(lastDayDate);
+    // Month range (Desktop view)
+    const monthStart = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
+    const monthEnd = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
+    
+    // Week range (Mobile view)
+    const week = getCurrentWeekDays();
+    const weekStart = week[0];
+    const weekEnd = week[6];
+    
+    // Use the maximum range that covers both views
+    const fetchStart = monthStart < weekStart ? monthStart : weekStart;
+    const fetchEnd = monthEnd > weekEnd ? monthEnd : weekEnd;
+    
+    const startDay = toLocalDateString(fetchStart);
+    const endDay = toLocalDateString(fetchEnd);
 
     try {
       setLoading(true);
       const [plansRes, recipesRes, categoriesRes, freezerRes] = await Promise.all([
-        fetch(`/api/planner?start=${firstDay}&end=${lastDay}`, {
+        fetch(`/api/planner?start=${startDay}&end=${endDay}`, {
           headers: { 'Authorization': `Bearer ${token}` }
         }),
         fetch('/api/recipes', {
