@@ -5,8 +5,8 @@ export const createMealPlan = async (req: Request, res: Response) => {
   const { recipeId, freezerItemId, date, mealType, notes } = req.body;
   const userId = (req as any).user.userId;
 
-  if ((!recipeId && !freezerItemId) || !date || !mealType) {
-    return res.status(400).json({ error: 'Recipe or Freezer Item, date, and meal type are required' });
+  if ((!recipeId && !freezerItemId && !notes) || !date || !mealType) {
+    return res.status(400).json({ error: 'Recipe, Freezer Item, or Note, plus date and meal type are required' });
   }
 
   // Validate recipe if provided
@@ -17,12 +17,16 @@ export const createMealPlan = async (req: Request, res: Response) => {
     }
   }
 
-  // Validate freezer item if provided
+  // Validate freezer item if provided and get its name
+  let freezerItemName = '';
   if (freezerItemId) {
-    const item = await db.get('SELECT id FROM freezer_items WHERE id = $1 AND user_id = $2', [freezerItemId, userId]);
+    const item = await db.get('SELECT name FROM freezer_items WHERE id = $1 AND user_id = $2', [freezerItemId, userId]);
     if (!item) {
       return res.status(404).json({ error: 'Freezer item not found' });
     }
+    freezerItemName = item.name;
+    // Delete the freezer item as requested
+    await db.run('DELETE FROM freezer_items WHERE id = $1 AND user_id = $2', [freezerItemId, userId]);
   }
 
   // Validate date format YYYY-MM-DD
@@ -30,16 +34,21 @@ export const createMealPlan = async (req: Request, res: Response) => {
     return res.status(400).json({ error: 'Date must be in YYYY-MM-DD format' });
   }
 
+  // If it was a freezer item, we put the name in notes so it's not lost since we deleted the item
+  const finalNotes = freezerItemId 
+    ? (notes ? `${freezerItemName}: ${notes}` : freezerItemName)
+    : (notes || '');
+
   try {
     const result = await db.run(`
       INSERT INTO meal_plans (user_id, recipe_id, freezer_item_id, date, meal_type, notes)
       VALUES ($1, $2, $3, $4, $5, $6)
       RETURNING id
-    `, [userId, recipeId || null, freezerItemId || null, date, mealType, notes || '']);
+    `, [userId, recipeId || null, null, date, mealType, finalNotes]);
     
     res.status(201).json({ 
       id: result.rows[0].id,
-      message: 'Meal plan created successfully' 
+      message: 'Meal plan created and item removed from freezer' 
     });
   } catch (err: any) {
     console.error('Error creating meal plan:', err);
@@ -111,8 +120,20 @@ export const updateMealPlan = async (req: Request, res: Response) => {
   const { recipeId, freezerItemId, date, mealType, notes } = req.body;
   const userId = (req as any).user.userId;
 
-  if ((!recipeId && !freezerItemId) || !date || !mealType) {
-    return res.status(400).json({ error: 'Recipe or Freezer Item, date, and meal type are required' });
+  if ((!recipeId && !freezerItemId && !notes) || !date || !mealType) {
+    return res.status(400).json({ error: 'Recipe, Freezer Item, or Note, plus date and meal type are required' });
+  }
+
+  // Validate freezer item if provided and get its name
+  let freezerItemName = '';
+  if (freezerItemId) {
+    const item = await db.get('SELECT name FROM freezer_items WHERE id = $1 AND user_id = $2', [freezerItemId, userId]);
+    if (!item) {
+      return res.status(404).json({ error: 'Freezer item not found' });
+    }
+    freezerItemName = item.name;
+    // Delete the freezer item as requested
+    await db.run('DELETE FROM freezer_items WHERE id = $1 AND user_id = $2', [freezerItemId, userId]);
   }
 
   // Validate date format YYYY-MM-DD
@@ -120,12 +141,17 @@ export const updateMealPlan = async (req: Request, res: Response) => {
     return res.status(400).json({ error: 'Date must be in YYYY-MM-DD format' });
   }
 
+  // If it was a freezer item, we put the name in notes so it's not lost since we deleted the item
+  const finalNotes = freezerItemId 
+    ? (notes ? `${freezerItemName}: ${notes}` : freezerItemName)
+    : (notes || '');
+
   try {
     const result = await db.run(`
       UPDATE meal_plans 
       SET recipe_id = $1, freezer_item_id = $2, date = $3, meal_type = $4, notes = $5
       WHERE id = $6 AND user_id = $7
-    `, [recipeId || null, freezerItemId || null, date, mealType, notes || '', id, userId]);
+    `, [recipeId || null, null, date, mealType, finalNotes, id, userId]);
     
     if (result.rowCount === 0) {
       return res.status(404).json({ error: 'Meal plan not found or unauthorized' });

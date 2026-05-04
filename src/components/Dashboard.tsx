@@ -10,7 +10,8 @@ import {
   Loader2,
   TrendingUp,
   History,
-  Snowflake
+  Snowflake,
+  MessageSquare
 } from 'lucide-react';
 
 interface Stats {
@@ -172,14 +173,18 @@ export default function Dashboard({ onNavigate }: DashboardProps) {
                   <div className="w-16 h-16 rounded-2xl overflow-hidden border border-cream shadow-sm shrink-0 bg-cream flex items-center justify-center">
                     {meal.recipe_id ? (
                       <img src={meal.recipe_image || meal.image_url} alt="" className="w-full h-full object-cover" referrerPolicy="no-referrer" />
-                    ) : (
+                    ) : meal.freezer_item_id ? (
                       <Snowflake className="w-8 h-8 text-sage/20" />
+                    ) : (
+                      <MessageSquare className="w-8 h-8 text-sage/20" />
                     )}
                   </div>
                   <div className="flex-1">
                     <p className="text-[10px] font-bold text-terracotta uppercase tracking-[0.2em] mb-1">{meal.meal_type}</p>
-                    <h4 className="text-lg font-serif text-sage">{meal.recipe_id ? meal.recipe_title : meal.freezer_item_name}</h4>
-                    {meal.notes && (
+                    <h4 className="text-lg font-serif text-sage">
+                      {meal.recipe_id ? meal.recipe_title : (meal.freezer_item_id ? meal.freezer_item_name : meal.notes)}
+                    </h4>
+                    {((meal.recipe_id || meal.freezer_item_id) && meal.notes) && (
                       <p className="text-[10px] text-sage/40 italic mt-1 line-clamp-1">{meal.notes}</p>
                     )}
                   </div>
@@ -187,8 +192,10 @@ export default function Dashboard({ onNavigate }: DashboardProps) {
                     onClick={() => {
                       if (meal.recipe_id) {
                         onNavigate('recipes', meal.recipe_id);
-                      } else {
+                      } else if (meal.freezer_item_id) {
                         onNavigate('freezer');
+                      } else {
+                        onNavigate('planner');
                       }
                     }}
                     className="p-3 bg-sage/5 text-sage/40 rounded-xl hover:bg-sage hover:text-white transition-all shadow-sm"

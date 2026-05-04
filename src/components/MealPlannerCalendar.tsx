@@ -175,7 +175,7 @@ export default function MealPlannerCalendar() {
   };
 
   const handleSavePlan = async () => {
-    if (!selectedDate || (planningSource === 'pantry' && !planningRecipeId) || (planningSource === 'freezer' && !planningFreezerItemId)) return;
+    if (!selectedDate || (!planningRecipeId && !planningFreezerItemId && !planningNotes.trim())) return;
 
     setSaving(true);
     const token = localStorage.getItem('la_mia_cucina_token');
@@ -317,13 +317,15 @@ export default function MealPlannerCalendar() {
               <div className="w-6 h-6 md:w-8 md:h-8 rounded-md overflow-hidden shrink-0 border border-white bg-cream flex items-center justify-center">
                 {plan.recipe_id ? (
                   <img src={plan.recipe_image || 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c'} alt="" className="w-full h-full object-cover" referrerPolicy="no-referrer" />
-                ) : (
+                ) : plan.freezer_item_id ? (
                   <Snowflake className="w-4 h-4 md:w-5 md:h-5 text-sage/40" />
+                ) : (
+                  <MessageSquare className="w-3 h-3 md:w-4 md:h-4 text-sage/40" />
                 )}
               </div>
               <div className="flex-1 min-w-0">
                 <p className="text-[8px] md:text-[10px] font-bold text-sage truncate leading-tight uppercase tracking-tighter">
-                  {plan.recipe_id ? plan.recipe_title : plan.freezer_item_name}
+                  {plan.recipe_id ? plan.recipe_title : (plan.freezer_item_id ? plan.freezer_item_name : plan.notes)}
                 </p>
                 <div className="flex items-center gap-1">
                   <p className={`text-[7px] md:text-[8px] uppercase font-bold tracking-widest leading-none ${
@@ -538,13 +540,15 @@ export default function MealPlannerCalendar() {
                             <div className="w-8 h-8 rounded-lg overflow-hidden shrink-0 border border-white bg-cream flex items-center justify-center">
                               {plan.recipe_id ? (
                                 <img src={plan.recipe_image || 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c'} alt="" className="w-full h-full object-cover" referrerPolicy="no-referrer" />
-                              ) : (
+                              ) : plan.freezer_item_id ? (
                                 <Snowflake className={`w-4 h-4 ${editingPlanId === plan.id ? 'text-white/40' : 'text-sage/40'}`} />
+                              ) : (
+                                <MessageSquare className={`w-3.5 h-3.5 ${editingPlanId === plan.id ? 'text-white/40' : 'text-sage/40'}`} />
                               )}
                             </div>
                             <div className="flex-1 min-w-0">
                                <p className={`text-[11px] font-bold truncate ${editingPlanId === plan.id ? 'text-white' : 'text-sage'}`}>
-                                 {plan.recipe_id ? plan.recipe_title : plan.freezer_item_name}
+                                 {plan.recipe_id ? plan.recipe_title : (plan.freezer_item_id ? plan.freezer_item_name : 'Custom Note')}
                                </p>
                                <p className={`text-[8px] uppercase font-bold tracking-widest ${editingPlanId === plan.id ? 'text-white/60' : 'text-terracotta'}`}>{plan.meal_type}</p>
                                {plan.notes && (
@@ -743,7 +747,7 @@ export default function MealPlannerCalendar() {
                 <div className="p-4 md:p-6 bg-sage/5 border-t border-sage/5">
                   <button
                     onClick={handleSavePlan}
-                    disabled={saving || (planningSource === 'pantry' ? !planningRecipeId : !planningFreezerItemId)}
+                    disabled={saving || (!planningRecipeId && !planningFreezerItemId && !planningNotes.trim())}
                     className="w-full bg-sage hover:bg-sage/90 text-white font-bold py-4 rounded-2xl transition-all shadow-lg flex items-center justify-center gap-3 active:scale-[0.99] disabled:opacity-50"
                   >
                     {saving ? <Loader2 className="w-5 h-5 animate-spin" /> : <Utensils className="w-5 h-5" />}
