@@ -43,6 +43,11 @@
     @apply text-[9px] font-semibold uppercase tracking-[0.24em] text-sage/45;
   }
 
+  /* The auth panel's paper tooth — a shade stronger than the body grain so it reads on sage. */
+  .grain-panel {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n2'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n2)' opacity='0.09'/%3E%3C/svg%3E");
+  }
+
   /* Rules do the separating now — not shadows. */
   .rule {
     @apply h-px bg-sage/20;

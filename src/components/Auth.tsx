@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'motion/react';
-import { ArrowRight, Mail, Lock, Loader2, User as UserIcon, UtensilsCrossed } from 'lucide-react';
+import { ArrowRight, Mail, Lock, Loader2, User as UserIcon, UtensilsCrossed, Eye, EyeOff } from 'lucide-react';
 import ForgotPassword from './ForgotPassword';
 import ResetPassword from './ResetPassword';
 
@@ -19,6 +19,7 @@ export default function Auth({ onSuccess, initialResetToken }: AuthProps) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
@@ -99,6 +100,7 @@ export default function Auth({ onSuccess, initialResetToken }: AuthProps) {
     setEmail('');
     setPassword('');
     setConfirmPassword('');
+    setShowPassword(false);
   };
 
   return (
@@ -184,13 +186,27 @@ export default function Auth({ onSuccess, initialResetToken }: AuthProps) {
             <div className="flex items-center gap-3 border-b border-sage/30 focus-within:border-terracotta transition-colors">
               <Lock className="w-[17px] h-[17px] text-sage/45 shrink-0" />
               <input
-                type="password"
+                type={showPassword ? 'text' : 'password'}
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 className="flex-1 min-w-0 bg-transparent border-0 pb-2.5 text-[17px] text-earth outline-none placeholder:text-earth/30"
                 placeholder="••••••••"
               />
+              {/* Masked by default; the eye is the only way to read it back. */}
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                aria-label={showPassword ? 'Hide the password' : 'Show the password'}
+                aria-pressed={showPassword}
+                className="shrink-0 pb-2.5 pl-2 text-sage/45 hover:text-terracotta transition-colors"
+              >
+                {showPassword ? (
+                  <EyeOff className="w-[17px] h-[17px]" />
+                ) : (
+                  <Eye className="w-[17px] h-[17px]" />
+                )}
+              </button>
             </div>
           </div>
 
@@ -244,24 +260,13 @@ export default function Auth({ onSuccess, initialResetToken }: AuthProps) {
 function AuthShell({ children }: { children: React.ReactNode }) {
   return (
     <div className="min-h-screen flex bg-cream">
-      <div
-        className="hidden lg:block relative w-[46%] max-w-[700px] shrink-0 overflow-hidden"
-        style={{
-          background:
-            'radial-gradient(ellipse at 40% 34%, #E8C99A 0%, #C98F5E 34%, #8E5A42 68%, #59715E 130%)',
-        }}
-      >
-        <div
-          className="absolute inset-0"
-          style={{
-            backgroundImage:
-              'repeating-linear-gradient(118deg, rgba(246,241,231,0.13) 0 2px, transparent 2px 13px)',
-          }}
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-earth/55 to-transparent to-60%" />
+      {/* One flat sage field — the same green as the primary button — framed like a page. */}
+      <div className="hidden lg:flex relative w-[46%] max-w-[700px] shrink-0 flex-col justify-between overflow-hidden bg-sage grain-panel p-14">
+        <div className="absolute top-7 bottom-7 left-7 right-[31px] border border-cream/20 pointer-events-none" />
+        <div className="absolute inset-y-0 right-0 w-[3px] bg-terracotta" />
 
-        <div className="absolute top-14 left-14 flex items-center gap-4">
-          <div className="w-11 h-11 bg-cream/95 flex items-center justify-center">
+        <div className="relative flex items-center gap-4">
+          <div className="w-11 h-11 shrink-0 bg-cream/95 flex items-center justify-center">
             <UtensilsCrossed className="w-6 h-6 text-sage" />
           </div>
           <span className="font-serif font-bold text-[17px] uppercase tracking-[0.30em] text-cream">
@@ -269,7 +274,7 @@ function AuthShell({ children }: { children: React.ReactNode }) {
           </span>
         </div>
 
-        <div className="absolute left-14 right-14 bottom-16">
+        <div className="relative">
           <p className="text-[10px] font-semibold uppercase tracking-[0.32em] text-cream/70">
             Your kitchen, written down
           </p>
@@ -284,16 +289,29 @@ function AuthShell({ children }: { children: React.ReactNode }) {
         </div>
       </div>
 
-      <div className="flex-1 min-w-0 flex flex-col justify-center px-6 sm:px-12 lg:px-24 py-14">
-        <div className="lg:hidden flex items-center gap-3 mb-12">
-          <div className="w-10 h-10 bg-sage flex items-center justify-center">
-            <UtensilsCrossed className="w-5 h-5 text-cream" />
+      <div className="flex-1 min-w-0 flex flex-col">
+        {/* Below lg the field becomes a masthead band, so the brand survives the breakpoint. */}
+        <div className="lg:hidden relative bg-sage grain-panel px-6 pt-8 pb-[34px]">
+          <div className="absolute inset-x-0 bottom-0 h-[3px] bg-terracotta" />
+          <div className="flex items-center gap-3.5">
+            <div className="w-10 h-10 shrink-0 bg-cream/95 flex items-center justify-center">
+              <UtensilsCrossed className="w-[21px] h-[21px] text-sage" />
+            </div>
+            <span className="font-serif font-bold text-sm uppercase tracking-[0.28em] text-cream">
+              La Mia Cucina
+            </span>
           </div>
-          <span className="font-serif font-bold text-sm uppercase tracking-[0.28em] text-sage">
-            La Mia Cucina
-          </span>
+          <p className="mt-[26px] text-[9px] font-semibold uppercase tracking-[0.30em] text-cream/70">
+            Your kitchen, written down
+          </p>
+          <p className="mt-3 font-serif font-bold text-[34px] leading-[0.98] tracking-[-0.03em] text-cream">
+            Every recipe<br />worth <span className="italic font-normal">keeping.</span>
+          </p>
         </div>
-        <div className="w-full max-w-lg">{children}</div>
+
+        <div className="flex-1 flex flex-col justify-center px-6 sm:px-12 lg:px-24 py-14">
+          <div className="w-full max-w-lg">{children}</div>
+        </div>
       </div>
     </div>
   );
