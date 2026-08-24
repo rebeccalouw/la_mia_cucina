@@ -1,25 +1,28 @@
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,500;0,700;1,400;1,500&display=swap');
 @import "tailwindcss";
 
 @theme {
-  --font-serif: "Playfair Display", serif;
-  --font-sans: "Outfit", sans-serif;
+  --font-serif: "Playfair Display", Georgia, serif;
+  --font-sans: "Outfit", system-ui, sans-serif;
 
-  --color-cream: #F9F7F2;
+  --color-cream: #F6F1E7;
   --color-sage: #59715E;
   --color-terracotta: #B67A5D;
   --color-ochre: #E6D5B8;
   --color-honey: #B8860B;
   --color-earth: #2D2D2D;
+  --color-brick: #B23A2A;
 }
 
 @layer base {
   body {
     @apply bg-cream text-earth font-sans;
+    /* Paper grain. Inline so nothing has to be fetched. */
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E");
   }
 
   h1, h2, h3, h4, h5, h6 {
-    @apply font-serif font-bold text-sage;
+    @apply font-serif font-bold text-earth;
   }
 
   .no-scrollbar::-webkit-scrollbar {
@@ -28,5 +31,56 @@
   .no-scrollbar {
     -ms-overflow-style: none;
     scrollbar-width: none;
+  }
+}
+
+@layer components {
+  /* Editorial micro-labels: the small caps that title every band. */
+  .label {
+    @apply text-[10px] font-semibold uppercase tracking-[0.28em] text-sage/60;
+  }
+  .micro {
+    @apply text-[9px] font-semibold uppercase tracking-[0.24em] text-sage/45;
+  }
+
+  /* Rules do the separating now — not shadows. */
+  .rule {
+    @apply h-px bg-sage/20;
+  }
+  .rule-strong {
+    @apply h-0.5 bg-sage/65;
+  }
+  .panel {
+    @apply bg-white/45 border border-sage/20;
+  }
+
+  /* Buttons: square, flat, 10px / .26em. */
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-3 px-6 py-3.5 text-[10px] font-semibold uppercase tracking-[0.26em] bg-sage text-cream transition-colors hover:bg-earth disabled:opacity-50;
+  }
+  .btn-accent {
+    @apply inline-flex items-center justify-center gap-3 px-6 py-3.5 text-[10px] font-semibold uppercase tracking-[0.26em] bg-terracotta text-cream transition-colors hover:bg-sage disabled:opacity-50;
+  }
+  .btn-ghost {
+    @apply inline-flex items-center justify-center gap-3 px-6 py-3.5 text-[10px] font-semibold uppercase tracking-[0.26em] border border-sage/30 text-sage transition-colors hover:bg-sage/5 disabled:opacity-50;
+  }
+  .btn-danger {
+    @apply inline-flex items-center justify-center gap-3 px-6 py-3.5 text-[10px] font-semibold uppercase tracking-[0.26em] border border-brick/40 text-brick transition-colors hover:bg-brick/5 disabled:opacity-50;
+  }
+
+  /* Fields are a rule, not a pill. Focus changes colour, never thickness,
+     so nothing shifts by a pixel when you tab through a form. */
+  .field {
+    @apply w-full bg-transparent border-0 border-b border-sage/30 pb-2.5 text-[17px] text-earth outline-none transition-colors placeholder:text-earth/30 focus:border-terracotta;
+  }
+  .field-box {
+    @apply w-full bg-white/50 border border-sage/25 px-4 py-3 text-[15px] leading-loose text-earth outline-none transition-colors placeholder:text-earth/30 focus:border-terracotta;
+  }
+
+  .chip {
+    @apply inline-flex items-center gap-2 px-3 py-1.5 text-[9px] font-semibold uppercase tracking-[0.22em] border border-sage/30 text-sage/70 transition-colors;
+  }
+  .chip-on {
+    @apply inline-flex items-center gap-2 px-3 py-1.5 text-[9px] font-semibold uppercase tracking-[0.22em] bg-terracotta text-cream transition-colors;
   }
 }

@@ -1,13 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { 
-  ChevronLeft, 
-  ChevronRight, 
-  Calendar as CalendarIcon,
+import {
+  ChevronLeft,
+  ChevronRight,
   ChefHat,
   Plus,
-  Clock,
-  Utensils,
   X,
   Loader2,
   Check,
@@ -269,6 +266,7 @@ export default function MealPlannerCalendar() {
   };
 
   const weekDays = getCurrentWeekDays();
+  const todayCount = mealPlans.filter(p => p.date === toLocalDateString(new Date())).length;
 
   // Helper to format date as dd-mm-yyyy for accessibility/display
   const formatDateString = (day: number) => {
@@ -284,7 +282,7 @@ export default function MealPlannerCalendar() {
     const dayName = dayDate.toLocaleDateString('default', { weekday: 'short' });
 
     if (isPadding) {
-      return <div key={`pad-${dStr}`} className="h-24 md:h-48 bg-cream/20 border border-sage/5 rounded-xl md:rounded-2xl opacity-50" />;
+      return <div key={`pad-${dStr}`} className="h-24 md:h-32 border border-sage/8" />;
     }
 
     return (
@@ -292,18 +290,19 @@ export default function MealPlannerCalendar() {
         key={dStr}
         whileHover={{ y: -4 }}
         onClick={() => setSelectedDate(dStr)}
-        className={`min-h-24 md:h-48 p-3 bg-white border border-sage/5 rounded-2xl md:rounded-4xl shadow-sm hover:shadow-xl hover:shadow-sage/10 transition-all group flex flex-col relative overflow-hidden cursor-pointer ${isToday ? 'ring-2 ring-terracotta' : ''}`}
+        className={`min-h-24 md:h-32 p-2.5 bg-white/45 transition-colors group flex flex-col relative overflow-hidden cursor-pointer ${
+          isToday ? 'border-2 border-terracotta bg-terracotta/7' : 'border border-sage/20 hover:bg-white/70'
+        }`}
       >
-        <div className="flex justify-between items-start mb-1 overflow-hidden">
-          <div className="flex flex-col md:flex-row md:items-center gap-0 md:gap-2">
-            <span className={`text-[10px] font-bold uppercase tracking-widest ${isToday ? 'text-terracotta' : 'text-sage/40'}`}>
-              {label}
-            </span>
-            <span className="md:hidden text-[8px] font-bold text-sage/20 uppercase tracking-widest">{dayName}</span>
-          </div>
-          <div className="hidden md:group-hover:flex items-center gap-1">
-             <Plus className="w-3 h-3 text-sage/30" />
-          </div>
+        <div className="flex justify-between items-baseline gap-2 mb-1.5">
+          {isToday ? (
+            <span className="text-[8px] font-semibold uppercase tracking-[0.22em] text-terracotta">Today</span>
+          ) : (
+            <span className="md:hidden micro">{dayName}</span>
+          )}
+          <span className={`font-serif text-[15px] leading-none ml-auto ${isToday ? 'text-earth' : 'text-earth/55'}`}>
+            {label}
+          </span>
         </div>
         
         <div className="flex-1 overflow-y-auto no-scrollbar space-y-1 py-0.5">
@@ -316,54 +315,41 @@ export default function MealPlannerCalendar() {
                   e.stopPropagation();
                   openEditModal(plan);
                 }}
-                className="group/item relative flex items-center gap-2 p-1 bg-sage/5 rounded-lg border border-sage/5 cursor-pointer hover:bg-sage/10 transition-colors"
+                className={`group/item relative flex items-center gap-2 py-1 px-1.5 cursor-pointer transition-colors ${
+                  plan.recipe_id
+                    ? 'bg-terracotta/10 border-l-2 border-terracotta hover:bg-terracotta/18'
+                    : 'bg-sage/10 border-l-2 border-sage hover:bg-sage/18'
+                }`}
               >
-              <div className="w-6 h-6 md:w-8 md:h-8 rounded-md overflow-hidden shrink-0 border border-white bg-cream flex items-center justify-center">
-                {plan.recipe_id ? (
-                  <img src={plan.recipe_image || 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c'} alt="" className="w-full h-full object-cover" referrerPolicy="no-referrer" />
-                ) : plan.freezer_item_name ? (
-                  <Snowflake className="w-4 h-4 md:w-5 md:h-5 text-sage/40" />
-                ) : (
-                  <MessageSquare className="w-3 h-3 md:w-4 md:h-4 text-sage/40" />
-                )}
-              </div>
+              {!plan.recipe_id && (
+                <span className="shrink-0 text-sage/55">
+                  {plan.freezer_item_name ? <Snowflake className="w-3 h-3" /> : <MessageSquare className="w-3 h-3" />}
+                </span>
+              )}
               <div className="flex-1 min-w-0">
-                <p className="text-[8px] md:text-[10px] font-bold text-sage truncate leading-tight uppercase tracking-tighter">
+                <p className="font-serif text-[12px] text-earth truncate leading-tight">
                   {plan.recipe_id ? plan.recipe_title : (plan.freezer_item_name || plan.notes)}
                 </p>
-                <div className="flex items-center gap-1">
-                  <p className={`text-[7px] md:text-[8px] uppercase font-bold tracking-widest leading-none ${
-                      plan.meal_type === 'breakfast' ? 'text-honey' :
-                      plan.meal_type === 'lunch' ? 'text-honey' :
-                      plan.meal_type === 'dinner' ? 'text-terracotta' :
-                      'text-terracotta/70'
-                    }`}>{plan.meal_type}</p>
-                </div>
               </div>
               <button 
                 onClick={(e) => {
                   e.stopPropagation();
                   handleDeletePlan(plan.id);
                 }}
-                className="opacity-0 group-hover/item:opacity-100 absolute -right-1 -top-1 bg-white p-1 rounded-full text-red-500 shadow-sm border border-red-50 transition-all hover:scale-110 z-10"
+                className="opacity-0 group-hover/item:opacity-100 absolute right-0 top-0 bg-cream p-1 text-brick border border-brick/30 transition-opacity z-10"
               >
                 <X className="w-2.5 h-2.5" />
               </button>
             </motion.div>
           ))}
           {plansForDay.length === 0 && (
-            <div className="h-full flex flex-col justify-center items-center gap-1 opacity-20 md:opacity-0 md:group-hover:opacity-100 transition-opacity">
-              <Plus className="w-4 h-4 text-sage/20" />
-              <p className="hidden md:block text-[8px] text-sage/30 font-bold uppercase tracking-tighter">Add Meal</p>
+            <div className="h-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+              <Plus className="w-4 h-4 text-sage/40" />
             </div>
           )}
         </div>
 
-        {isToday && (
-          <div className="absolute top-3 right-3">
-            <div className="w-1.5 h-1.5 bg-terracotta rounded-full shadow-lg shadow-terracotta/40 animate-pulse" />
-          </div>
-        )}
+
       </motion.div>
     );
   };
@@ -381,69 +367,67 @@ export default function MealPlannerCalendar() {
   }
 
   return (
-    <div className="max-w-6xl mx-auto space-y-6 md:space-y-8 pb-20 px-0">
-      {/* Header Overlay */}
-      <div className="bg-white p-6 md:p-12 rounded-3xl md:rounded-[3.5rem] shadow-xl shadow-sage/5 border border-sage/5 flex flex-col md:flex-row items-center justify-between gap-6 md:gap-8">
-        <div className="flex items-center gap-4 md:gap-6 w-full md:w-auto">
-          <div className="bg-sage p-3 md:p-4 rounded-2xl md:rounded-3xl shadow-lg shadow-sage/20">
-            <CalendarIcon className="w-6 h-6 md:w-8 md:h-8 text-cream" />
-          </div>
-          <div>
-            <h2 className="text-2xl md:text-4xl font-serif text-sage tracking-tight md:block hidden">{monthName} {year}</h2>
-            <h2 className="text-xl font-serif text-sage tracking-tight md:hidden">Meal Planner</h2>
-            <p className="text-sage/40 text-[10px] md:text-xs font-bold uppercase tracking-[0.2em] mt-0.5 md:mt-1 italic">Organize your weekly feast</p>
-          </div>
+    <div className="pb-20">
+      {/* Header */}
+      <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 pb-7">
+        <div>
+          <p className="label">
+            {mealPlans.length} {mealPlans.length === 1 ? 'meal' : 'meals'} on the board
+          </p>
+          <h1 className="mt-3 text-[36px] md:text-[50px] leading-none tracking-[-0.025em]">
+            {monthName} <span className="italic font-normal text-sage">{year}</span>
+          </h1>
         </div>
 
-        <div className="flex items-center gap-2 bg-cream/40 p-1.5 md:p-2 rounded-2xl border border-sage/5 w-full md:w-auto justify-between md:justify-start">
-          <button 
+        <div className="flex items-center gap-5 pb-1.5">
+          <button
             onClick={prevMonth}
-            className="p-3 hover:bg-white hover:text-terracotta text-sage/40 transition-all rounded-xl shadow-sm md:block hidden"
+            className="hidden md:block p-2 -m-2 text-sage/55 hover:text-earth transition-colors"
+            title="Previous month"
           >
-            <ChevronLeft className="w-5 h-5" />
+            <ChevronLeft className="w-4 h-4" />
           </button>
-          <div className="md:hidden flex items-center gap-1 ml-2">
-            <CalendarIcon className="w-4 h-4 text-sage/40" />
-            <span className="text-[10px] font-bold text-sage/60 uppercase tracking-widest">{monthName}</span>
-          </div>
-          <button 
+          <button
             onClick={() => setCurrentDate(new Date())}
-            className="px-6 py-2 bg-white text-sage text-[10px] md:text-xs font-bold uppercase tracking-widest rounded-xl shadow-sm hover:text-terracotta transition-colors"
+            className="text-[10px] font-semibold uppercase tracking-[0.24em] text-sage hover:text-terracotta transition-colors"
           >
             Today
           </button>
-          <button 
+          <button
             onClick={nextMonth}
-            className="p-3 hover:bg-white hover:text-terracotta text-sage/40 transition-all rounded-xl shadow-sm md:block hidden"
+            className="hidden md:block p-2 -m-2 text-sage/55 hover:text-earth transition-colors"
+            title="Next month"
           >
-            <ChevronRight className="w-5 h-5" />
+            <ChevronRight className="w-4 h-4" />
           </button>
+
+          <span className="hidden md:block w-px h-4 bg-sage/25" />
+
+          <span className="hidden md:flex items-center gap-2.5 micro">
+            <span className="w-3 h-0.5 bg-terracotta" /> From the box
+          </span>
+          <span className="hidden md:flex items-center gap-2.5 micro">
+            <span className="w-3 h-0.5 bg-sage" /> Freezer or a note
+          </span>
         </div>
       </div>
 
+      <div className="rule-strong mb-6" />
+
       {/* Week View (Mobile Default) */}
       <div className="md:hidden space-y-4">
-        <div className="flex items-center justify-between px-4">
-          <h3 className="text-xs font-bold text-sage/40 uppercase tracking-[0.2em]">
+        <div className="flex items-center justify-between gap-3">
+          <h3 className="text-[10px] font-semibold text-earth uppercase tracking-[0.26em]">
             {weekOffset === 0 ? 'This Week' : weekOffset === 1 ? 'Next Week' : weekOffset === -1 ? 'Previous Week' : `Week ${weekOffset > 0 ? '+' : ''}${weekOffset}`}
           </h3>
-          <div className="flex items-center gap-2 bg-cream/40 p-1 rounded-xl border border-sage/5">
-            <button 
-              onClick={() => setWeekOffset(prev => prev - 1)}
-              className="p-2 hover:bg-white hover:text-terracotta text-sage/40 transition-all rounded-lg shadow-sm"
-            >
+          <div className="flex items-center gap-4">
+            <button onClick={() => setWeekOffset(prev => prev - 1)} className="p-2 -m-2 text-sage/55">
               <ChevronLeft className="w-4 h-4" />
             </button>
-            <button 
-              onClick={() => setWeekOffset(0)}
-              className="px-4 py-1 text-[9px] font-bold uppercase tracking-widest text-sage"
-            >
-              Reset
+            <button onClick={() => setWeekOffset(0)} className="text-[9px] font-semibold uppercase tracking-[0.22em] text-sage">
+              This week
             </button>
-            <button 
-              onClick={() => setWeekOffset(prev => prev + 1)}
-              className="p-2 hover:bg-white hover:text-terracotta text-sage/40 transition-all rounded-lg shadow-sm"
-            >
+            <button onClick={() => setWeekOffset(prev => prev + 1)} className="p-2 -m-2 text-sage/55">
               <ChevronRight className="w-4 h-4" />
             </button>
           </div>
@@ -457,21 +441,19 @@ export default function MealPlannerCalendar() {
       </div>
 
       {/* Month View (Desktop Default) */}
-      <div className="hidden md:block space-y-8">
+      <div className="hidden md:block">
         {/* Week Day Labels */}
-        <div className="grid grid-cols-7 gap-4 px-2">
+        <div className="grid grid-cols-7 gap-2.5 mb-3">
           {dayNames.map(day => (
-            <div key={day} className="text-center">
-              <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-sage/30">{day}</span>
-            </div>
+            <span key={day} className="micro">{day}</span>
           ))}
         </div>
 
         {/* Grid */}
-        <div className="grid grid-cols-7 gap-4">
+        <div className="grid grid-cols-7 gap-2.5">
           {loading ? (
             Array.from({ length: 35 }).map((_, i) => (
-              <div key={i} className="h-48 bg-white/50 border border-sage/5 rounded-4xl animate-pulse" />
+              <div key={i} className="h-32 bg-white/40 border border-sage/20 animate-pulse" />
             ))
           ) : (
             days
@@ -488,35 +470,38 @@ export default function MealPlannerCalendar() {
                animate={{ opacity: 1 }}
                exit={{ opacity: 0 }}
                onClick={closePlanningModal}
-               className="absolute inset-0 bg-sage/20 backdrop-blur-md"
+               className="absolute inset-0 bg-earth/40"
              />
              <motion.div 
                initial={{ scale: 0.9, opacity: 0, y: 20 }}
                animate={{ scale: 1, opacity: 1, y: 0 }}
-               exit={{ scale: 0.9, opacity: 0, y: 20 }}
-               className="relative w-full max-w-xl bg-white rounded-4xl md:rounded-[3.5rem] shadow-2xl overflow-hidden border border-sage/5"
+               exit={{ scale: 0.98, opacity: 0, y: 12 }}
+               className="relative w-full max-w-2xl bg-cream border border-sage/30 max-h-[90vh] overflow-y-auto no-scrollbar"
              >
-                <div className="px-4 py-4 md:px-6 md:py-5 bg-sage/5 border-b border-sage/5 flex items-center justify-between">
+                <div className="px-6 md:px-9 pt-8 pb-5 border-b-2 border-sage/65 flex items-start justify-between gap-4">
                   <div>
-                    <h3 className="text-xl font-serif text-sage">{editingPlanId ? 'Update Meal Plan' : 'Plan Your Meal'}</h3>
-                    <p className="text-[10px] font-bold text-sage/40 uppercase tracking-widest mt-0.5">
-                      For {new Date(selectedDate).toLocaleDateString('default', { day: 'numeric', month: 'long', year: 'numeric' })}
-                    </p>
+                    <p className="label">{editingPlanId ? 'Changing the plan for' : 'Planning for'}</p>
+                    <h3 className="mt-2.5 font-serif text-[28px] md:text-[36px] leading-tight text-earth">
+                      {new Date(selectedDate).toLocaleDateString('default', { weekday: 'long' })},{' '}
+                      <span className="italic font-normal text-sage">
+                        {new Date(selectedDate).toLocaleDateString('default', { day: 'numeric', month: 'long' })}
+                      </span>
+                    </h3>
                   </div>
-                  <button 
+                  <button
                     onClick={closePlanningModal}
-                    className="p-2 bg-white hover:bg-red-50 text-sage/30 hover:text-red-500 rounded-xl transition-all border border-sage/10 shadow-sm"
+                    className="p-2 -mr-2 -mt-1 text-sage/55 hover:text-earth transition-colors"
                   >
                     <X className="w-5 h-5" />
                   </button>
                 </div>
 
-                <div className="p-4 md:p-6 space-y-6 max-h-[60vh] overflow-y-auto no-scrollbar">
+                <div className="px-6 md:px-9 py-7 space-y-7">
                   {/* Daily Schedule Overview */}
                   {plansForSelectedDate.length > 0 && (
                     <div className="space-y-3">
                       <div className="flex items-center justify-between px-1">
-                        <label className="text-[9px] font-bold text-sage/40 uppercase tracking-[0.2em]">Already scheduled</label>
+                        <label className="text-[10px] font-semibold uppercase tracking-[0.28em] text-terracotta">Already on this day</label>
                         {editingPlanId && (
                           <button 
                             onClick={() => {
@@ -525,7 +510,7 @@ export default function MealPlannerCalendar() {
                               setPlanningFreezerItemId(null);
                               setPlanningFreezerName(null);
                             }}
-                            className="text-[9px] text-terracotta font-bold uppercase tracking-widest hover:underline flex items-center gap-1"
+                            className="text-[9px] font-semibold uppercase tracking-[0.22em] text-sage hover:text-terracotta transition-colors flex items-center gap-1.5"
                           >
                             <Plus className="w-3 h-3" /> New
                           </button>
@@ -536,13 +521,13 @@ export default function MealPlannerCalendar() {
                           <div 
                             key={plan.id}
                             onClick={() => openEditModal(plan)}
-                            className={`flex items-center gap-3 p-1.5 rounded-xl border transition-all cursor-pointer ${
-                              editingPlanId === plan.id 
-                                ? 'bg-sage border-sage shadow-md' 
-                                : 'bg-cream/30 border-sage/5 hover:border-sage/20'
+                            className={`flex items-center gap-3.5 p-2.5 border transition-colors cursor-pointer ${
+                              editingPlanId === plan.id
+                                ? 'bg-sage border-sage'
+                                : 'bg-white/50 border-sage/25 hover:bg-white'
                             }`}
                           >
-                            <div className="w-8 h-8 rounded-lg overflow-hidden shrink-0 border border-white bg-cream flex items-center justify-center">
+                            <div className="w-8 h-8 overflow-hidden shrink-0 border border-white bg-cream flex items-center justify-center">
                               {plan.recipe_id ? (
                                 <img src={plan.recipe_image || 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c'} alt="" className="w-full h-full object-cover" referrerPolicy="no-referrer" />
                               ) : plan.freezer_item_name ? (
@@ -552,10 +537,10 @@ export default function MealPlannerCalendar() {
                               )}
                             </div>
                             <div className="flex-1 min-w-0">
-                               <p className={`text-[11px] font-bold truncate ${editingPlanId === plan.id ? 'text-white' : 'text-sage'}`}>
-                                 {plan.recipe_id ? plan.recipe_title : (plan.freezer_item_name || 'Custom Note')}
+                               <p className={`font-serif text-[17px] leading-tight truncate ${editingPlanId === plan.id ? 'text-cream' : 'text-earth'}`}>
+                                 {plan.recipe_id ? plan.recipe_title : (plan.freezer_item_name || 'A note')}
                                </p>
-                               <p className={`text-[8px] uppercase font-bold tracking-widest ${editingPlanId === plan.id ? 'text-white/60' : 'text-terracotta'}`}>{plan.meal_type}</p>
+                               <p className={`mt-1 text-[8px] uppercase font-semibold tracking-[0.24em] ${editingPlanId === plan.id ? 'text-cream/65' : 'text-terracotta'}`}>{plan.meal_type}</p>
                                {plan.notes && (
                                  <div className={`flex items-start gap-1 mt-1 ${editingPlanId === plan.id ? 'text-white/40' : 'text-sage/40'}`}>
                                    <MessageSquare className="w-2.5 h-2.5 mt-0.5" />
@@ -569,7 +554,7 @@ export default function MealPlannerCalendar() {
                                 handleDeletePlan(plan.id);
                                 if (editingPlanId === plan.id) closePlanningModal();
                               }}
-                              className={`p-1.5 rounded-lg transition-colors ${editingPlanId === plan.id ? 'bg-white/10 text-white hover:bg-white/20' : 'bg-white text-red-500 hover:bg-red-50'}`}
+                              className={`p-2 shrink-0 transition-colors ${editingPlanId === plan.id ? 'text-cream/70 hover:text-cream' : 'text-brick/70 hover:text-brick'}`}
                             >
                               <X className="w-3.5 h-3.5" />
                             </button>
@@ -581,25 +566,23 @@ export default function MealPlannerCalendar() {
 
                   {/* Error Notification */}
                   {error && (
-                    <div className="p-3 bg-red-50 border border-red-100 rounded-xl text-red-500 text-[10px] font-medium text-center">
-                      {error}
-                    </div>
+                    <p className="border border-brick/40 bg-brick/5 text-brick text-sm px-4 py-3">{error}</p>
                   )}
 
                   {/* Meal Type Selection */}
-                  <div className="space-y-3 pt-2">
-                    <label className="text-[9px] font-bold text-sage/40 uppercase tracking-[0.2em] ml-1">
-                      {editingPlanId ? 'Change Meal Type' : 'Select Meal Type'}
+                  <div>
+                    <label className="block text-[10px] font-semibold uppercase tracking-[0.28em] text-terracotta mb-3.5">
+                      Which meal
                     </label>
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
-                      {['breakfast', 'snack', 'lunch', 'dinner'].map(type => (
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-2.5">
+                      {['breakfast', 'lunch', 'dinner', 'snack'].map(type => (
                         <button
                           key={type}
                           onClick={() => setPlanningMealType(type)}
-                          className={`px-2 py-2 rounded-xl text-[9px] font-bold uppercase tracking-widest transition-all border ${
-                            planningMealType === type 
-                              ? 'bg-terracotta text-cream border-terracotta shadow-md' 
-                              : 'bg-white text-sage/60 border-sage/10 hover:bg-honey/5 hover:text-honey'
+                          className={`py-3 text-[9px] font-semibold uppercase tracking-[0.22em] transition-colors ${
+                            planningMealType === type
+                              ? 'bg-sage text-cream'
+                              : 'border border-sage/28 text-sage/65 hover:bg-sage/5'
                           }`}
                         >
                           {type}
@@ -609,91 +592,77 @@ export default function MealPlannerCalendar() {
                   </div>
 
                   {/* Source Toggle */}
-                  <div className="space-y-3">
-                    <label className="text-[9px] font-bold text-sage/40 uppercase tracking-[0.2em] ml-1">Select From</label>
-                    <div className="flex gap-2">
-                      <button
-                        onClick={() => {
-                          setPlanningSource('pantry');
-                          setPlanningFreezerItemId(null);
-                          setPlanningFreezerName(null);
-                        }}
-                        className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-2xl text-[10px] font-bold uppercase tracking-widest border transition-all ${
-                          planningSource === 'pantry'
-                            ? 'bg-sage text-white border-sage shadow-md'
-                            : 'bg-white text-sage/40 border-sage/10 hover:bg-sage/5'
-                        }`}
-                      >
-                        <ChefHat className="w-4 h-4" /> Pantry Recipes
-                      </button>
-                      <button
-                        onClick={() => {
-                          setPlanningSource('freezer');
-                          setPlanningRecipeId(null);
-                        }}
-                        className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-2xl text-[10px] font-bold uppercase tracking-widest border transition-all ${
-                          planningSource === 'freezer'
-                            ? 'bg-sage text-white border-sage shadow-md'
-                            : 'bg-white text-sage/40 border-sage/10 hover:bg-sage/5'
-                        }`}
-                      >
-                        <Snowflake className="w-4 h-4" /> Freezer Meals
-                      </button>
-                    </div>
+                  <div className="flex gap-8 border-b border-sage/25">
+                    <button
+                      onClick={() => {
+                        setPlanningSource('pantry');
+                        setPlanningFreezerItemId(null);
+                        setPlanningFreezerName(null);
+                      }}
+                      className={`flex items-center gap-2.5 pb-3 -mb-px text-[10px] font-semibold uppercase tracking-[0.26em] border-b-2 transition-colors ${
+                        planningSource === 'pantry' ? 'text-earth border-terracotta' : 'text-sage/50 border-transparent hover:text-sage'
+                      }`}
+                    >
+                      <ChefHat className="w-4 h-4" /> From the box
+                    </button>
+                    <button
+                      onClick={() => {
+                        setPlanningSource('freezer');
+                        setPlanningRecipeId(null);
+                      }}
+                      className={`flex items-center gap-2.5 pb-3 -mb-px text-[10px] font-semibold uppercase tracking-[0.26em] border-b-2 transition-colors ${
+                        planningSource === 'freezer' ? 'text-earth border-terracotta' : 'text-sage/50 border-transparent hover:text-sage'
+                      }`}
+                    >
+                      <Snowflake className="w-4 h-4" /> From the freezer
+                    </button>
                   </div>
 
                   {/* Item Selection based on Source */}
                   <div className="space-y-3">
-                    <div className="flex flex-col gap-3 px-1">
-                      <div className="flex items-center justify-between">
-                        <label className="text-[9px] font-bold text-sage/40 uppercase tracking-[0.2em]">
-                          {planningSource === 'pantry' ? 'Select Recipe' : 'Select Freezer Meal'}
-                        </label>
-                        {planningSource === 'pantry' && (
-                          <select
-                            value={selectedCategory}
-                            onChange={(e) => setSelectedCategory(e.target.value)}
-                            className="text-[9px] bg-cream/50 border border-sage/10 rounded-lg px-2 py-1 outline-none focus:border-sage/30 transition-all font-bold text-sage uppercase tracking-widest cursor-pointer"
-                          >
-                            <option value="All">All Categories</option>
-                            {categories.map(cat => (
-                              <option key={cat} value={cat}>{cat}</option>
-                            ))}
-                          </select>
-                        )}
-                      </div>
-                      <div className="relative w-full">
-                        <input 
-                          type="text"
-                          placeholder={planningSource === 'pantry' ? "Search pantry..." : "Search freezer..."}
-                          value={recipeSearch}
-                          onChange={(e) => setRecipeSearch(e.target.value)}
-                          className="w-full text-[10px] bg-cream/50 border border-sage/10 rounded-lg px-3 py-1.5 outline-none focus:border-sage/30 transition-all"
-                        />
-                      </div>
+                    <div className="flex flex-col gap-4">
+                      <input
+                        type="text"
+                        placeholder={planningSource === 'pantry' ? 'Search your recipes…' : 'Search the freezer…'}
+                        value={recipeSearch}
+                        onChange={(e) => setRecipeSearch(e.target.value)}
+                        className="w-full bg-transparent border-0 border-b border-sage/30 pb-2.5 font-serif italic text-[17px] text-earth outline-none transition-colors placeholder:text-earth/40 focus:border-terracotta"
+                      />
+                      {planningSource === 'pantry' && (
+                        <select
+                          value={selectedCategory}
+                          onChange={(e) => setSelectedCategory(e.target.value)}
+                          className="self-start bg-transparent border border-sage/28 px-3 py-2 text-[9px] font-semibold uppercase tracking-[0.22em] text-sage outline-none focus:border-terracotta transition-colors cursor-pointer"
+                        >
+                          <option value="All">All categories</option>
+                          {categories.map(cat => (
+                            <option key={cat} value={cat}>{cat}</option>
+                          ))}
+                        </select>
+                      )}
                     </div>
-                    <div className="grid grid-cols-1 gap-2 max-h-40 overflow-y-auto no-scrollbar pr-1">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-2.5 max-h-56 overflow-y-auto no-scrollbar">
                        {planningSource === 'pantry' ? (
                          filteredRecipes.map(recipe => (
                            <button
                              key={recipe.id}
                              onClick={() => toggleRecipeSelection(recipe.id)}
-                             className={`flex items-center gap-3 p-2 rounded-xl border transition-all text-left ${
+                             className={`flex items-center gap-3.5 p-2.5 transition-colors text-left ${
                                planningRecipeId === recipe.id
-                                 ? 'bg-sage/10 border-sage shadow-sm'
-                                 : 'bg-white border-sage/5 hover:border-sage/20'
+                                 ? 'border-2 border-terracotta bg-terracotta/8'
+                                 : 'border border-sage/22 bg-white/45 hover:bg-white'
                              }`}
                            >
-                              <div className="w-10 h-10 rounded-lg overflow-hidden shrink-0 border border-white">
-                                <img src={recipe.image_url || 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c'} alt="" className="w-full h-full object-cover" referrerPolicy="no-referrer" />
+                              <div className="w-11 h-11 overflow-hidden shrink-0 bg-sage/5">
+                                {recipe.image_url && (
+                                  <img src={recipe.image_url} alt="" className="w-full h-full object-cover" referrerPolicy="no-referrer" />
+                                )}
                               </div>
                               <div className="flex-1 min-w-0">
-                                 <p className="text-xs font-medium text-sage truncate">{recipe.title}</p>
+                                 <p className="font-serif text-[17px] leading-tight text-earth truncate">{recipe.title}</p>
                               </div>
                               {planningRecipeId === recipe.id && (
-                                <div className="bg-sage text-white p-1 rounded-full">
-                                  <Check className="w-2.5 h-2.5" />
-                                </div>
+                                <Check className="w-4 h-4 text-terracotta shrink-0" strokeWidth={2.4} />
                               )}
                            </button>
                          ))
@@ -702,63 +671,68 @@ export default function MealPlannerCalendar() {
                             <button
                                key={item.id}
                                onClick={() => toggleFreezerSelection(item.id)}
-                               className={`flex items-center gap-3 p-2 rounded-xl border transition-all text-left ${
+                               className={`flex items-center gap-3.5 p-2.5 transition-colors text-left ${
                                  planningFreezerItemId === item.id
-                                   ? 'bg-sage/10 border-sage shadow-sm'
-                                   : 'bg-white border-sage/5 hover:border-sage/20'
+                                   ? 'border-2 border-terracotta bg-terracotta/8'
+                                   : 'border border-sage/22 bg-white/45 hover:bg-white'
                                }`}
                              >
-                                <div className="w-10 h-10 rounded-lg bg-cream flex items-center justify-center shrink-0 border border-white">
-                                  <Snowflake className="w-5 h-5 text-sage/40" />
+                                <div className="w-11 h-11 border border-sage/25 flex items-center justify-center shrink-0">
+                                  <Snowflake className="w-5 h-5 text-sage/50" />
                                 </div>
                                 <div className="flex-1 min-w-0">
-                                   <p className="text-xs font-medium text-sage truncate">{item.name}</p>
+                                   <p className="font-serif text-[17px] leading-tight text-earth truncate">{item.name}</p>
                                 </div>
                                 {planningFreezerItemId === item.id && (
-                                  <div className="bg-sage text-white p-1 rounded-full">
-                                    <Check className="w-2.5 h-2.5" />
-                                  </div>
+                                  <Check className="w-4 h-4 text-terracotta shrink-0" strokeWidth={2.4} />
                                 )}
                              </button>
                          ))
                        )}
                        {planningSource === 'pantry' && recipes.length === 0 && (
-                         <div className="py-4 text-center text-sage/30 italic text-xs">
-                           No recipes found in your pantry yet.
-                         </div>
+                         <p className="md:col-span-2 py-5 text-center font-serif italic text-earth/45">
+                           Nothing in the box yet.
+                         </p>
                        )}
                        {planningSource === 'freezer' && freezerMeals.length === 0 && (
-                         <div className="py-4 text-center text-sage/30 italic text-xs">
-                           No ready-made meals found in your freezer.
-                         </div>
+                         <p className="md:col-span-2 py-5 text-center font-serif italic text-earth/45">
+                           No cooked meals in the freezer.
+                         </p>
                        )}
                     </div>
                   </div>
 
                   {/* Notes Field */}
-                  <div className="space-y-3 border-t border-sage/5 pt-4">
-                    <label className="text-[9px] font-bold text-sage/40 uppercase tracking-[0.2em] ml-1 flex items-center gap-2">
-                       <MessageSquare className="w-3 h-3" /> Add a note (sides, etc)
-                    </label>
-                    <textarea 
+                  <div className="pt-2">
+                    <label className="micro block mb-2.5">Note &middot; optional</label>
+                    <input
+                      type="text"
                       value={planningNotes}
                       onChange={(e) => setPlanningNotes(e.target.value)}
-                      placeholder="e.g., Serve with sweet potato fries and a garden salad..."
-                      className="w-full text-xs bg-cream/30 border border-sage/10 rounded-2xl p-4 outline-none focus:border-sage/30 transition-all font-medium text-sage min-h-20 resize-none"
+                      placeholder="Double the basil this time"
+                      className="field font-serif italic text-base"
                     />
                   </div>
                 </div>
 
                 {/* Fixed Footer Action */}
-                <div className="p-4 md:p-6 bg-sage/5 border-t border-sage/5">
-                  <button
-                    onClick={handleSavePlan}
-                    disabled={saving || (!planningRecipeId && !planningFreezerItemId && !planningNotes.trim())}
-                    className="w-full bg-sage hover:bg-sage/90 text-white font-bold py-4 rounded-2xl transition-all shadow-lg flex items-center justify-center gap-3 active:scale-[0.99] disabled:opacity-50"
-                  >
-                    {saving ? <Loader2 className="w-5 h-5 animate-spin" /> : <Utensils className="w-5 h-5" />}
-                    {editingPlanId ? 'Update Meal Plan' : 'Confirm Meal Plan'}
-                  </button>
+                <div className="px-6 md:px-9 py-5 border-t border-sage/20 flex flex-wrap items-center justify-between gap-4">
+                  <p className="font-serif italic text-[15px] text-earth/45">
+                    {plansForSelectedDate.length === 0
+                      ? 'Nothing planned for this day yet.'
+                      : `${plansForSelectedDate.length} already on this day.`}
+                  </p>
+                  <div className="flex items-center gap-2.5">
+                    <button onClick={closePlanningModal} className="btn-ghost">Cancel</button>
+                    <button
+                      onClick={handleSavePlan}
+                      disabled={saving || (!planningRecipeId && !planningFreezerItemId && !planningNotes.trim())}
+                      className="btn-accent"
+                    >
+                      {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
+                      {editingPlanId ? 'Save the change' : 'Add to the day'}
+                    </button>
+                  </div>
                 </div>
              </motion.div>
           </div>
@@ -766,27 +740,15 @@ export default function MealPlannerCalendar() {
       </AnimatePresence>
 
       {/* Legend / Upcoming (Sneak Peek) */}
-      <div className="hidden md:block bg-sage/5 rounded-[3rem] p-10 border border-sage/10 relative overflow-hidden">
-        <ChefHat className="absolute -right-4 -bottom-4 w-48 h-48 text-sage/5 -rotate-12" />
-        <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-6">
-          <div className="flex items-center gap-4">
-            <div className="bg-white p-3 rounded-2xl shadow-sm border border-sage/10">
-              <Clock className="w-5 h-5 text-sage" />
-            </div>
-            <div>
-              <p className="text-sage font-serif text-xl italic leading-none mb-1">Today's Kitchen Forecast</p>
-              <p className="text-sage/40 text-[10px] font-bold uppercase tracking-widest">
-                {mealPlans.filter(p => p.date === toLocalDateString(new Date())).length} meals planned for today
-              </p>
-            </div>
-          </div>
-          <button 
-            onClick={() => setSelectedDate(toLocalDateString(new Date()))}
-            className="px-8 py-4 bg-terracotta text-cream rounded-2xl text-xs font-bold uppercase tracking-widest shadow-lg shadow-terracotta/20 hover:scale-105 transition-all"
-          >
-            Quick Add
-          </button>
-        </div>
+      <div className="hidden md:flex items-center justify-between gap-6 mt-10 pt-6 border-t border-sage/20">
+        <p className="font-serif italic text-lg text-earth/55">
+          {todayCount === 0
+            ? 'Nothing on the board for today.'
+            : `${todayCount} on the board for today.`}
+        </p>
+        <button onClick={() => setSelectedDate(toLocalDateString(new Date()))} className="btn-accent">
+          Plan today
+        </button>
       </div>
     </div>
   );

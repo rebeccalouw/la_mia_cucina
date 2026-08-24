@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'motion/react';
-import { Save, Utensils, Clock, Users, Link as LinkIcon, FileText, Loader2, CheckCircle2, ArrowLeft, Tag, X, Image as ImageIcon } from 'lucide-react';
+import { Save, Loader2, CheckCircle2, ArrowLeft, Image as ImageIcon } from 'lucide-react';
 import CategorySelector from './CategorySelector';
+import Loading from './Loading';
 
 interface EditRecipeProps {
   recipeId: number;
@@ -143,125 +144,108 @@ export default function EditRecipe({ recipeId, onSuccess, onCancel }: EditRecipe
   };
 
   if (fetching) {
-    return (
-      <div className="flex flex-col items-center justify-center py-20 gap-4">
-        <Loader2 className="w-8 h-8 text-sage animate-spin" />
-        <p className="text-sage/60 font-medium">Loading recipe details...</p>
-      </div>
-    );
+    return <Loading message="Opening the recipe…" />;
   }
 
   if (success) {
     return (
-      <motion.div 
-        initial={{ opacity: 0, scale: 0.9 }}
-        animate={{ opacity: 1, scale: 1 }}
-        className="max-w-xl mx-auto bg-white/50 backdrop-blur-md p-12 rounded-[3rem] border border-sage/10 text-center"
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        className="max-w-xl mx-auto my-20 border border-sage/40 bg-sage/6 p-12 text-center"
       >
-        <div className="bg-sage/10 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
-          <CheckCircle2 className="w-10 h-10 text-sage" />
-        </div>
-        <h2 className="text-3xl font-serif text-sage mb-2">Recipe Updated</h2>
-        <p className="text-sage/60 italic">Your changes have been saved to your pantry.</p>
+        <CheckCircle2 className="w-12 h-12 text-sage mx-auto mb-5" strokeWidth={1.2} />
+        <h2 className="font-serif text-4xl text-sage mb-3">Saved</h2>
+        <p className="font-serif italic text-lg text-earth/60">Your changes are in the box.</p>
       </motion.div>
     );
   }
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      className="max-w-4xl mx-auto bg-white p-4 md:p-12 rounded-[3rem] shadow-xl shadow-sage/5 border border-sage/5"
+    <motion.form
+      onSubmit={handleSubmit}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
     >
-      <div className="flex items-center justify-between mb-8 md:mb-10">
-        <button 
+      {/* Thin bar */}
+      <div className="flex flex-wrap items-center justify-between gap-4 pb-5 mb-9 border-b border-sage/20">
+        <button
+          type="button"
           onClick={onCancel}
-          className="flex items-center gap-2 text-sage/40 hover:text-sage font-bold uppercase tracking-widest text-xs transition-all group"
+          className="flex items-center gap-3 text-[10px] font-semibold uppercase tracking-[0.26em] text-sage/60 hover:text-sage transition-colors"
         >
-          <div className="bg-cream p-2 rounded-xl group-hover:bg-sage/5 transition-colors">
-            <ArrowLeft className="w-4 h-4" />
-          </div>
-          Cancel
+          <ArrowLeft className="w-4 h-4" />
+          Back to the recipe
         </button>
-        <div className="text-right">
-          <h2 className="text-3xl font-serif text-sage">Edit Recipe</h2>
-          <p className="text-sage/40 text-xs uppercase font-bold tracking-widest">Update your creation</p>
-        </div>
+        <button type="submit" disabled={loading} className="btn-primary">
+          {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
+          Save changes
+        </button>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-8">
-        {/* Image Upload Section */}
-        <div className="space-y-4">
-          <label className="block text-sm font-bold text-sage uppercase tracking-widest ml-1">Recipe Image</label>
-          <div className="flex flex-col md:flex-row gap-6 items-center">
-            <div className="w-full md:w-48 h-48 bg-cream/30 border-2 border-dashed border-sage/20 rounded-4xl overflow-hidden flex items-center justify-center relative group">
+      <p className="label">Editing</p>
+      <h1 className="mt-3 text-[36px] md:text-[50px] leading-none tracking-[-0.025em] mb-10 text-pretty">
+        {formData.title || 'Untitled recipe'}
+      </h1>
+
+      <div className="flex flex-col lg:flex-row gap-12 lg:gap-16">
+        {/* Left: the photograph and the categories */}
+        <div className="w-full lg:w-[380px] shrink-0 space-y-9">
+          <div>
+            <p className="text-[10px] font-semibold uppercase tracking-[0.28em] text-terracotta mb-3">
+              The photograph
+            </p>
+            <div className="relative h-[268px] bg-white/35 border border-dashed border-sage/40 overflow-hidden flex flex-col items-center justify-center gap-3.5">
               {formData.image_url ? (
                 <>
-                  <img src={formData.image_url} alt="Preview" className="w-full h-full object-cover" referrerPolicy="no-referrer" />
-                  <button 
-                    type="button"
-                    onClick={() => setFormData({...formData, image_url: ''})}
-                    className="absolute top-2 right-2 bg-white/80 p-1.5 rounded-full text-red-500 opacity-0 group-hover:opacity-100 transition-opacity"
-                  >
-                    <X className="w-4 h-4" />
-                  </button>
+                  <img src={formData.image_url} alt="Preview" className="absolute inset-0 w-full h-full object-cover" referrerPolicy="no-referrer" />
+                  <div className="absolute top-3 right-3 flex gap-1.5">
+                    <label className="cursor-pointer px-3 py-1.5 bg-cream/95 text-sage text-[8px] font-semibold uppercase tracking-[0.22em]">
+                      Replace
+                      <input type="file" className="hidden" accept="image/*" onChange={handleImageUpload} disabled={uploading} />
+                    </label>
+                    <button
+                      type="button"
+                      onClick={() => setFormData({ ...formData, image_url: '' })}
+                      className="px-3 py-1.5 bg-cream/95 text-brick text-[8px] font-semibold uppercase tracking-[0.22em]"
+                    >
+                      Remove
+                    </button>
+                  </div>
                 </>
               ) : (
-                <div className="text-center p-4">
-                  <ImageIcon className="w-8 h-8 text-sage/20 mx-auto mb-2" />
-                  <p className="text-[10px] text-sage/40 font-bold uppercase tracking-widest">No Image</p>
-                </div>
+                <>
+                  <ImageIcon className="w-8 h-8 text-sage/30" strokeWidth={1.2} />
+                  <p className="font-serif italic text-[17px] text-sage/55">No photograph yet</p>
+                  <label className="cursor-pointer px-5 py-2.5 bg-cream border border-sage/35 text-sage text-[9px] font-semibold uppercase tracking-[0.24em] hover:bg-sage/5 transition-colors">
+                    Choose a file
+                    <input type="file" className="hidden" accept="image/*" onChange={handleImageUpload} disabled={uploading} />
+                  </label>
+                </>
               )}
               {uploading && (
-                <div className="absolute inset-0 bg-white/60 backdrop-blur-sm flex items-center justify-center">
+                <div className="absolute inset-0 bg-cream/80 flex items-center justify-center">
                   <Loader2 className="w-8 h-8 text-sage animate-spin" />
                 </div>
               )}
             </div>
-            <div className="flex-1 space-y-4 w-full">
-              <p className="text-sage/60 text-sm italic">Capture the beauty of your dish. Upload a new photo or provide a link.</p>
-              <div className="flex flex-col sm:flex-row gap-3">
-                <label className="cursor-pointer bg-cream hover:bg-cream/50 text-sage px-6 py-3 rounded-xl font-bold text-xs uppercase tracking-widest border border-sage/10 transition-all text-center flex-1 sm:flex-none">
-                  {formData.image_url ? 'Change Photo' : 'Choose Photo'}
-                  <input type="file" className="hidden" accept="image/*" onChange={handleImageUpload} disabled={uploading} />
-                </label>
-                <div className="flex-1">
-                  <div className="relative">
-                    <LinkIcon className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-sage/30" />
-                    <input
-                      name="image_url"
-                      value={formData.image_url}
-                      onChange={handleChange}
-                      className="w-full pl-10 pr-4 py-3 rounded-xl bg-cream/30 border border-sage/10 focus:border-terracotta/50 outline-none transition-all text-xs"
-                      placeholder="Or paste an image URL..."
-                    />
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Title Section */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          <div className="space-y-2">
-            <label className="block text-sm font-bold text-sage uppercase tracking-widest ml-1">Recipe Title</label>
-            <div className="relative">
-              <Utensils className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-sage/30" />
+            <div className="mt-5">
+              <label className="micro block mb-2">Or paste an image URL</label>
               <input
-                name="title"
-                required
-                value={formData.title}
+                name="image_url"
+                value={formData.image_url}
                 onChange={handleChange}
-                className="w-full pl-12 pr-4 py-4 rounded-2xl bg-cream/50 border border-sage/10 focus:border-terracotta/50 focus:ring-4 focus:ring-terracotta/5 outline-none transition-all text-lg"
-                placeholder="e.g. Grandma's Secret Lasagna"
+                className="field text-[15px]"
+                placeholder="https://…"
               />
             </div>
           </div>
 
-          <div className="space-y-4">
-            <label className="block text-sm font-bold text-sage uppercase tracking-widest ml-1">Categories</label>
-            <CategorySelector 
+          <div>
+            <p className="text-[10px] font-semibold uppercase tracking-[0.28em] text-terracotta mb-3">
+              Categories
+            </p>
+            <CategorySelector
               selectedCategories={formData.categories}
               onAddCategory={handleAddCategory}
               onRemoveCategory={handleRemoveCategory}
@@ -269,126 +253,126 @@ export default function EditRecipe({ recipeId, onSuccess, onCancel }: EditRecipe
           </div>
         </div>
 
-        {/* Times & Servings */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="space-y-2">
-            <label className="block text-xs font-bold text-sage uppercase tracking-widest ml-1">Prep Time (min)</label>
-            <div className="relative">
-              <Clock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-sage/30" />
+        {/* Right: the recipe itself */}
+        <div className="flex-1 min-w-0 space-y-8">
+          <div>
+            <label className="block text-[10px] font-semibold uppercase tracking-[0.28em] text-terracotta mb-3">
+              Title
+            </label>
+            <input
+              name="title"
+              required
+              value={formData.title}
+              onChange={handleChange}
+              className="w-full bg-transparent border-0 border-b border-sage/30 pb-2.5 font-serif text-[30px] md:text-[32px] text-earth outline-none transition-colors placeholder:text-earth/30 focus:border-terracotta"
+              placeholder="Grandma’s Secret Lasagna"
+            />
+          </div>
+
+          <div className="flex flex-wrap gap-8">
+            <div className="w-[130px]">
+              <label className="micro block mb-2">Prep · minutes</label>
               <input
                 name="prep_time"
                 type="number"
                 min="0"
                 value={formData.prep_time}
                 onChange={handleChange}
-                className="w-full pl-10 pr-4 py-3 rounded-2xl bg-cream/30 border border-sage/10 focus:border-terracotta/50 outline-none transition-all"
+                className="w-full bg-transparent border-0 border-b border-sage/30 pb-2 font-serif text-[26px] text-earth outline-none transition-colors placeholder:text-earth/30 focus:border-terracotta"
                 placeholder="15"
               />
             </div>
-          </div>
-          <div className="space-y-2">
-            <label className="block text-xs font-bold text-sage uppercase tracking-widest ml-1">Cook Time (min)</label>
-            <div className="relative">
-              <Clock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-sage/30" />
+            <div className="w-[130px]">
+              <label className="micro block mb-2">Cook · minutes</label>
               <input
                 name="cook_time"
                 type="number"
                 min="0"
                 value={formData.cook_time}
                 onChange={handleChange}
-                className="w-full pl-10 pr-4 py-3 rounded-2xl bg-cream/30 border border-sage/10 focus:border-terracotta/50 outline-none transition-all"
+                className="w-full bg-transparent border-0 border-b border-sage/30 pb-2 font-serif text-[26px] text-earth outline-none transition-colors placeholder:text-earth/30 focus:border-terracotta"
                 placeholder="45"
               />
             </div>
-          </div>
-          <div className="space-y-2">
-            <label className="block text-xs font-bold text-sage uppercase tracking-widest ml-1">Servings</label>
-            <div className="relative">
-              <Users className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-sage/30" />
+            <div className="w-[130px]">
+              <label className="micro block mb-2">Serves</label>
               <input
                 name="servings"
                 type="number"
                 min="1"
                 value={formData.servings}
                 onChange={handleChange}
-                className="w-full pl-10 pr-4 py-3 rounded-2xl bg-cream/30 border border-sage/10 focus:border-terracotta/50 outline-none transition-all"
+                className="w-full bg-transparent border-0 border-b border-sage/30 pb-2 font-serif text-[26px] text-earth outline-none transition-colors placeholder:text-earth/30 focus:border-terracotta"
               />
             </div>
           </div>
-        </div>
 
-        {/* Ingredients & Instructions */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          <div className="space-y-2">
-            <label className="block text-sm font-bold text-sage uppercase tracking-widest ml-1">Ingredients</label>
-            <textarea
-              name="ingredients"
-              required
-              rows={8}
-              value={formData.ingredients}
-              onChange={handleChange}
-              className="w-full p-6 rounded-4xl bg-cream/50 border border-sage/10 focus:border-terracotta/50 focus:ring-4 focus:ring-terracotta/5 outline-none transition-all resize-none"
-              placeholder="List one ingredient per line (will be bulleted)..."
-            />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div>
+              <div className="flex items-baseline justify-between gap-3 mb-3">
+                <label className="text-[10px] font-semibold uppercase tracking-[0.28em] text-terracotta">Ingredients</label>
+                <span className="micro">One per line</span>
+              </div>
+              <textarea
+                name="ingredients"
+                required
+                rows={9}
+                value={formData.ingredients}
+                onChange={handleChange}
+                className="field-box resize-none"
+              />
+            </div>
+            <div>
+              <div className="flex items-baseline justify-between gap-3 mb-3">
+                <label className="text-[10px] font-semibold uppercase tracking-[0.28em] text-terracotta">Method</label>
+                <span className="micro">One step per line</span>
+              </div>
+              <textarea
+                name="instructions"
+                required
+                rows={9}
+                value={formData.instructions}
+                onChange={handleChange}
+                className="field-box resize-none"
+              />
+            </div>
           </div>
-          <div className="space-y-2">
-            <label className="block text-sm font-bold text-sage uppercase tracking-widest ml-1">Instructions</label>
-            <textarea
-              name="instructions"
-              required
-              rows={8}
-              value={formData.instructions}
-              onChange={handleChange}
-              className="w-full p-6 rounded-4xl bg-cream/50 border border-sage/10 focus:border-terracotta/50 focus:ring-4 focus:ring-terracotta/5 outline-none transition-all resize-none"
-              placeholder="Step-by-step method (each line becomes a bullet point)..."
-            />
-          </div>
-        </div>
 
-        {/* Optional Notes & URL */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-4 border-t border-sage/5">
-          <div className="space-y-2">
-            <label className="block text-xs font-bold text-sage uppercase tracking-widest ml-1">Source URL (Optional)</label>
-            <div className="relative">
-              <LinkIcon className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-sage/30" />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div>
+              <label className="micro block mb-2">Source URL</label>
               <input
                 name="source_url"
                 value={formData.source_url}
                 onChange={handleChange}
-                className="w-full pl-10 pr-4 py-3 rounded-2xl bg-cream/30 border border-sage/10 focus:border-terracotta/50 outline-none transition-all"
-                placeholder="https://original-recipe.com"
+                className="field text-[15px]"
+                placeholder="Not set"
               />
             </div>
-          </div>
-          <div className="space-y-2">
-            <label className="block text-xs font-bold text-sage uppercase tracking-widest ml-1">Chef's Notes (Optional)</label>
-            <div className="relative">
-              <FileText className="absolute left-4 top-4 w-4 h-4 text-sage/30" />
-              <textarea
+            <div>
+              <label className="micro block mb-2">Chef’s notes</label>
+              <input
                 name="description"
-                rows={1}
                 value={formData.description}
                 onChange={handleChange}
-                className="w-full pl-10 pr-4 py-3 rounded-2xl bg-cream/30 border border-sage/10 focus:border-terracotta/50 outline-none transition-all resize-none"
+                className="field font-serif italic text-base"
                 placeholder="Any special tips?"
               />
             </div>
           </div>
+
+          {error && (
+            <p className="border border-brick/40 bg-brick/5 text-brick text-sm px-4 py-3">{error}</p>
+          )}
+
+          <div className="pt-2">
+            <button type="submit" disabled={loading} className="btn-primary w-full py-[19px]">
+              {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
+              Save changes
+            </button>
+          </div>
         </div>
-
-        {error && (
-          <p className="text-red-500 text-sm font-medium text-center bg-red-50 py-3 rounded-2xl border border-red-100">{error}</p>
-        )}
-
-        <button
-          type="submit"
-          disabled={loading}
-          className="w-full bg-terracotta hover:bg-terracotta/90 text-white font-bold py-5 rounded-2xl transition-all shadow-xl shadow-terracotta/10 flex items-center justify-center gap-3 active:scale-[0.99] disabled:opacity-50"
-        >
-          {loading ? <Loader2 className="w-6 h-6 animate-spin" /> : <Save className="w-6 h-6" />}
-          Update Recipe
-        </button>
-      </form>
-    </motion.div>
+      </div>
+    </motion.form>
   );
 }

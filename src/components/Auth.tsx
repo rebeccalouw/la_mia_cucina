@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
-import { LogIn, UserPlus, Mail, Lock, Loader2, User as UserIcon } from 'lucide-react';
+import { motion } from 'motion/react';
+import { ArrowRight, Mail, Lock, Loader2, User as UserIcon, UtensilsCrossed } from 'lucide-react';
 import ForgotPassword from './ForgotPassword';
 import ResetPassword from './ResetPassword';
 
@@ -77,154 +77,224 @@ export default function Auth({ onSuccess, initialResetToken }: AuthProps) {
   };
 
   if (mode === 'forgot-password') {
-    return <ForgotPassword onBack={() => setMode('login')} />;
+    return (
+      <AuthShell>
+        <ForgotPassword onBack={() => setMode('login')} />
+      </AuthShell>
+    );
   }
 
   if (mode === 'reset-password' && resetToken) {
-    return <ResetPassword token={resetToken} onSuccess={() => setMode('login')} />;
+    return (
+      <AuthShell>
+        <ResetPassword token={resetToken} onSuccess={() => setMode('login')} />
+      </AuthShell>
+    );
   }
 
-  return (
-    <motion.div
-      initial={{ opacity: 0, scale: 0.95 }}
-      animate={{ opacity: 1, scale: 1 }}
-      className="w-full max-w-md bg-white p-8 rounded-4xl shadow-2xl shadow-sage/10 border border-sage/5"
-    >
-      <div className="text-center mb-8">
-        <h2 className="text-3xl font-serif text-sage mb-2">
-          {mode === 'login' ? 'Welcome Back' : 'Join La Mia Cucina'}
-        </h2>
-        <p className="text-sage/60 font-light italic">
-          {mode === 'login' ? 'Log in to your kitchen' : 'Start your culinary journey'}
-        </p>
-      </div>
+  const switchMode = () => {
+    setMode(mode === 'login' ? 'register' : 'login');
+    setError('');
+    setName('');
+    setEmail('');
+    setPassword('');
+    setConfirmPassword('');
+  };
 
-      <form onSubmit={handleSubmit} className="space-y-4">
-        {mode === 'register' && (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
+  return (
+    <AuthShell>
+      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+        {/* Mode is a pair of tabs on a rule, not a link buried at the bottom. */}
+        <div className="flex gap-8 border-b border-sage/25 mb-10">
+          <button
+            onClick={() => mode !== 'login' && switchMode()}
+            className={`pb-3.5 -mb-px text-[10px] font-semibold uppercase tracking-[0.28em] border-b-2 transition-colors ${
+              mode === 'login' ? 'text-earth border-terracotta' : 'text-sage/50 border-transparent hover:text-sage'
+            }`}
           >
-            <label className="block text-sm font-medium text-sage/70 mb-1 ml-1 uppercase tracking-wider">Name</label>
-            <div className="relative">
-              <UserIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-sage/40" />
+            Sign in
+          </button>
+          <button
+            onClick={() => mode !== 'register' && switchMode()}
+            className={`pb-3.5 -mb-px text-[10px] font-semibold uppercase tracking-[0.28em] border-b-2 transition-colors ${
+              mode === 'register' ? 'text-earth border-terracotta' : 'text-sage/50 border-transparent hover:text-sage'
+            }`}
+          >
+            Create an account
+          </button>
+        </div>
+
+        <h2 className="text-[40px] md:text-[52px] leading-none tracking-[-0.03em]">
+          {mode === 'login' ? (
+            <>Welcome <span className="italic font-normal text-sage">back</span></>
+          ) : (
+            <>Join the <span className="italic font-normal text-sage">kitchen</span></>
+          )}
+        </h2>
+        <p className="mt-4 mb-11 font-serif italic text-lg text-earth/55">
+          {mode === 'login' ? 'Let yourself into the kitchen.' : 'Somewhere to keep everything worth cooking twice.'}
+        </p>
+
+        <form onSubmit={handleSubmit} className="space-y-8">
+          {mode === 'register' && (
+            <div>
+              <label className="micro block mb-2.5">Name</label>
+              <div className="flex items-center gap-3 border-b border-sage/30 focus-within:border-terracotta transition-colors">
+                <UserIcon className="w-[17px] h-[17px] text-sage/45 shrink-0" />
+                <input
+                  type="text"
+                  required={mode === 'register'}
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  className="flex-1 min-w-0 bg-transparent border-0 pb-2.5 text-[17px] text-earth outline-none placeholder:text-earth/30"
+                  placeholder="Mario"
+                />
+              </div>
+            </div>
+          )}
+
+          <div>
+            <label className="micro block mb-2.5">Email</label>
+            <div className="flex items-center gap-3 border-b border-sage/30 focus-within:border-terracotta transition-colors">
+              <Mail className="w-[17px] h-[17px] text-sage/45 shrink-0" />
               <input
-                type="text"
-                required={mode === 'register'}
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                className="w-full pl-10 pr-4 py-3 rounded-2xl bg-cream/50 border border-sage/10 focus:border-terracotta/50 focus:ring-2 focus:ring-terracotta/10 outline-none transition-all font-sans"
-                placeholder="Chef Mario"
+                type="email"
+                required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="flex-1 min-w-0 bg-transparent border-0 pb-2.5 text-[17px] text-earth outline-none placeholder:text-earth/30"
+                placeholder="chef@lamiacucina.com"
               />
             </div>
-          </motion.div>
-        )}
-
-        <div>
-          <label className="block text-sm font-medium text-sage/70 mb-1 ml-1 uppercase tracking-wider">Email</label>
-          <div className="relative">
-            <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-sage/40" />
-            <input
-              type="email"
-              required
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="w-full pl-10 pr-4 py-3 rounded-2xl bg-cream/50 border border-sage/10 focus:border-terracotta/50 focus:ring-2 focus:ring-terracotta/10 outline-none transition-all font-sans"
-              placeholder="chef@lamiacucina.com"
-            />
           </div>
-        </div>
 
-        <div>
-          <div className="flex justify-between items-center mb-1 ml-1">
-            <label className="block text-sm font-medium text-sage/70 uppercase tracking-wider">Password</label>
-            {mode === 'login' && (
-              <button 
-                type="button"
-                onClick={() => setMode('forgot-password')}
-                className="text-[10px] font-bold text-terracotta uppercase tracking-widest hover:underline"
-              >
-                Forgot?
-              </button>
-            )}
-          </div>
-          <div className="relative">
-            <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-sage/40" />
-            <input
-              type="password"
-              required
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full pl-10 pr-4 py-3 rounded-2xl bg-cream/50 border border-sage/10 focus:border-terracotta/50 focus:ring-2 focus:ring-terracotta/10 outline-none transition-all font-sans"
-              placeholder="••••••••"
-            />
-          </div>
-        </div>
-
-        {mode === 'register' && (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-          >
-            <label className="block text-sm font-medium text-sage/70 mb-1 ml-1 uppercase tracking-wider">Confirm Password</label>
-            <div className="relative">
-              <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-sage/40" />
+          <div>
+            <div className="flex items-baseline justify-between gap-4 mb-2.5">
+              <label className="micro">Password</label>
+              {mode === 'login' && (
+                <button
+                  type="button"
+                  onClick={() => setMode('forgot-password')}
+                  className="text-[9px] font-semibold text-terracotta uppercase tracking-[0.22em] hover:text-sage transition-colors"
+                >
+                  Forgotten it?
+                </button>
+              )}
+            </div>
+            <div className="flex items-center gap-3 border-b border-sage/30 focus-within:border-terracotta transition-colors">
+              <Lock className="w-[17px] h-[17px] text-sage/45 shrink-0" />
               <input
                 type="password"
-                required={mode === 'register'}
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                className="w-full pl-10 pr-4 py-3 rounded-2xl bg-cream/50 border border-sage/10 focus:border-terracotta/50 focus:ring-2 focus:ring-terracotta/10 outline-none transition-all font-sans"
+                required
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="flex-1 min-w-0 bg-transparent border-0 pb-2.5 text-[17px] text-earth outline-none placeholder:text-earth/30"
                 placeholder="••••••••"
               />
             </div>
-          </motion.div>
-        )}
+          </div>
 
-        {error && (
-          <motion.p
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="text-red-500 text-sm text-center font-medium bg-red-50 py-2 rounded-xl border border-red-100"
-          >
-            {error}
-          </motion.p>
-        )}
-
-        <button
-          type="submit"
-          disabled={loading}
-          className="w-full bg-terracotta hover:bg-terracotta/90 text-white py-4 rounded-2xl font-bold uppercase tracking-widest text-xs transition-all shadow-lg shadow-terracotta/20 active:scale-[0.98] flex items-center justify-center gap-2"
-        >
-          {loading ? (
-            <Loader2 className="w-5 h-5 animate-spin" />
-          ) : mode === 'login' ? (
-            <>
-              <LogIn className="w-5 h-5" /> Sign In
-            </>
-          ) : (
-            <>
-              <UserPlus className="w-5 h-5" /> Create Account
-            </>
+          {mode === 'register' && (
+            <div>
+              <label className="micro block mb-2.5">Confirm the password</label>
+              <div className="flex items-center gap-3 border-b border-sage/30 focus-within:border-terracotta transition-colors">
+                <Lock className="w-[17px] h-[17px] text-sage/45 shrink-0" />
+                <input
+                  type="password"
+                  required={mode === 'register'}
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  className="flex-1 min-w-0 bg-transparent border-0 pb-2.5 text-[17px] text-earth outline-none placeholder:text-earth/30"
+                  placeholder="••••••••"
+                />
+              </div>
+            </div>
           )}
-        </button>
-      </form>
 
-      <div className="mt-8 text-center border-t border-sage/5 pt-6">
-        <button
-          onClick={() => {
-            setMode(mode === 'login' ? 'register' : 'login');
-            setError('');
-            setName('');
-            setEmail('');
-            setPassword('');
-            setConfirmPassword('');
+          {error && (
+            <motion.p
+              initial={{ opacity: 0, y: -6 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="border border-brick/40 bg-brick/5 text-brick text-sm px-4 py-3"
+            >
+              {error}
+            </motion.p>
+          )}
+
+          <button type="submit" disabled={loading} className="btn-primary w-full py-[19px]">
+            {loading ? (
+              <Loader2 className="w-4 h-4 animate-spin" />
+            ) : mode === 'login' ? (
+              <>Enter the kitchen <ArrowRight className="w-6 h-4" /></>
+            ) : (
+              <>Create the account <ArrowRight className="w-6 h-4" /></>
+            )}
+          </button>
+        </form>
+      </motion.div>
+    </AuthShell>
+  );
+}
+
+/**
+ * The split: a plated left half that carries the brand, a form on the right.
+ * Everything the auth flow renders — sign in, register, forgot, reset — sits
+ * inside it, so the panel never flashes away mid-flow.
+ */
+function AuthShell({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="min-h-screen flex bg-cream">
+      <div
+        className="hidden lg:block relative w-[46%] max-w-[700px] shrink-0 overflow-hidden"
+        style={{
+          background:
+            'radial-gradient(ellipse at 40% 34%, #E8C99A 0%, #C98F5E 34%, #8E5A42 68%, #59715E 130%)',
+        }}
+      >
+        <div
+          className="absolute inset-0"
+          style={{
+            backgroundImage:
+              'repeating-linear-gradient(118deg, rgba(246,241,231,0.13) 0 2px, transparent 2px 13px)',
           }}
-          className="text-terracotta hover:text-terracotta/80 text-sm font-medium transition-colors"
-        >
-          {mode === 'login' ? "Don't have an account? Sign Up" : 'Already have an account? Sign In'}
-        </button>
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-earth/55 to-transparent to-60%" />
+
+        <div className="absolute top-14 left-14 flex items-center gap-4">
+          <div className="w-11 h-11 bg-cream/95 flex items-center justify-center">
+            <UtensilsCrossed className="w-6 h-6 text-sage" />
+          </div>
+          <span className="font-serif font-bold text-[17px] uppercase tracking-[0.30em] text-cream">
+            La Mia Cucina
+          </span>
+        </div>
+
+        <div className="absolute left-14 right-14 bottom-16">
+          <p className="text-[10px] font-semibold uppercase tracking-[0.32em] text-cream/70">
+            Your kitchen, written down
+          </p>
+          <p className="mt-5 font-serif font-bold text-[66px] leading-[0.98] tracking-[-0.03em] text-cream">
+            Every recipe<br />worth <span className="italic font-normal">keeping.</span>
+          </p>
+          <div className="w-[90px] h-[3px] bg-cream/75 my-7" />
+          <p className="max-w-[470px] font-serif italic text-xl leading-relaxed text-cream/80">
+            Write them, import them, plan the week around them, and remember what is still in
+            the freezer.
+          </p>
+        </div>
       </div>
-    </motion.div>
+
+      <div className="flex-1 min-w-0 flex flex-col justify-center px-6 sm:px-12 lg:px-24 py-14">
+        <div className="lg:hidden flex items-center gap-3 mb-12">
+          <div className="w-10 h-10 bg-sage flex items-center justify-center">
+            <UtensilsCrossed className="w-5 h-5 text-cream" />
+          </div>
+          <span className="font-serif font-bold text-sm uppercase tracking-[0.28em] text-sage">
+            La Mia Cucina
+          </span>
+        </div>
+        <div className="w-full max-w-lg">{children}</div>
+      </div>
+    </div>
   );
 }

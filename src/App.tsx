@@ -5,7 +5,7 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { UtensilsCrossed, Loader2 } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import Auth from "./components/Auth.tsx";
 import DashboardLayout from "./components/DashboardLayout.tsx";
 import AddRecipe from "./components/AddRecipe.tsx";
@@ -147,14 +147,9 @@ export default function App() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="min-h-screen flex flex-col items-center justify-center p-6"
+            className="min-h-screen"
           >
-            <div className="flex items-center gap-3 mb-12">
-              <div className="bg-sage p-3 rounded-2xl shadow-lg shadow-sage/20">
-                <UtensilsCrossed className="w-8 h-8 text-cream" />
-              </div>
-              <h1 className="text-4xl font-serif text-sage tracking-tight">La Mia Cucina</h1>
-            </div>
+            {/* Auth owns its own full-bleed split layout, brand panel included. */}
             <Auth onSuccess={setUser} initialResetToken={initialResetToken} />
           </motion.div>
         ) : (
@@ -166,9 +161,12 @@ export default function App() {
           >
             <AnimatePresence mode="wait">
               {activeTab === 'dashboard' && (
-                <Dashboard onNavigate={(tab, id) => {
-                  navigate(tab, id || null);
-                }} />
+                <Dashboard
+                  userName={user.name}
+                  onNavigate={(tab, id) => {
+                    navigate(tab, id || null);
+                  }}
+                />
               )}
 
               {activeTab === 'add-recipe' && (

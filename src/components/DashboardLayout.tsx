@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
-  UtensilsCrossed, 
   BookOpen, 
   PlusCircle, 
   Download, 
@@ -34,68 +33,67 @@ export default function DashboardLayout({ user, onLogout, children, activeTab, o
 
   return (
     <div className="min-h-screen bg-cream selection:bg-terracotta/20">
-      {/* Top Header */}
-      <header className="sticky top-0 z-50 bg-white/70 backdrop-blur-xl border-b border-sage/5">
-        <nav className="max-w-7xl mx-auto px-4 md:px-6 h-20 flex items-center justify-between">
-          <div 
-            className="flex items-center gap-3 cursor-pointer"
+      {/* Masthead */}
+      <header className="sticky top-0 z-50 bg-cream/90 backdrop-blur-xl">
+        <nav className="max-w-7xl mx-auto px-4 md:px-8 h-20 flex items-center justify-between gap-8">
+          <div
+            className="flex items-baseline gap-4 cursor-pointer shrink-0"
             onClick={() => onTabChange('dashboard')}
           >
-            <motion.div 
-              whileHover={{ rotate: 15 }}
-              className="bg-sage p-2 rounded-xl shadow-lg shadow-sage/10"
-            >
-              <UtensilsCrossed className="w-6 h-6 text-cream" />
-            </motion.div>
-            <h1 className="text-2xl font-serif text-sage tracking-tight hidden sm:block">
+            <h1 className="font-serif font-bold text-lg md:text-xl uppercase tracking-[0.3em] text-sage leading-none">
               La Mia Cucina
             </h1>
+            <span className="hidden lg:block micro">Est. in your kitchen</span>
           </div>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center gap-1">
+          <div className="hidden md:flex items-center gap-7">
             {navItems.map((item) => (
               <button
                 key={item.id}
                 onClick={() => onTabChange(item.id)}
-                className={`px-4 py-2 rounded-full text-sm font-medium transition-all flex items-center gap-2 ${
+                className={`pb-1 text-[11px] font-semibold uppercase tracking-[0.18em] transition-colors border-b-2 ${
                   activeTab === item.id
-                    ? 'bg-sage/10 text-sage' 
-                    : 'text-sage/60 hover:text-sage hover:bg-sage/5'
+                    ? 'text-earth border-terracotta'
+                    : 'text-sage/60 border-transparent hover:text-sage'
                 }`}
               >
-                <item.icon className="w-4 h-4" />
                 {item.label}
               </button>
             ))}
           </div>
 
           {/* User & Desktop Logout */}
-          <div className="hidden md:flex items-center gap-4 pl-4 border-l border-sage/10">
-            <button 
+          <div className="hidden md:flex items-center gap-4 shrink-0">
+            <button
               onClick={() => onTabChange('profile')}
-              className={`text-right group ${activeTab === 'profile' ? 'opacity-100' : 'opacity-80 hover:opacity-100'} transition-all`}
+              className="text-right group"
             >
-              <p className="text-xs uppercase tracking-widest text-sage/40 font-bold leading-none mb-1 group-hover:text-terracotta transition-colors">Chef</p>
-              <p className="text-sm font-medium text-sage leading-none group-hover:text-terracotta transition-colors">{user.name}</p>
+              <p className="micro leading-none mb-1.5 group-hover:text-terracotta transition-colors">Chef</p>
+              <p className={`font-serif text-[15px] leading-none transition-colors ${activeTab === 'profile' ? 'text-terracotta' : 'text-sage group-hover:text-terracotta'}`}>
+                {user.name}
+              </p>
             </button>
             <button
               onClick={onLogout}
-              className="bg-cream hover:bg-red-50 text-sage/60 hover:text-red-500 p-2.5 rounded-xl transition-all border border-sage/5 hover:border-red-100 group"
+              className="p-2.5 text-sage/50 hover:text-brick transition-colors border border-sage/25 hover:border-brick/40"
               title="Logout"
             >
-              <LogOut className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+              <LogOut className="w-5 h-5" />
             </button>
           </div>
 
           {/* Mobile Menu Toggle */}
-          <button 
-            className="md:hidden p-2 text-sage/60 hover:text-sage"
+          <button
+            className="md:hidden p-3 -mr-3 text-sage/70 hover:text-sage"
             onClick={() => setIsMenuOpen(!isMenuOpen)}
           >
             {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </button>
         </nav>
+        {/* The masthead is a double rule, the way a paper sets one. */}
+        <div className="h-[3px] bg-sage/85" />
+        <div className="rule mt-[3px]" />
       </header>
 
       {/* Mobile Menu Backdrop */}
@@ -107,56 +105,78 @@ export default function DashboardLayout({ user, onLogout, children, activeTab, o
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setIsMenuOpen(false)}
-              className="fixed inset-0 z-40 bg-earth/10 backdrop-blur-sm md:hidden"
+              className="fixed inset-0 z-40 bg-earth/40 md:hidden"
             />
             <motion.div
               initial={{ x: '100%' }}
               animate={{ x: 0 }}
               exit={{ x: '100%' }}
               transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-              className="fixed right-0 top-0 bottom-0 z-50 w-72 bg-white shadow-2xl p-6 md:hidden flex flex-col"
+              className="fixed right-0 top-0 bottom-0 z-50 w-[302px] bg-cream border-l-2 border-sage/65 md:hidden flex flex-col"
             >
-              <button 
-                onClick={() => {
-                  onTabChange('profile');
-                  setIsMenuOpen(false);
-                }}
-                className={`flex items-center gap-3 mb-10 pb-6 border-b border-sage/5 w-full text-left group transition-all ${activeTab === 'profile' ? 'bg-sage/5 rounded-2xl p-4 -mx-4' : ''}`}
-              >
-                <ChefHat className={`w-8 h-8 transition-colors ${activeTab === 'profile' ? 'text-terracotta' : 'text-sage'}`} />
-                <div>
-                  <h2 className={`text-xl font-serif leading-none mb-1 transition-colors ${activeTab === 'profile' ? 'text-terracotta' : 'text-sage'}`}>Menu</h2>
-                  <p className="text-xs text-sage/40 font-medium tracking-wider uppercase group-hover:text-terracotta transition-colors">{user.name}</p>
-                </div>
-              </button>
+              <div className="flex items-start justify-between gap-4 px-6 pt-14 pb-5 border-b border-sage/20">
+                <button
+                  onClick={() => {
+                    onTabChange('profile');
+                    setIsMenuOpen(false);
+                  }}
+                  className="text-left group"
+                >
+                  <p className="micro mb-1.5">Chef</p>
+                  <h2 className={`font-serif text-[28px] leading-tight transition-colors ${activeTab === 'profile' ? 'text-terracotta' : 'text-earth group-hover:text-terracotta'}`}>
+                    {user.name}
+                  </h2>
+                </button>
+                <button
+                  onClick={() => setIsMenuOpen(false)}
+                  className="p-3 -mr-3 -mt-2 text-sage"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
 
-              <div className="flex-1 space-y-2">
+              <div className="flex-1 px-6">
                 {navItems.map((item) => (
                   <button
                     key={item.id}
-                    className={`w-full text-left px-4 py-4 rounded-2xl flex items-center gap-4 transition-all text-lg font-medium ${
-                      activeTab === item.id 
-                        ? 'bg-sage/10 text-sage' 
-                        : 'text-sage/60 hover:text-sage hover:bg-sage/5'
-                    }`}
+                    className="w-full h-[62px] flex items-center gap-4 border-b border-sage/15 text-left relative"
                     onClick={() => {
                       onTabChange(item.id);
                       setIsMenuOpen(false);
                     }}
                   >
-                    <item.icon className="w-6 h-6" />
-                    {item.label}
+                    {activeTab === item.id && (
+                      <span className="absolute -left-6 top-0 bottom-0 w-[3px] bg-terracotta" />
+                    )}
+                    <item.icon className={`w-5 h-5 shrink-0 ${activeTab === item.id ? 'text-terracotta' : 'text-sage'}`} />
+                    <span className={`font-serif text-[21px] ${activeTab === item.id ? 'text-terracotta' : 'text-earth'}`}>
+                      {item.label}
+                    </span>
                   </button>
                 ))}
+                <button
+                  className="w-full h-[62px] flex items-center gap-4 text-left relative"
+                  onClick={() => {
+                    onTabChange('profile');
+                    setIsMenuOpen(false);
+                  }}
+                >
+                  {activeTab === 'profile' && (
+                    <span className="absolute -left-6 top-0 bottom-0 w-[3px] bg-terracotta" />
+                  )}
+                  <ChefHat className={`w-5 h-5 shrink-0 ${activeTab === 'profile' ? 'text-terracotta' : 'text-sage'}`} />
+                  <span className={`font-serif text-[21px] ${activeTab === 'profile' ? 'text-terracotta' : 'text-earth'}`}>
+                    Chef profile
+                  </span>
+                </button>
               </div>
 
-              <button
-                onClick={onLogout}
-                className="mt-auto w-full px-4 py-4 rounded-2xl flex items-center gap-4 text-red-500 hover:bg-red-50 transition-all text-lg font-medium"
-              >
-                <LogOut className="w-6 h-6" />
-                Logout
-              </button>
+              <div className="px-6 pt-4 pb-8 border-t border-sage/20">
+                <button onClick={onLogout} className="btn-danger w-full">
+                  <LogOut className="w-4 h-4" />
+                  Log out
+                </button>
+              </div>
             </motion.div>
           </>
         )}

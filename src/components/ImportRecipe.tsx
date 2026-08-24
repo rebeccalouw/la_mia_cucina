@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Link as LinkIcon, Loader2, Globe, AlertCircle, Search, Utensils, ClipboardList, CheckCircle2, Save, X, Tag } from 'lucide-react';
+import { Link as LinkIcon, Loader2, AlertCircle, Search, Utensils, CheckCircle2, Save } from 'lucide-react';
 
 interface ExtractedRecipe {
   title: string;
@@ -115,254 +115,235 @@ export default function ImportRecipe() {
   };
 
   return (
-    <div className="max-w-4xl mx-auto space-y-8">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="bg-white p-4 md:p-12 rounded-3xl md:rounded-[2.5rem] shadow-xl shadow-sage/5 border border-sage/5 text-center"
-      >
-        <div className="bg-sage/10 w-16 h-16 rounded-3xl flex items-center justify-center mx-auto mb-6 md:mb-8">
-          <Globe className="w-8 h-8 text-sage" />
-        </div>
-        
-        <h2 className="text-3xl md:text-4xl font-serif text-sage mb-2">Import from Web</h2>
-        <p className="text-sage/60 italic font-light tracking-wide mb-8 md:mb-10 max-w-md mx-auto text-sm md:text-base">
-          Paste a recipe URL below and we'll gather the details for your pantry.
-        </p>
-
-        <form onSubmit={handleFetch} className="max-w-2xl mx-auto group">
-          <div className="flex flex-col md:flex-row gap-4 relative">
-            <div className="relative flex-1">
-              <LinkIcon className="absolute left-6 top-1/2 -translate-y-1/2 w-5 h-5 text-sage/30 group-focus-within:text-terracotta transition-colors" />
-              <input 
-                type="url"
-                placeholder="https://example.com/recipe"
-                value={url}
-                onChange={(e) => setUrl(e.target.value)}
-                required
-                className="w-full pl-14 md:pl-16 pr-6 md:pr-32 py-4 md:py-5 bg-cream/40 rounded-4xl border border-sage/10 focus:ring-8 focus:ring-terracotta/5 focus:border-terracotta/20 outline-none transition-all font-sans text-sage text-base md:text-lg"
-              />
-            </div>
-            <button 
-              type="submit"
-              disabled={loading}
-              className="md:absolute md:right-3 md:top-1/2 md:-translate-y-1/2 px-8 py-4 md:py-3 bg-terracotta hover:bg-terracotta/90 text-white font-bold rounded-3xl transition-all shadow-lg shadow-terracotta/20 active:scale-95 disabled:opacity-50 flex items-center justify-center gap-2"
-            >
-              {loading ? (
-                <>
-                  <Loader2 className="w-5 h-5 md:w-4 md:h-4 animate-spin" />
-                  <span>Fetching...</span>
-                </>
-              ) : (
-                <>
-                  <Search className="w-5 h-5 md:w-4 md:h-4" />
-                  <span>Fetch Content</span>
-                </>
-              )}
+    <div>
+      {/* Thin bar */}
+      <div className="flex flex-wrap items-center justify-between gap-4 pb-5 mb-9 border-b border-sage/20">
+        <p className="label">Import from the web</p>
+        {extractedRecipe && (
+          <div className="flex items-center gap-2.5">
+            <button onClick={handleClear} className="btn-ghost">Clear</button>
+            <button onClick={handleSave} disabled={saving} className="btn-accent">
+              {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
+              Save to the box
             </button>
           </div>
-        </form>
-
-        {error && (
-          <motion.div 
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="mt-8 p-6 bg-red-50 text-red-600 rounded-4xl border border-red-100 flex items-center justify-center gap-3"
-          >
-            <AlertCircle className="w-5 h-5" />
-            <p className="font-medium">{error}</p>
-          </motion.div>
         )}
+      </div>
 
-        {success && (
-          <motion.div 
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="mt-8 p-8 bg-sage/10 text-sage rounded-4xl border border-sage/10 flex flex-col items-center gap-4"
-          >
-            <CheckCircle2 className="w-10 h-10" />
-            <div className="text-center">
-              <p className="text-xl font-serif mb-1">Import Successful!</p>
-              <p className="text-sm opacity-70 italic">Your new recipe has been added to your digital pantry.</p>
-            </div>
-          </motion.div>
-        )}
-      </motion.div>
+      {/* The link */}
+      <form onSubmit={handleFetch} className="flex flex-col lg:flex-row lg:items-end gap-6 lg:gap-8">
+        <h1 className="shrink-0 text-[36px] md:text-[46px] leading-none tracking-[-0.025em]">
+          Paste a <span className="italic font-normal text-sage">link</span>
+        </h1>
+        <div className="flex-1 min-w-0 flex items-center gap-3.5 border-b-2 border-sage/65 pb-2.5 focus-within:border-terracotta transition-colors">
+          <LinkIcon className="w-[18px] h-[18px] text-sage/55 shrink-0" />
+          <input
+            type="url"
+            placeholder="https://example.com/recipe"
+            value={url}
+            onChange={(e) => setUrl(e.target.value)}
+            required
+            className="flex-1 min-w-0 bg-transparent border-0 outline-none text-[17px] text-earth placeholder:text-earth/30"
+          />
+          <button type="submit" disabled={loading} className="btn-primary shrink-0 px-5 py-2.5">
+            {loading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Search className="w-3.5 h-3.5" />}
+            {loading ? 'Fetching' : 'Fetch'}
+          </button>
+        </div>
+      </form>
+
+      <div className="rule-strong mt-7" />
+
+      {error && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="mt-8 border border-brick/40 bg-brick/5 px-6 py-5 flex items-start gap-4"
+        >
+          <AlertCircle className="w-5 h-5 text-brick shrink-0 mt-0.5" />
+          <div>
+            <p className="font-serif text-xl text-brick mb-1">We could not reach that page</p>
+            <p className="text-sm text-earth/60">{error}</p>
+          </div>
+        </motion.div>
+      )}
+
+      {success && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="mt-8 border border-sage/40 bg-sage/6 px-6 py-8 text-center"
+        >
+          <CheckCircle2 className="w-10 h-10 text-sage mx-auto mb-4" strokeWidth={1.2} />
+          <p className="font-serif text-2xl text-sage mb-1">Imported</p>
+          <p className="font-serif italic text-earth/60">It is in the box now.</p>
+        </motion.div>
+      )}
 
       <AnimatePresence>
         {extractedRecipe && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="bg-white rounded-3xl md:rounded-[2.5rem] shadow-xl shadow-sage/5 border border-sage/5 overflow-hidden"
-          >
-            <div className="px-4 md:px-12 py-6 bg-sage/10 border-b border-sage/5 flex items-center justify-between">
-              <span className="text-[10px] uppercase font-bold tracking-widest text-sage flex items-center gap-2">
-                <CheckCircle2 className="w-4 h-4" />
-                Preview & Edit
-              </span>
-              <button 
-                onClick={handleClear}
-                className="text-sage/40 hover:text-red-500 transition-colors uppercase text-[10px] font-bold tracking-widest"
-              >
-                Clear Results
-              </button>
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="mt-8">
+            <div className="flex flex-wrap items-center justify-between gap-4 mb-8">
+              <div className="flex items-center gap-3">
+                <CheckCircle2 className="w-[17px] h-[17px] text-sage" strokeWidth={1.7} />
+                <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-earth">
+                  Found a recipe &mdash; check it over
+                </p>
+              </div>
+              <p className="font-serif italic text-[15px] text-earth/50">
+                Everything below is editable before it is saved.
+              </p>
             </div>
-            <div className="p-4 md:p-12 space-y-10">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-                <div className="space-y-4">
-                  <div className="aspect-video bg-sage/5 rounded-[2.5rem] overflow-hidden border border-sage/10 relative group">
-                    {extractedRecipe.image ? (
-                      <>
-                        <img src={extractedRecipe.image} alt={extractedRecipe.title} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
-                        <button 
-                          className="absolute top-4 right-4 bg-white/80 p-2 rounded-full text-red-500 opacity-0 group-hover:opacity-100 transition-opacity"
-                          onClick={() => setExtractedRecipe({...extractedRecipe, image: ''})}
-                        >
-                          <X className="w-4 h-4" />
-                        </button>
-                      </>
-                    ) : (
-                      <div className="w-full h-full flex flex-col items-center justify-center p-8 text-center gap-3">
-                        <Utensils className="w-8 h-8 text-sage/20" />
-                        <p className="text-[10px] text-sage/30 font-bold uppercase tracking-widest">No Image Extracted</p>
-                      </div>
-                    )}
-                  </div>
-                  <input 
-                    type="text" 
+
+            <div className="flex flex-col lg:flex-row gap-12 lg:gap-14">
+              {/* Left: the photograph and the categories */}
+              <div className="w-full lg:w-[430px] shrink-0 space-y-6">
+                <div className="relative h-[268px] bg-sage/5 overflow-hidden">
+                  {extractedRecipe.image ? (
+                    <>
+                      <img src={extractedRecipe.image} alt={extractedRecipe.title} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
+                      <span className="absolute top-3 left-3 px-3 py-1.5 bg-cream/95 text-sage text-[8px] font-semibold uppercase tracking-[0.22em]">
+                        Image found
+                      </span>
+                      <button
+                        onClick={() => setExtractedRecipe({ ...extractedRecipe, image: '' })}
+                        className="absolute top-3 right-3 px-3 py-1.5 bg-cream/95 text-brick text-[8px] font-semibold uppercase tracking-[0.22em]"
+                      >
+                        Remove
+                      </button>
+                    </>
+                  ) : (
+                    <div className="w-full h-full flex flex-col items-center justify-center gap-3">
+                      <Utensils className="w-8 h-8 text-sage/30" strokeWidth={1.2} />
+                      <p className="micro">No image found</p>
+                    </div>
+                  )}
+                </div>
+
+                <div>
+                  <label className="micro block mb-2">Image URL</label>
+                  <input
+                    type="text"
                     value={extractedRecipe.image || ''}
-                    onChange={(e) => setExtractedRecipe({...extractedRecipe, image: e.target.value})}
-                    placeholder="Image URL..."
-                    className="w-full px-4 py-2 bg-cream/30 border border-sage/5 rounded-xl text-[10px] outline-none focus:border-sage/20"
+                    onChange={(e) => setExtractedRecipe({ ...extractedRecipe, image: e.target.value })}
+                    placeholder="https://…"
+                    className="field text-[13px]"
                   />
                 </div>
-                <div className="space-y-6">
-                  <div className="space-y-2">
-                    <label className="text-[10px] font-bold text-sage/40 uppercase tracking-widest ml-1">Title</label>
-                    <input 
-                      type="text"
-                      value={extractedRecipe.title}
-                      onChange={(e) => setExtractedRecipe({...extractedRecipe, title: e.target.value})}
-                      className="w-full px-6 py-4 bg-cream/50 border border-sage/10 rounded-2xl text-2xl font-serif text-sage outline-none focus:border-terracotta/30"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <label className="text-[10px] font-bold text-sage/40 uppercase tracking-widest ml-1">Short Description</label>
-                    <textarea 
-                      value={extractedRecipe.description}
-                      onChange={(e) => setExtractedRecipe({...extractedRecipe, description: e.target.value})}
-                      rows={3}
-                      className="w-full px-6 py-4 bg-cream/50 border border-sage/10 rounded-2xl text-sm italic text-sage/60 outline-none focus:border-terracotta/30 resize-none"
-                    />
-                  </div>
 
-                  <div className="grid grid-cols-3 gap-4 border-t border-sage/5 pt-6">
-                    <div className="space-y-2">
-                      <label className="text-[9px] font-bold text-sage/40 uppercase tracking-widest block text-center">Prep (min)</label>
-                      <input 
-                        type="number"
-                        min="0"
-                        value={extractedRecipe.prepTime || 0}
-                        onChange={(e) => setExtractedRecipe({...extractedRecipe, prepTime: Math.max(0, parseInt(e.target.value) || 0)})}
-                        className="w-full px-4 py-3 bg-cream/50 border border-sage/10 rounded-xl text-center text-sage font-bold outline-none focus:border-terracotta/30"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <label className="text-[9px] font-bold text-sage/40 uppercase tracking-widest block text-center">Cook (min)</label>
-                      <input 
-                        type="number"
-                        min="0"
-                        value={extractedRecipe.cookTime || 0}
-                        onChange={(e) => setExtractedRecipe({...extractedRecipe, cookTime: Math.max(0, parseInt(e.target.value) || 0)})}
-                        className="w-full px-4 py-3 bg-cream/50 border border-sage/10 rounded-xl text-center text-sage font-bold outline-none focus:border-terracotta/30"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <label className="text-[9px] font-bold text-sage/40 uppercase tracking-widest block text-center">Servings</label>
-                      <input 
-                        type="number"
-                        min="1"
-                        value={extractedRecipe.servings || 1}
-                        onChange={(e) => setExtractedRecipe({...extractedRecipe, servings: Math.max(1, parseInt(e.target.value) || 1)})}
-                        className="w-full px-4 py-3 bg-cream/50 border border-sage/10 rounded-xl text-center text-sage font-bold outline-none focus:border-terracotta/30"
-                      />
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-10 border-t border-sage/5 pt-10">
-                <div className="space-y-4">
-                  <div className="flex items-center gap-2 text-sage mb-2">
-                    <Tag className="w-5 h-5" />
-                    <h4 className="font-bold uppercase tracking-widest text-xs">Categories</h4>
-                  </div>
-                  <CategorySelector 
+                <div>
+                  <p className="text-[10px] font-semibold uppercase tracking-[0.28em] text-terracotta mb-3">Categories</p>
+                  <CategorySelector
                     selectedCategories={extractedRecipe.categories || []}
                     onAddCategory={(cat) => setExtractedRecipe({
-                      ...extractedRecipe, 
+                      ...extractedRecipe,
                       categories: [...(extractedRecipe.categories || []), cat]
                     })}
                     onRemoveCategory={(cat) => setExtractedRecipe({
-                      ...extractedRecipe, 
+                      ...extractedRecipe,
                       categories: (extractedRecipe.categories || []).filter(c => c !== cat)
                     })}
                   />
                 </div>
+
                 {(!extractedRecipe.ingredients || !extractedRecipe.instructions) && (
-                  <div className="p-6 bg-amber-50 border border-amber-100 rounded-4xl flex items-start gap-4">
-                    <AlertCircle className="w-6 h-6 text-amber-500 shrink-0 mt-1" />
+                  <div className="border border-honey/45 bg-honey/8 px-5 py-4 flex items-start gap-3.5">
+                    <AlertCircle className="w-5 h-5 text-honey shrink-0 mt-0.5" />
                     <div>
-                      <p className="text-sm font-bold text-amber-900 uppercase tracking-wide mb-1">Partial Extraction</p>
-                      <p className="text-xs text-amber-700 italic leading-relaxed">
-                        We couldn't automatically find all the {!extractedRecipe.ingredients && !extractedRecipe.instructions ? 'ingredients or instructions' : !extractedRecipe.ingredients ? 'ingredients' : 'instructions'}. Please verify and fill them in manually below.
+                      <p className="text-[9px] font-semibold uppercase tracking-[0.24em] text-honey mb-1.5">Partial extraction</p>
+                      <p className="text-[13px] leading-relaxed text-earth/70">
+                        We could not find the {!extractedRecipe.ingredients && !extractedRecipe.instructions ? 'ingredients or the method' : !extractedRecipe.ingredients ? 'ingredients' : 'method'}. Fill them in before saving.
                       </p>
                     </div>
                   </div>
                 )}
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-10 border-t border-sage/5 pt-10">
-                <div className="space-y-4">
-                  <div className="flex items-center gap-2 text-sage mb-2">
-                    <Utensils className="w-5 h-5" />
-                    <h4 className="font-bold uppercase tracking-widest text-xs">Ingredients</h4>
-                  </div>
-                  <textarea 
-                    value={extractedRecipe.ingredients}
-                    onChange={(e) => setExtractedRecipe({...extractedRecipe, ingredients: e.target.value})}
-                    rows={12}
-                    className="w-full p-8 bg-cream/30 border border-sage/5 rounded-4xl text-sm text-sage/70 font-sans leading-relaxed outline-none focus:border-sage/20 resize-none"
-                    placeholder="Each line will become a bullet point..."
+              {/* Right: the recipe itself */}
+              <div className="flex-1 min-w-0 space-y-7">
+                <div>
+                  <label className="micro block mb-2">Title</label>
+                  <input
+                    type="text"
+                    value={extractedRecipe.title}
+                    onChange={(e) => setExtractedRecipe({ ...extractedRecipe, title: e.target.value })}
+                    className="w-full bg-transparent border-0 border-b border-sage/30 pb-2.5 font-serif text-[30px] text-earth outline-none transition-colors focus:border-terracotta"
                   />
                 </div>
-                <div className="space-y-4">
-                  <div className="flex items-center gap-2 text-sage mb-2">
-                    <ClipboardList className="w-5 h-5" />
-                    <h4 className="font-bold uppercase tracking-widest text-xs">Instructions</h4>
-                  </div>
-                  <textarea 
-                    value={extractedRecipe.instructions}
-                    onChange={(e) => setExtractedRecipe({...extractedRecipe, instructions: e.target.value})}
-                    rows={12}
-                    className="w-full p-8 bg-cream/30 border border-sage/5 rounded-4xl text-sm text-sage/70 font-sans leading-relaxed outline-none focus:border-sage/20 resize-none"
-                    placeholder="Each line will be shown as a step..."
-                  />
-                </div>
-              </div>
 
-              <div className="pt-8 border-t border-sage/5 text-center flex flex-col items-center gap-4">
-                <p className="text-sage/40 text-xs italic">
-                  Review and adjust the details above. When ready, save to your kitchen.
-                </p>
-                <button
-                  onClick={handleSave}
-                  disabled={saving}
-                  className="w-full max-w-md bg-terracotta hover:bg-terracotta/90 text-white font-bold py-5 rounded-2xl transition-all shadow-xl shadow-terracotta/10 flex items-center justify-center gap-3 active:scale-[0.99] disabled:opacity-50"
-                >
-                  {saving ? <Loader2 className="w-6 h-6 animate-spin" /> : <Save className="w-6 h-6" />}
-                  Save Import to Pantry
+                <div>
+                  <label className="micro block mb-2">Short description</label>
+                  <textarea
+                    value={extractedRecipe.description}
+                    onChange={(e) => setExtractedRecipe({ ...extractedRecipe, description: e.target.value })}
+                    rows={2}
+                    className="w-full bg-transparent border-0 border-b border-sage/30 pb-2.5 font-serif italic text-[17px] leading-relaxed text-earth/70 outline-none transition-colors resize-none focus:border-terracotta"
+                  />
+                </div>
+
+                <div className="flex flex-wrap gap-8">
+                  <div className="w-[120px]">
+                    <label className="micro block mb-2">Prep</label>
+                    <input
+                      type="number"
+                      min="0"
+                      value={extractedRecipe.prepTime || 0}
+                      onChange={(e) => setExtractedRecipe({ ...extractedRecipe, prepTime: Math.max(0, parseInt(e.target.value) || 0) })}
+                      className="w-full bg-transparent border-0 border-b border-sage/30 pb-2 font-serif text-2xl text-earth outline-none transition-colors focus:border-terracotta"
+                    />
+                  </div>
+                  <div className="w-[120px]">
+                    <label className="micro block mb-2">Cook</label>
+                    <input
+                      type="number"
+                      min="0"
+                      value={extractedRecipe.cookTime || 0}
+                      onChange={(e) => setExtractedRecipe({ ...extractedRecipe, cookTime: Math.max(0, parseInt(e.target.value) || 0) })}
+                      className="w-full bg-transparent border-0 border-b border-sage/30 pb-2 font-serif text-2xl text-earth outline-none transition-colors focus:border-terracotta"
+                    />
+                  </div>
+                  <div className="w-[120px]">
+                    <label className="micro block mb-2">Serves</label>
+                    <input
+                      type="number"
+                      min="1"
+                      value={extractedRecipe.servings || 1}
+                      onChange={(e) => setExtractedRecipe({ ...extractedRecipe, servings: Math.max(1, parseInt(e.target.value) || 1) })}
+                      className="w-full bg-transparent border-0 border-b border-sage/30 pb-2 font-serif text-2xl text-earth outline-none transition-colors focus:border-terracotta"
+                    />
+                  </div>
+                  <div className="flex-1 min-w-[180px]">
+                    <label className="micro block mb-2">Source</label>
+                    <p className="border-b border-sage/30 pb-2.5 text-[13px] text-earth/55 truncate">{url}</p>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                  <div>
+                    <label className="block text-[10px] font-semibold uppercase tracking-[0.28em] text-terracotta mb-3">Ingredients</label>
+                    <textarea
+                      value={extractedRecipe.ingredients}
+                      onChange={(e) => setExtractedRecipe({ ...extractedRecipe, ingredients: e.target.value })}
+                      rows={10}
+                      className="field-box resize-none text-sm"
+                      placeholder="One ingredient per line…"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[10px] font-semibold uppercase tracking-[0.28em] text-terracotta mb-3">Method</label>
+                    <textarea
+                      value={extractedRecipe.instructions}
+                      onChange={(e) => setExtractedRecipe({ ...extractedRecipe, instructions: e.target.value })}
+                      rows={10}
+                      className="field-box resize-none text-sm"
+                      placeholder="One step per line…"
+                    />
+                  </div>
+                </div>
+
+                <button onClick={handleSave} disabled={saving} className="btn-accent w-full py-[19px]">
+                  {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
+                  Save to the box
                 </button>
               </div>
             </div>
@@ -371,31 +352,25 @@ export default function ImportRecipe() {
 
         {htmlPreview && !extractedRecipe && (
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 20 }}
-            className="bg-white rounded-[3.5rem] shadow-xl shadow-sage/5 border border-sage/5 overflow-hidden"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="mt-8 border border-sage/25"
           >
-            <div className="px-12 py-6 bg-sage/5 border-b border-sage/5 flex items-center justify-between">
-              <span className="text-[10px] uppercase font-bold tracking-widest text-sage/40">Raw Content Preview (No Structured Data)</span>
-              <button 
-                onClick={handleClear}
-                className="text-sage/40 hover:text-red-500 transition-colors uppercase text-[10px] font-bold tracking-widest"
-              >
-                Clear Preview
-              </button>
+            <div className="px-6 py-4 border-b border-sage/20 flex flex-wrap items-center justify-between gap-3">
+              <span className="micro">Raw content &mdash; no structured recipe found</span>
+              <button onClick={handleClear} className="micro hover:text-sage transition-colors">Clear</button>
             </div>
-            <div className="p-12">
-              <div className="prose prose-sage max-w-none">
-                <p className="text-sage/60 italic mb-8 border-l-4 border-sage/10 pl-4 py-1 text-sm">
-                  We fetched the page content, but no machine-readable recipe structure (JSON-LD) was found. In the next step, our AI chef will parse this raw text for you.
-                </p>
-                <div className="bg-cream/30 p-8 rounded-4xl border border-sage/5 overflow-auto max-h-125">
-                  <pre className="text-[10px] text-sage/40 font-mono whitespace-pre-wrap leading-relaxed">
-                    {htmlPreview.slice(0, 5000)}
-                    {htmlPreview.length > 5000 && '... [content truncated for preview]'}
-                  </pre>
-                </div>
+            <div className="p-6">
+              <p className="font-serif italic text-earth/60 mb-6 border-l-2 border-sage/40 pl-4">
+                We fetched the page, but it carries no machine-readable recipe. You can still copy what you need
+                out of the text below.
+              </p>
+              <div className="bg-white/50 border border-sage/20 p-6 overflow-auto max-h-125">
+                <pre className="text-[11px] text-earth/50 font-mono whitespace-pre-wrap leading-relaxed">
+                  {htmlPreview.slice(0, 5000)}
+                  {htmlPreview.length > 5000 && '… [truncated]'}
+                </pre>
               </div>
             </div>
           </motion.div>

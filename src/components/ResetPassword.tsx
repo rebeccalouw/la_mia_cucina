@@ -56,59 +56,55 @@ export default function ResetPassword({ token, onSuccess }: ResetPasswordProps) 
   };
 
   return (
-    <motion.div
-      initial={{ opacity: 0, scale: 0.95 }}
-      animate={{ opacity: 1, scale: 1 }}
-      className="w-full max-w-md bg-white p-8 rounded-4xl shadow-2xl shadow-sage/10 border border-sage/5"
-    >
-      <div className="text-center mb-8">
-        <h2 className="text-3xl font-serif text-sage mb-2">New Password</h2>
-        <p className="text-sage/60 font-light italic">
-          Set your new secure password
-        </p>
-      </div>
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+      <h2 className="text-[40px] md:text-[52px] leading-none tracking-[-0.03em]">
+        A new <span className="italic font-normal text-sage">password</span>
+      </h2>
+      <p className="mt-4 mb-11 font-serif italic text-lg text-earth/55">
+        Pick something you have not used elsewhere.
+      </p>
 
       {success ? (
         <motion.div 
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
-          className="p-8 bg-sage/10 rounded-4xl border border-sage/10 text-center"
+          className="border border-sage/40 bg-sage/6 p-10 text-center"
         >
-          <CheckCircle2 className="w-12 h-12 text-sage mx-auto mb-4" />
-          <p className="text-sage font-serif text-xl mb-1">Success!</p>
-          <p className="text-sage/60 text-sm italic">
-            Your password has been reset. Redirecting to login...
+          <CheckCircle2 className="w-12 h-12 text-sage mx-auto mb-5" strokeWidth={1.2} />
+          <p className="font-serif text-3xl text-sage mb-2">All set</p>
+          <p className="font-serif italic text-earth/60">
+            Your password has been changed. Taking you back to sign in&hellip;
           </p>
         </motion.div>
       ) : (
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-sage/70 mb-1 ml-1 uppercase tracking-wider">New Password</label>
-              <div className="relative">
-                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-sage/40" />
+              <label className="micro block mb-2.5">New password &middot; at least 8 characters</label>
+              <div className="flex items-center gap-3 border-b border-sage/30 focus-within:border-terracotta transition-colors">
+                <Lock className="w-[17px] h-[17px] text-sage/45 shrink-0" />
                 <input
                   type="password"
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full pl-10 pr-4 py-3 rounded-2xl bg-cream/50 border border-sage/10 focus:border-terracotta/50 focus:ring-2 focus:ring-terracotta/10 outline-none transition-all font-sans"
-                  placeholder="Min. 8 characters"
+                  className="flex-1 min-w-0 bg-transparent border-0 pb-2.5 text-[17px] text-earth outline-none placeholder:text-earth/30"
+                  placeholder="Type a new one"
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-sage/70 mb-1 ml-1 uppercase tracking-wider">Confirm Password</label>
-              <div className="relative">
-                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-sage/40" />
+              <label className="micro block mb-2.5">Confirm the new password</label>
+              <div className="flex items-center gap-3 border-b border-sage/30 focus-within:border-terracotta transition-colors">
+                <Lock className="w-[17px] h-[17px] text-sage/45 shrink-0" />
                 <input
                   type="password"
                   required
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
-                  className="w-full pl-10 pr-4 py-3 rounded-2xl bg-cream/50 border border-sage/10 focus:border-terracotta/50 focus:ring-2 focus:ring-terracotta/10 outline-none transition-all font-sans"
-                  placeholder="Confirm your new password"
+                  className="flex-1 min-w-0 bg-transparent border-0 pb-2.5 text-[17px] text-earth outline-none placeholder:text-earth/30"
+                  placeholder="Type it again"
                 />
               </div>
             </div>
@@ -118,7 +114,7 @@ export default function ResetPassword({ token, onSuccess }: ResetPasswordProps) 
             <motion.p
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
-              className="text-red-500 text-sm text-center font-medium bg-red-50 py-2 rounded-xl border border-red-100 flex items-center justify-center gap-2"
+              className="flex items-center gap-3 border border-brick/40 bg-brick/5 text-brick text-sm px-4 py-3"
             >
               <AlertCircle className="w-4 h-4" /> {error}
             </motion.p>
@@ -127,7 +123,7 @@ export default function ResetPassword({ token, onSuccess }: ResetPasswordProps) 
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-terracotta hover:bg-terracotta/90 text-white py-4 rounded-2xl font-bold uppercase tracking-widest text-xs transition-all shadow-lg shadow-terracotta/20 active:scale-[0.98] flex items-center justify-center gap-2"
+            className="btn-accent w-full py-[19px]"
           >
             {loading ? (
               <Loader2 className="w-5 h-5 animate-spin" />

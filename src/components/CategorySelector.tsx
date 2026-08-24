@@ -83,8 +83,8 @@ export default function CategorySelector({
   return (
     <div className="space-y-4" ref={containerRef}>
       <div className="relative">
-        <div className="relative">
-          <Tag className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-sage/30" />
+        <div className="flex items-center gap-3 border-b border-sage/30 focus-within:border-terracotta transition-colors">
+          <Tag className="w-4 h-4 text-sage/45 shrink-0" />
           <input
             type="text"
             value={input}
@@ -103,18 +103,18 @@ export default function CategorySelector({
                 }
               }
             }}
-            className="w-full pl-12 pr-4 py-4 rounded-2xl bg-cream/50 border border-sage/10 focus:border-terracotta/50 focus:ring-4 focus:ring-terracotta/5 outline-none transition-all"
-            placeholder="Type to search or add category..."
+            className="flex-1 min-w-0 bg-transparent border-0 pb-2.5 text-[15px] text-earth outline-none placeholder:text-earth/30"
+            placeholder="Type to search or add…"
           />
         </div>
 
         <AnimatePresence>
           {isOpen && (input.length > 0 || suggestions.length > 0) && (
             <motion.div
-              initial={{ opacity: 0, y: -10 }}
+              initial={{ opacity: 0, y: -6 }}
               animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              className="absolute z-50 w-full mt-2 bg-white rounded-2xl shadow-2xl border border-sage/10 overflow-hidden"
+              exit={{ opacity: 0, y: -6 }}
+              className="absolute z-50 w-full mt-1 bg-cream border border-sage/30 overflow-hidden"
             >
               <div className="max-h-60 overflow-y-auto no-scrollbar">
                 {suggestions.map((cat) => (
@@ -122,32 +122,30 @@ export default function CategorySelector({
                     key={cat.id}
                     type="button"
                     onClick={() => handleSelect(cat.name)}
-                    className="w-full flex items-center justify-between px-6 py-3 hover:bg-sage/5 transition-colors text-left"
+                    className="w-full flex items-center justify-between gap-3 px-4 py-3 border-b border-sage/15 last:border-b-0 hover:bg-sage/5 transition-colors text-left"
                   >
-                    <span className="text-sage font-medium">{cat.name}</span>
-                    <Plus className="w-4 h-4 text-sage/30" />
+                    <span className="font-serif text-[17px] text-earth">{cat.name}</span>
+                    <Plus className="w-4 h-4 text-sage/40 shrink-0" />
                   </button>
                 ))}
-                
+
                 {input.trim() !== '' && !allCategories.some(c => c.name.toLowerCase() === input.trim().toLowerCase()) && (
                   <button
                     type="button"
                     onClick={handleAddNew}
-                    className="w-full flex items-center gap-3 px-6 py-4 bg-terracotta/5 hover:bg-terracotta/10 transition-colors text-left border-t border-sage/5"
+                    className="w-full flex items-center gap-3.5 px-4 py-3.5 bg-terracotta/8 hover:bg-terracotta/15 transition-colors text-left border-t border-sage/20"
                   >
-                    <div className="bg-terracotta/20 p-1.5 rounded-lg">
-                      <Plus className="w-4 h-4 text-terracotta" />
-                    </div>
-                    <div>
-                      <p className="text-xs font-bold text-terracotta uppercase tracking-widest">Create New</p>
-                      <p className="text-sage font-medium">"{input.trim()}"</p>
+                    <Plus className="w-4 h-4 text-terracotta shrink-0" />
+                    <div className="min-w-0">
+                      <p className="text-[9px] font-semibold text-terracotta uppercase tracking-[0.24em]">Create new</p>
+                      <p className="font-serif text-[17px] text-earth truncate">{input.trim()}</p>
                     </div>
                   </button>
                 )}
 
                 {input.trim() !== '' && suggestions.length === 0 && allCategories.some(c => c.name.toLowerCase() === input.trim().toLowerCase() && selectedCategories.includes(c.name)) && (
-                  <div className="px-6 py-4 text-center text-sage/40 italic text-sm">
-                    Category already added
+                  <div className="px-4 py-4 text-center font-serif italic text-sm text-earth/45">
+                    Already added
                   </div>
                 )}
               </div>
@@ -162,22 +160,19 @@ export default function CategorySelector({
           {selectedCategories.map((cat) => (
             <motion.span
               key={cat}
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.8 }}
-              className="inline-flex items-center gap-2 px-4 py-2 bg-terracotta text-cream rounded-full text-xs font-bold uppercase tracking-widest shadow-lg shadow-terracotta/10 group overflow-hidden relative"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="chip-on"
             >
-              <span className="relative z-10">{cat}</span>
+              {cat}
               <button
                 type="button"
                 onClick={() => onRemoveCategory(cat)}
-                className="relative z-10 hover:text-white transition-colors"
+                className="hover:text-earth transition-colors"
               >
-                <X className="w-3.5 h-3.5" />
+                <X className="w-3 h-3" />
               </button>
-              <motion.div 
-                className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity"
-              />
             </motion.span>
           ))}
         </AnimatePresence>

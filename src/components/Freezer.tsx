@@ -1,19 +1,16 @@
 import React, { useState, useEffect, useRef } from 'react';
+import Loading from './Loading';
 import { motion, AnimatePresence } from 'motion/react';
-import { 
-  Snowflake, 
-  Trash2, 
-  Edit3, 
-  Plus, 
-  Calendar as CalendarIcon, 
-  Loader2, 
+import {
+  Trash2,
+  Edit3,
+  Plus,
+  Calendar as CalendarIcon,
+  Loader2,
   X,
   Package,
   ChefHat,
-  Filter,
-  Search,
-  CheckCircle2,
-  AlertCircle
+  Search
 } from 'lucide-react';
 
 interface FreezerItem {
@@ -211,179 +208,174 @@ export default function Freezer() {
   const meals = filteredItems.filter(i => i.type === 'meal');
 
   if (loading) {
-    return (
-      <div className="flex flex-col items-center justify-center py-32 gap-4">
-        <Loader2 className="w-8 h-8 text-sage animate-spin" />
-        <p className="text-sage/60 font-medium italic font-serif">Checking the freezer...</p>
-      </div>
-    );
+    return <Loading message="Checking the freezer…" />;
   }
 
-  const renderSection = (title: string, icon: React.ReactNode, type: 'ingredient' | 'meal', list: FreezerItem[]) => (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between gap-4 px-2">
-        <div className="flex items-center gap-3">
-          <div className="bg-sage/10 p-2 rounded-xl text-sage">
-            {icon}
-          </div>
-          <h3 className="text-xs font-bold text-sage/40 uppercase tracking-[0.2em]">{title}</h3>
-          <span className="bg-sage/5 px-2 py-1 rounded-lg text-[10px] font-bold text-sage/30">{list.length}</span>
+  /** Whole days between the placement date and today. */
+  const daysIn = (placedAt: string) =>
+    Math.max(0, Math.round((Date.now() - new Date(placedAt).getTime()) / 86_400_000));
+
+  const renderSection = (title: string, type: 'ingredient' | 'meal', list: FreezerItem[]) => (
+    <div className="flex-1 min-w-0">
+      <div className="flex items-baseline justify-between gap-4 pb-3">
+        <div className="flex items-center gap-3.5">
+          <h3 className="text-[11px] font-semibold uppercase tracking-[0.30em] text-earth">{title}</h3>
+          <span className="font-serif text-[15px] text-sage/45">{String(list.length).padStart(2, '0')}</span>
         </div>
-        <button 
+        <button
           onClick={() => handleOpenModal(type)}
-          className="bg-terracotta text-white px-4 py-2 rounded-xl font-bold text-[10px] uppercase tracking-widest shadow-lg shadow-terracotta/10 hover:scale-105 active:scale-95 transition-all flex items-center justify-center gap-2 shrink-0"
-          title={`Add ${type}`}
+          className="text-[9px] font-semibold uppercase tracking-[0.22em] text-terracotta hover:text-sage transition-colors"
         >
-          <Plus className="w-3 h-3" />
-          Add
+          Add one
         </button>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {list.length > 0 ? (
-          list.map(item => (
-            <motion.div 
+      {list.length > 0 ? (
+        <div className="border-t border-sage/20">
+          {list.map(item => (
+            <motion.div
               key={item.id}
-              layout
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              className="bg-white p-4 sm:p-6 rounded-2xl sm:rounded-[2.5rem] border border-sage/5 shadow-md shadow-sage/5 flex flex-col sm:flex-row sm:items-center justify-between group hover:shadow-xl hover:shadow-sage/10 transition-all cursor-pointer relative overflow-hidden"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="flex items-center gap-4 md:gap-5 py-3.5 border-b border-sage/20 group cursor-pointer"
               onClick={() => handleOpenModal(item.type, item)}
             >
-              <div className="flex items-center gap-4 sm:gap-6">
-                <div className="bg-cream p-3 sm:p-4 rounded-xl sm:rounded-2xl border border-sage/5 group-hover:bg-sage group-hover:text-cream transition-colors shrink-0">
-                  {type === 'ingredient' ? <Package className="w-5 h-5 sm:w-6 h-6" /> : <ChefHat className="w-5 h-5 sm:w-6 h-6" />}
-                </div>
-                <div>
-                  <h4 className="text-base sm:text-lg font-serif text-sage group-hover:text-terracotta transition-colors">{item.name}</h4>
-                  <div className="flex flex-wrap gap-2 mt-1 sm:mt-2">
-                    <div className="flex items-center gap-2 text-sage/30 text-[9px] sm:text-[10px] font-bold uppercase tracking-widest mr-2">
-                      <CalendarIcon className="w-3 h-3" />
-                      <span>{new Date(item.placed_at).toLocaleDateString()}</span>
-                    </div>
-                    {item.categories?.map(cat => (
-                      <span key={cat} className="px-2 py-0.5 bg-sage/5 text-sage/40 text-[8px] font-bold uppercase tracking-widest rounded-md">
-                        {cat}
-                      </span>
-                    ))}
-                  </div>
+              <div className="w-[54px] h-[54px] shrink-0 border border-sage/25 flex items-center justify-center text-sage/55 group-hover:bg-sage group-hover:text-cream group-hover:border-sage transition-colors">
+                {type === 'ingredient' ? <Package className="w-5 h-5" /> : <ChefHat className="w-5 h-5" />}
+              </div>
+
+              <div className="flex-1 min-w-0">
+                <h4 className="font-serif text-xl leading-tight text-earth group-hover:text-terracotta transition-colors truncate">
+                  {item.name}
+                </h4>
+                <div className="flex flex-wrap items-center gap-2 mt-1.5">
+                  {item.categories?.map(cat => (
+                    <span key={cat} className="px-2.5 py-1 border border-sage/25 text-[8px] font-semibold uppercase tracking-[0.20em] text-sage/60">
+                      {cat}
+                    </span>
+                  ))}
+                  <span className="micro">
+                    In since {new Date(item.placed_at).toLocaleDateString(undefined, { day: 'numeric', month: 'long' })}
+                  </span>
                 </div>
               </div>
 
-              {/* Action Buttons: Edit or Confirm Delete Overlay */}
-              <div className="flex items-center justify-end gap-2 mt-3 sm:mt-0 pt-3 sm:pt-0 border-t sm:border-t-0 border-sage/5">
+              <div className="shrink-0 text-right">
+                <p className={`font-serif text-2xl leading-none ${daysIn(item.placed_at) > 60 ? 'text-terracotta' : 'text-earth'}`}>
+                  {String(daysIn(item.placed_at)).padStart(2, '0')}
+                </p>
+                <p className="micro mt-1">days</p>
+              </div>
+
+              <div className="shrink-0" onClick={(e) => e.stopPropagation()}>
                 <AnimatePresence mode="wait">
                   {confirmDeleteId === item.id ? (
-                    <motion.div 
+                    <motion.div
                       key="confirm"
-                      initial={{ x: 30, opacity: 0 }}
-                      animate={{ x: 0, opacity: 1 }}
-                      exit={{ x: 30, opacity: 0 }}
-                      transition={{ type: 'spring', damping: 20, stiffness: 300 }}
-                      className="flex items-center gap-1 bg-red-500 p-1 rounded-xl shadow-lg"
-                      onClick={(e) => e.stopPropagation()}
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      className="flex items-center gap-1.5"
                     >
-                      <button 
+                      <button
                         onClick={() => handleDeleteItem(item.id)}
-                        className="px-3 py-2 bg-white text-red-500 rounded-lg text-[9px] font-bold uppercase tracking-wider hover:bg-red-50 transition-all whitespace-nowrap"
                         disabled={isDeletingId === item.id}
+                        className="px-3 py-2 bg-brick text-cream text-[9px] font-semibold uppercase tracking-[0.2em] hover:bg-earth transition-colors"
                       >
-                        {isDeletingId === item.id ? <Loader2 className="w-3 h-3 animate-spin" /> : 'Confirm'}
+                        {isDeletingId === item.id ? <Loader2 className="w-3 h-3 animate-spin" /> : 'Delete'}
                       </button>
-                      <button 
+                      <button
                         onClick={() => setConfirmDeleteId(null)}
-                        className="px-3 py-2 text-white hover:bg-white/10 rounded-lg text-[9px] font-bold uppercase tracking-widest"
                         disabled={isDeletingId === item.id}
+                        className="px-3 py-2 text-[9px] font-semibold uppercase tracking-[0.2em] text-sage hover:text-earth transition-colors"
                       >
-                        Cancel
+                        Keep
                       </button>
                     </motion.div>
                   ) : (
-                    <motion.div 
+                    <motion.div
                       key="actions"
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       exit={{ opacity: 0 }}
-                      className="flex items-center gap-1 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity"
+                      className="flex items-center gap-2"
                     >
-                      <button 
-                        onClick={(e) => { e.stopPropagation(); handleOpenModal(item.type, item); }}
-                        className="p-3 hover:bg-cream text-sage/40 hover:text-sage transition-all rounded-xl"
+                      <button
+                        onClick={() => handleOpenModal(item.type, item)}
+                        className="w-[34px] h-[34px] border border-sage/25 flex items-center justify-center text-sage hover:bg-sage/5 transition-colors"
                       >
-                        <Edit3 className="w-5 h-5" />
+                        <Edit3 className="w-3.5 h-3.5" />
                       </button>
-                      <button 
-                        onClick={(e) => { e.stopPropagation(); setConfirmDeleteId(item.id); }}
-                        className="p-3 hover:bg-red-50 text-terracotta/40 hover:text-red-500 transition-all rounded-xl"
+                      <button
+                        onClick={() => setConfirmDeleteId(item.id)}
+                        className="w-[34px] h-[34px] border border-brick/30 flex items-center justify-center text-brick hover:bg-brick/5 transition-colors"
                       >
-                        <Trash2 className="w-5 h-5" />
+                        <Trash2 className="w-3.5 h-3.5" />
                       </button>
                     </motion.div>
                   )}
                 </AnimatePresence>
               </div>
             </motion.div>
-          ))
-        ) : (
-          <div className="md:col-span-2 py-12 text-center border-2 border-dashed border-sage/10 rounded-[3rem] bg-white/40">
-            <Snowflake className="w-10 h-10 text-sage/10 mx-auto mb-4" />
-            <p className="text-sage/40 font-serif italic uppercase text-[10px] tracking-widest">Empty Shelf</p>
-          </div>
-        )}
-      </div>
+          ))}
+        </div>
+      ) : (
+        <button
+          onClick={() => handleOpenModal(type)}
+          className="w-full mt-3 py-6 px-6 border border-dashed border-sage/30 flex items-center justify-center gap-3.5 text-sage/55 hover:bg-sage/5 transition-colors"
+        >
+          <Plus className="w-4 h-4" />
+          <span className="font-serif italic text-[17px]">
+            Nothing here yet &mdash; add {type === 'ingredient' ? 'an ingredient' : 'a cooked meal'}
+          </span>
+        </button>
+      )}
     </div>
   );
 
   return (
-    <div className="space-y-12">
-      {/* Header Overlay */}
-      <div className="bg-white p-8 md:p-12 rounded-3xl md:rounded-[3.5rem] shadow-xl shadow-sage/5 border border-sage/5 flex flex-col md:flex-row items-center justify-between gap-8 text-center md:text-left">
-        <div className="flex flex-col md:flex-row items-center gap-6">
-          <div className="bg-sage p-4 rounded-3xl shadow-lg shadow-sage/20 text-cream">
-            <Snowflake className="w-8 h-8" />
-          </div>
-          <div>
-            <h2 className="text-3xl md:text-5xl font-serif text-sage tracking-tight">Freezer</h2>
-            <p className="text-sage/40 text-[10px] md:text-xs font-bold uppercase tracking-[0.2em] mt-1 italic">Preserving your pantry</p>
-          </div>
+    <div>
+      {/* Header */}
+      <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-8 pb-7">
+        <div>
+          <p className="label">
+            {items.length} {items.length === 1 ? 'thing' : 'things'} on ice
+          </p>
+          <h1 className="mt-3 text-[40px] md:text-[56px] leading-none tracking-[-0.025em]">
+            The <span className="italic font-normal text-sage">freezer</span>
+          </h1>
         </div>
-      </div>
 
-      {/* Filter Bar */}
-      {allCategories.length > 0 && (
-        <div className="flex flex-wrap items-center gap-3 px-2">
-          <div className="bg-sage/10 p-2 rounded-lg text-sage">
-            <Filter className="w-4 h-4" />
-          </div>
-          <button
-            onClick={() => setSelectedCategory(null)}
-            className={`px-4 py-2 rounded-full text-[10px] font-bold uppercase tracking-widest transition-all border ${
-              selectedCategory === null 
-                ? 'bg-sage text-white border-sage shadow-md' 
-                : 'bg-white text-sage/60 border-sage/10 hover:border-sage/20'
-            }`}
-          >
-            All Items
-          </button>
-          {allCategories.map(cat => (
+        {allCategories.length > 0 && (
+          <div className="flex flex-wrap items-center gap-x-6 gap-y-2.5">
             <button
-              key={cat}
-              onClick={() => setSelectedCategory(cat === selectedCategory ? null : cat)}
-              className={`px-4 py-2 rounded-full text-[10px] font-bold uppercase tracking-widest transition-all border ${
-                selectedCategory === cat 
-                  ? 'bg-sage text-white border-sage shadow-md' 
-                  : 'bg-white text-sage/60 border-sage/10 hover:border-sage/20'
+              onClick={() => setSelectedCategory(null)}
+              className={`pb-1 text-[10px] font-semibold uppercase tracking-[0.24em] border-b-2 transition-colors ${
+                selectedCategory === null ? 'text-earth border-terracotta' : 'text-sage/55 border-transparent hover:text-sage'
               }`}
             >
-              {cat}
+              All
             </button>
-          ))}
-        </div>
-      )}
+            {allCategories.map(cat => (
+              <button
+                key={cat}
+                onClick={() => setSelectedCategory(cat === selectedCategory ? null : cat)}
+                className={`pb-1 text-[10px] font-semibold uppercase tracking-[0.24em] border-b-2 transition-colors ${
+                  selectedCategory === cat ? 'text-earth border-terracotta' : 'text-sage/55 border-transparent hover:text-sage'
+                }`}
+              >
+                {cat}
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
 
-      <div className="grid grid-cols-1 gap-16">
-        {renderSection('Ingredients', <Package className="w-5 h-5" />, 'ingredient', ingredients)}
-        {renderSection('Ready Made Meals', <ChefHat className="w-5 h-5" />, 'meal', meals)}
+      <div className="rule-strong" />
+
+      <div className="flex flex-col lg:flex-row gap-12 lg:gap-20 pt-10">
+        {renderSection('Cooked meals', 'meal', meals)}
+        {renderSection('Ingredients', 'ingredient', ingredients)}
       </div>
 
       {/* Add / Edit Modal */}
@@ -395,68 +387,66 @@ export default function Freezer() {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={handleCloseModal}
-              className="absolute inset-0 bg-sage/20 backdrop-blur-md"
+              className="absolute inset-0 bg-earth/40"
             />
             <motion.div 
               initial={{ scale: 0.9, opacity: 0, y: 20 }}
               animate={{ scale: 1, opacity: 1, y: 0 }}
-              exit={{ scale: 0.9, opacity: 0, y: 20 }}
-              className="relative w-full max-w-lg bg-white rounded-[2.5rem] shadow-2xl overflow-hidden border border-sage/5"
+              exit={{ scale: 0.98, opacity: 0, y: 12 }}
+              className="relative w-full max-w-lg bg-cream border border-sage/30 max-h-[88vh] overflow-y-auto no-scrollbar"
             >
-              <div className="px-8 py-6 bg-sage/5 border-b border-sage/5 flex items-center justify-between">
+              <div className="px-8 pt-8 pb-5 border-b-2 border-sage/65 flex items-start justify-between gap-4">
                 <div>
-                  <h3 className="text-xl font-serif text-sage">
-                    {editingItem ? 'Update Entry' : `New ${formData.type === 'ingredient' ? 'Ingredient' : 'Meal'}`}
+                  <p className="label">{editingItem ? 'Editing' : 'Putting something in'}</p>
+                  <h3 className="mt-2.5 font-serif text-[32px] leading-none text-earth">
+                    {formData.type === 'ingredient' ? 'An ingredient' : 'A cooked meal'}
                   </h3>
-                  <p className="text-[10px] font-bold text-sage/40 uppercase tracking-widest mt-0.5">Label your chill storage</p>
                 </div>
-                <button 
+                <button
                   onClick={handleCloseModal}
-                  className="p-2 bg-white hover:bg-red-50 text-sage/30 hover:text-red-500 rounded-xl transition-all border border-sage/10 shadow-sm"
+                  className="p-2 -mr-2 -mt-1 text-sage/55 hover:text-earth transition-colors"
                 >
                   <X className="w-5 h-5" />
                 </button>
               </div>
 
-              <form onSubmit={handleSave} className="p-8 space-y-6">
+              <form onSubmit={handleSave} className="p-8 space-y-7">
                 {error && (
-                  <div className="p-4 bg-red-50 border border-red-100 rounded-2xl text-red-500 text-xs font-medium text-center">
-                    {error}
-                  </div>
+                  <p className="border border-brick/40 bg-brick/5 text-brick text-sm px-4 py-3">{error}</p>
                 )}
 
-                <div className="space-y-3">
-                  <label className="text-[10px] font-bold text-sage/40 uppercase tracking-[0.2em] ml-1">Item Name</label>
-                  <input 
+                <div>
+                  <label className="micro block mb-2.5">What is it</label>
+                  <input
                     type="text"
                     required
                     value={formData.name}
                     onChange={e => setFormData({...formData, name: e.target.value})}
-                    placeholder={formData.type === 'ingredient' ? "e.g., Frozen Spinach" : "e.g., Homemade Lasagna"}
-                    className="w-full px-6 py-4 bg-cream/30 border border-sage/10 rounded-2xl focus:ring-8 focus:ring-terracotta/5 focus:border-terracotta/20 outline-none transition-all text-sage font-medium"
+                    placeholder={formData.type === 'ingredient' ? 'Guanciale, 300 g' : 'Minestrone, 2 portions'}
+                    className="field"
                   />
                 </div>
 
-                <div className="space-y-3">
-                  <label className="text-[10px] font-bold text-sage/40 uppercase tracking-[0.2em] ml-1">Placement Date</label>
-                  <div className="relative">
-                    <CalendarIcon className="absolute left-6 top-1/2 -translate-y-1/2 w-4 h-4 text-sage/30" />
-                    <input 
+                <div>
+                  <label className="micro block mb-2.5">Went in on</label>
+                  <div className="flex items-center gap-3 border-b border-sage/30 focus-within:border-terracotta transition-colors">
+                    <CalendarIcon className="w-4 h-4 text-sage/45 shrink-0" />
+                    <input
                       type="date"
                       required
                       value={formData.placed_at}
                       onChange={e => setFormData({...formData, placed_at: e.target.value})}
-                      className="w-full pl-14 pr-6 py-4 bg-cream/30 border border-sage/10 rounded-2xl focus:ring-8 focus:ring-terracotta/5 focus:border-terracotta/20 outline-none transition-all text-sage font-medium"
+                      className="flex-1 min-w-0 bg-transparent border-0 pb-2.5 text-[17px] text-earth outline-none"
                     />
                   </div>
                 </div>
 
                 {/* Categories / Tags */}
                 <div className="space-y-3">
-                  <label className="text-[10px] font-bold text-sage/40 uppercase tracking-[0.2em] ml-1">Categories / Tags</label>
+                  <label className="micro block">Categories</label>
                   <div className="space-y-2 relative" ref={suggestionRef}>
                     <div className="flex items-center relative">
-                      <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-sage/30" />
+                      <Search className="absolute left-0 top-1.5 w-4 h-4 text-sage/45" />
                       <input 
                         type="text"
                         value={categoryInput}
@@ -471,8 +461,8 @@ export default function Freezer() {
                             handleAddTag(categoryInput);
                           }
                         }}
-                        placeholder="Search or add categories..."
-                        className="w-full pl-12 pr-6 py-4 bg-cream/30 border border-transparent border-b-sage/10 focus:border-b-terracotta/40 focus:bg-white outline-none transition-all text-sm text-sage"
+                        placeholder="Search or add…"
+                        className="w-full pl-7 pr-4 pb-2.5 bg-transparent border-0 border-b border-sage/30 focus:border-terracotta outline-none transition-colors text-[15px] text-earth placeholder:text-earth/30"
                       />
                     </div>
 
@@ -482,17 +472,17 @@ export default function Freezer() {
                           initial={{ opacity: 0, y: -10 }}
                           animate={{ opacity: 1, y: 0 }}
                           exit={{ opacity: 0 }}
-                          className="absolute z-110 left-0 right-0 top-full mt-1 bg-white border border-sage/10 rounded-2xl shadow-xl overflow-hidden"
+                          className="absolute z-110 left-0 right-0 top-full mt-1 bg-cream border border-sage/30 overflow-hidden"
                         >
                           {suggestedCategories.map(cat => (
                             <button
                               key={cat}
                               type="button"
                               onClick={() => handleAddTag(cat)}
-                              className="w-full px-6 py-3 text-left text-xs font-medium text-sage hover:bg-cream hover:text-terracotta transition-colors flex items-center justify-between"
+                              className="w-full px-4 py-3 text-left font-serif text-[17px] text-earth border-b border-sage/15 last:border-b-0 hover:bg-sage/5 transition-colors flex items-center justify-between gap-3"
                             >
                               {cat}
-                              <Plus className="w-3 h-3 opacity-30" />
+                              <Plus className="w-3.5 h-3.5 text-sage/40 shrink-0" />
                             </button>
                           ))}
                         </motion.div>
@@ -502,9 +492,9 @@ export default function Freezer() {
                     <button
                       type="button"
                       onClick={() => handleAddTag(categoryInput)}
-                      className="w-full bg-sage/5 text-sage hover:bg-sage hover:text-cream py-3 rounded-xl font-bold text-[10px] uppercase tracking-widest transition-all"
+                      className="btn-ghost w-full py-3"
                     >
-                      Add Category
+                      Add category
                     </button>
                   </div>
                   
@@ -512,31 +502,27 @@ export default function Freezer() {
                     {formData.categories.map(cat => (
                       <span 
                         key={cat}
-                        className="px-3 py-1.5 bg-sage text-white text-[10px] font-bold uppercase tracking-widest rounded-lg flex items-center gap-2 shadow-sm"
+                        className="chip-on"
                       >
                         {cat}
                         <button 
                           type="button"
                           onClick={() => removeCategory(cat)}
-                          className="text-white/60 hover:text-white transition-colors"
+                          className="hover:text-earth transition-colors"
                         >
                           <X className="w-3 h-3" />
                         </button>
                       </span>
                     ))}
                     {formData.categories.length === 0 && (
-                      <p className="text-[10px] text-sage/30 italic ml-1 pt-1 font-medium">Add some tags to organize better...</p>
+                      <p className="font-serif italic text-[15px] text-earth/40">No categories yet.</p>
                     )}
                   </div>
                 </div>
 
-                <button
-                  type="submit"
-                  disabled={saving}
-                  className="w-full bg-terracotta hover:bg-terracotta/90 text-white font-bold py-5 rounded-2xl transition-all shadow-xl shadow-terracotta/10 flex items-center justify-center gap-3 active:scale-[0.99] disabled:opacity-50"
-                >
-                  {saving ? <Loader2 className="w-5 h-5 animate-spin" /> : editingItem ? <Edit3 className="w-5 h-5" /> : <Plus className="w-5 h-5" />}
-                  {editingItem ? 'Update Entry' : 'Store in Freezer'}
+                <button type="submit" disabled={saving} className="btn-accent w-full py-[19px]">
+                  {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : editingItem ? <Edit3 className="w-4 h-4" /> : <Plus className="w-4 h-4" />}
+                  {editingItem ? 'Save changes' : 'Put it in the freezer'}
                 </button>
               </form>
             </motion.div>
