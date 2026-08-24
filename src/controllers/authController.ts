@@ -2,11 +2,8 @@ import { Request, Response } from 'express';
 import bcrypt from 'bcryptjs';
 import db from '../lib/db.ts';
 import { generateToken } from '../lib/auth.ts';
-import jwt from 'jsonwebtoken';
 import crypto from 'crypto';
 import { sendResetPasswordEmail } from '../services/emailService.ts';
-
-const JWT_SECRET = process.env.JWT_SECRET || 'mia-cucina-jwt-secret-dev';
 
 export const register = async (req: Request, res: Response) => {
   const { email, password, name } = req.body;
@@ -24,9 +21,12 @@ export const register = async (req: Request, res: Response) => {
     
     res.status(201).json({ user, token });
   } catch (err: any) {
-    if (err.message.includes('UNIQUE constraint failed')) {
+    // 23505 = unique_violation. The old check looked for SQLite's message, which Postgres
+    // never produces, so a duplicate signup surfaced as a 500.
+    if (err?.code === '23505' || err?.message?.includes('duplicate key value')) {
       return res.status(409).json({ error: 'Email already exists' });
     }
+    console.error('Error registering user:', err);
     res.status(500).json({ error: 'Internal server error' });
   }
 };
@@ -58,19 +58,10 @@ export const logout = (req: Request, res: Response) => {
   res.json({ message: 'Logged out successfully' });
 };
 
+// Guarded by isAuthenticated, which has already verified the token and populated req.user.
 export const me = (req: Request, res: Response) => {
-  const authHeader = req.headers.authorization;
-  if (!authHeader || !authHeader.startsWith('Bearer ')) {
-    return res.status(401).json({ error: 'Not authenticated' });
-  }
-
-  const token = authHeader.split(' ')[1];
-  try {
-    const decoded = jwt.verify(token, JWT_SECRET) as { userId: number; email: string; name: string };
-    res.json({ id: decoded.userId, email: decoded.email, name: decoded.name });
-  } catch (err) {
-    res.status(401).json({ error: 'Invalid session' });
-  }
+  const user = (req as any).user;
+  res.json({ id: user.userId, email: user.email, name: user.name });
 };
 
 export const updateProfile = async (req: Request, res: Response) => {
@@ -104,8 +95,8 @@ export const changePassword = async (req: Request, res: Response) => {
 
   try {
     const user = await db.get('SELECT password FROM users WHERE id = $1', [userId]) as any;
-    
-    if (!(await bcrypt.compare(currentPassword, user.password))) {
+
+    if (!user || !(await bcrypt.compare(currentPassword, user.password))) {
       return res.status(401).json({ error: 'Incorrect current password' });
     }
 
@@ -178,11 +169,7 @@ export const resetPassword = async (req: Request, res: Response) => {
       return res.status(400).json({ error: 'Invalid or expired reset token' });
     }
     
-    console.log('Raw expiry from DB:', user.reset_token_expiry);
-    console.log('Parsed expiry:', new Date(user.reset_token_expiry).toISOString());
-    console.log('Now:', new Date().toISOString());
-
-    if (new Date(user.reset_token_expiry) < new Date()) {
+    if (!user.reset_token_expiry || new Date(user.reset_token_expiry) < new Date()) {
       return res.status(400).json({ error: 'Reset token has expired' });
     }
 

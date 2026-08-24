@@ -66,11 +66,14 @@ CREATE TABLE IF NOT EXISTS freezer_item_categories (
 );
 
 -- 8. Meal Plans Table
+-- A plan points at a recipe, or records the name of a freezer meal that was consumed when it
+-- was planned (the freezer item itself is removed at that point, so there is no row to
+-- reference), or is just a free-text note.
 CREATE TABLE IF NOT EXISTS meal_plans (
   id SERIAL PRIMARY KEY,
   user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
   recipe_id INTEGER REFERENCES recipes(id) ON DELETE CASCADE,
-  freezer_item_id INTEGER REFERENCES freezer_items(id) ON DELETE CASCADE,
+  freezer_item_name TEXT,
   date DATE NOT NULL,
   meal_type TEXT CHECK(meal_type IN ('breakfast', 'lunch', 'dinner', 'snack')),
   notes TEXT,

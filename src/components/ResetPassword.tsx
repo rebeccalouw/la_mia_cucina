@@ -59,7 +59,7 @@ export default function ResetPassword({ token, onSuccess }: ResetPasswordProps) 
     <motion.div
       initial={{ opacity: 0, scale: 0.95 }}
       animate={{ opacity: 1, scale: 1 }}
-      className="w-full max-w-md bg-white p-8 rounded-[2rem] shadow-2xl shadow-sage/10 border border-sage/5"
+      className="w-full max-w-md bg-white p-8 rounded-4xl shadow-2xl shadow-sage/10 border border-sage/5"
     >
       <div className="text-center mb-8">
         <h2 className="text-3xl font-serif text-sage mb-2">New Password</h2>
@@ -72,7 +72,7 @@ export default function ResetPassword({ token, onSuccess }: ResetPasswordProps) 
         <motion.div 
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
-          className="p-8 bg-sage/10 rounded-[2rem] border border-sage/10 text-center"
+          className="p-8 bg-sage/10 rounded-4xl border border-sage/10 text-center"
         >
           <CheckCircle2 className="w-12 h-12 text-sage mx-auto mb-4" />
           <p className="text-sage font-serif text-xl mb-1">Success!</p>

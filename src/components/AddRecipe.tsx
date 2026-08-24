@@ -143,7 +143,7 @@ export default function AddRecipe({ onSuccess }: AddRecipeProps) {
         <div className="space-y-4">
           <label className="block text-sm font-bold text-sage uppercase tracking-widest ml-1">Recipe Image</label>
           <div className="flex flex-col md:flex-row gap-6 items-center">
-            <div className="w-full md:w-48 h-48 bg-cream/30 border-2 border-dashed border-sage/20 rounded-[2rem] overflow-hidden flex items-center justify-center relative group">
+            <div className="w-full md:w-48 h-48 bg-cream/30 border-2 border-dashed border-sage/20 rounded-4xl overflow-hidden flex items-center justify-center relative group">
               {formData.image_url ? (
                 <>
                   <img src={formData.image_url} alt="Preview" className="w-full h-full object-cover" referrerPolicy="no-referrer" />
@@ -276,7 +276,7 @@ export default function AddRecipe({ onSuccess }: AddRecipeProps) {
               rows={8}
               value={formData.ingredients}
               onChange={handleChange}
-              className="w-full p-6 rounded-[2rem] bg-cream/50 border border-sage/10 focus:border-terracotta/50 focus:ring-4 focus:ring-terracotta/5 outline-none transition-all resize-none"
+              className="w-full p-6 rounded-4xl bg-cream/50 border border-sage/10 focus:border-terracotta/50 focus:ring-4 focus:ring-terracotta/5 outline-none transition-all resize-none"
               placeholder="List one ingredient per line (will be bulleted)..."
             />
           </div>
@@ -288,7 +288,7 @@ export default function AddRecipe({ onSuccess }: AddRecipeProps) {
               rows={8}
               value={formData.instructions}
               onChange={handleChange}
-              className="w-full p-6 rounded-[2rem] bg-cream/50 border border-sage/10 focus:border-terracotta/50 focus:ring-4 focus:ring-terracotta/5 outline-none transition-all resize-none"
+              className="w-full p-6 rounded-4xl bg-cream/50 border border-sage/10 focus:border-terracotta/50 focus:ring-4 focus:ring-terracotta/5 outline-none transition-all resize-none"
               placeholder="Step-by-step method (each line becomes a bullet point)..."
             />
           </div>

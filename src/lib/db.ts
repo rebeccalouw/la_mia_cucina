@@ -2,9 +2,24 @@ import pg from 'pg';
 import dotenv from 'dotenv';
 dotenv.config();
 
+const connectionString = process.env.DATABASE_URL;
+
+if (!connectionString) {
+  throw new Error('DATABASE_URL is not set. Copy .env.example to .env and add your Supabase connection string.');
+}
+
+// Supabase requires TLS, from any environment. Decide from the host rather than NODE_ENV, so
+// local development against Supabase works the same as production; a Postgres running on
+// localhost is the only case that skips it. Set DATABASE_SSL=false to override.
+const isLocalDatabase = /@(localhost|127\.0\.0\.1|\[::1\])[:/]/.test(connectionString);
+const useSsl = process.env.DATABASE_SSL
+  ? process.env.DATABASE_SSL !== 'false'
+  : !isLocalDatabase;
+
 const pool = new pg.Pool({
-  connectionString: process.env.DATABASE_URL,
-  ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false
+  connectionString,
+  // Supabase serves a certificate that is not in Node's default trust store.
+  ssl: useSsl ? { rejectUnauthorized: false } : false
 });
 
 // Helper for logging queries (optional)

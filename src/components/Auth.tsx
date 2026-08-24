@@ -88,7 +88,7 @@ export default function Auth({ onSuccess, initialResetToken }: AuthProps) {
     <motion.div
       initial={{ opacity: 0, scale: 0.95 }}
       animate={{ opacity: 1, scale: 1 }}
-      className="w-full max-w-md bg-white p-8 rounded-[2rem] shadow-2xl shadow-sage/10 border border-sage/5"
+      className="w-full max-w-md bg-white p-8 rounded-4xl shadow-2xl shadow-sage/10 border border-sage/5"
     >
       <div className="text-center mb-8">
         <h2 className="text-3xl font-serif text-sage mb-2">

@@ -43,7 +43,7 @@ export default function ForgotPassword({ onBack }: ForgotPasswordProps) {
     <motion.div
       initial={{ opacity: 0, scale: 0.95 }}
       animate={{ opacity: 1, scale: 1 }}
-      className="w-full max-w-md bg-white p-8 rounded-[2rem] shadow-2xl shadow-sage/10 border border-sage/5"
+      className="w-full max-w-md bg-white p-8 rounded-4xl shadow-2xl shadow-sage/10 border border-sage/5"
     >
       <button 
         onClick={onBack}
@@ -65,7 +65,7 @@ export default function ForgotPassword({ onBack }: ForgotPasswordProps) {
           <motion.div 
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="p-6 bg-sage/10 rounded-[2rem] border border-sage/10 text-center"
+            className="p-6 bg-sage/10 rounded-4xl border border-sage/10 text-center"
           >
             <CheckCircle2 className="w-10 h-10 text-sage mx-auto mb-4" />
             <p className="text-sage font-medium leading-relaxed">

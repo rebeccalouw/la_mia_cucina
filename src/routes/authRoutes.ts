@@ -7,7 +7,7 @@ const router = Router();
 router.post('/register', register);
 router.post('/login', login);
 router.post('/logout', logout);
-router.get('/me', me);
+router.get('/me', isAuthenticated, me);
 router.post('/update-profile', isAuthenticated, updateProfile);
 router.post('/change-password', isAuthenticated, changePassword);
 router.post('/forgot-password', forgotPassword);

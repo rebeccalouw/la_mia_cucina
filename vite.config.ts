@@ -17,7 +17,9 @@ export default defineConfig(({mode}) => {
     },
     server: {
       hmr: process.env.DISABLE_HMR !== 'true',
-      allowedHosts: true,
+      // `true` disabled host-header checking entirely. Set DEV_ALLOWED_HOSTS to a
+      // comma-separated list when reaching the dev server through a tunnel or proxy.
+      allowedHosts: env.DEV_ALLOWED_HOSTS ? env.DEV_ALLOWED_HOSTS.split(',') : [],
     },
   };
 });

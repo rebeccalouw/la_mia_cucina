@@ -140,13 +140,13 @@ export default function ImportRecipe() {
                 value={url}
                 onChange={(e) => setUrl(e.target.value)}
                 required
-                className="w-full pl-14 md:pl-16 pr-6 md:pr-32 py-4 md:py-5 bg-cream/40 rounded-[2rem] border border-sage/10 focus:ring-8 focus:ring-terracotta/5 focus:border-terracotta/20 outline-none transition-all font-sans text-sage text-base md:text-lg"
+                className="w-full pl-14 md:pl-16 pr-6 md:pr-32 py-4 md:py-5 bg-cream/40 rounded-4xl border border-sage/10 focus:ring-8 focus:ring-terracotta/5 focus:border-terracotta/20 outline-none transition-all font-sans text-sage text-base md:text-lg"
               />
             </div>
             <button 
               type="submit"
               disabled={loading}
-              className="md:absolute md:right-3 md:top-1/2 md:-translate-y-1/2 px-8 py-4 md:py-3 bg-terracotta hover:bg-terracotta/90 text-white font-bold rounded-[1.5rem] transition-all shadow-lg shadow-terracotta/20 active:scale-95 disabled:opacity-50 flex items-center justify-center gap-2"
+              className="md:absolute md:right-3 md:top-1/2 md:-translate-y-1/2 px-8 py-4 md:py-3 bg-terracotta hover:bg-terracotta/90 text-white font-bold rounded-3xl transition-all shadow-lg shadow-terracotta/20 active:scale-95 disabled:opacity-50 flex items-center justify-center gap-2"
             >
               {loading ? (
                 <>
@@ -167,7 +167,7 @@ export default function ImportRecipe() {
           <motion.div 
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="mt-8 p-6 bg-red-50 text-red-600 rounded-[2rem] border border-red-100 flex items-center justify-center gap-3"
+            className="mt-8 p-6 bg-red-50 text-red-600 rounded-4xl border border-red-100 flex items-center justify-center gap-3"
           >
             <AlertCircle className="w-5 h-5" />
             <p className="font-medium">{error}</p>
@@ -178,7 +178,7 @@ export default function ImportRecipe() {
           <motion.div 
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="mt-8 p-8 bg-sage/10 text-sage rounded-[2rem] border border-sage/10 flex flex-col items-center gap-4"
+            className="mt-8 p-8 bg-sage/10 text-sage rounded-4xl border border-sage/10 flex flex-col items-center gap-4"
           >
             <CheckCircle2 className="w-10 h-10" />
             <div className="text-center">
@@ -311,7 +311,7 @@ export default function ImportRecipe() {
                   />
                 </div>
                 {(!extractedRecipe.ingredients || !extractedRecipe.instructions) && (
-                  <div className="p-6 bg-amber-50 border border-amber-100 rounded-[2rem] flex items-start gap-4">
+                  <div className="p-6 bg-amber-50 border border-amber-100 rounded-4xl flex items-start gap-4">
                     <AlertCircle className="w-6 h-6 text-amber-500 shrink-0 mt-1" />
                     <div>
                       <p className="text-sm font-bold text-amber-900 uppercase tracking-wide mb-1">Partial Extraction</p>
@@ -333,7 +333,7 @@ export default function ImportRecipe() {
                     value={extractedRecipe.ingredients}
                     onChange={(e) => setExtractedRecipe({...extractedRecipe, ingredients: e.target.value})}
                     rows={12}
-                    className="w-full p-8 bg-cream/30 border border-sage/5 rounded-[2rem] text-sm text-sage/70 font-sans leading-relaxed outline-none focus:border-sage/20 resize-none"
+                    className="w-full p-8 bg-cream/30 border border-sage/5 rounded-4xl text-sm text-sage/70 font-sans leading-relaxed outline-none focus:border-sage/20 resize-none"
                     placeholder="Each line will become a bullet point..."
                   />
                 </div>
@@ -346,7 +346,7 @@ export default function ImportRecipe() {
                     value={extractedRecipe.instructions}
                     onChange={(e) => setExtractedRecipe({...extractedRecipe, instructions: e.target.value})}
                     rows={12}
-                    className="w-full p-8 bg-cream/30 border border-sage/5 rounded-[2rem] text-sm text-sage/70 font-sans leading-relaxed outline-none focus:border-sage/20 resize-none"
+                    className="w-full p-8 bg-cream/30 border border-sage/5 rounded-4xl text-sm text-sage/70 font-sans leading-relaxed outline-none focus:border-sage/20 resize-none"
                     placeholder="Each line will be shown as a step..."
                   />
                 </div>
@@ -390,7 +390,7 @@ export default function ImportRecipe() {
                 <p className="text-sage/60 italic mb-8 border-l-4 border-sage/10 pl-4 py-1 text-sm">
                   We fetched the page content, but no machine-readable recipe structure (JSON-LD) was found. In the next step, our AI chef will parse this raw text for you.
                 </p>
-                <div className="bg-cream/30 p-8 rounded-[2rem] border border-sage/5 overflow-auto max-h-[500px]">
+                <div className="bg-cream/30 p-8 rounded-4xl border border-sage/5 overflow-auto max-h-125">
                   <pre className="text-[10px] text-sage/40 font-mono whitespace-pre-wrap leading-relaxed">
                     {htmlPreview.slice(0, 5000)}
                     {htmlPreview.length > 5000 && '... [content truncated for preview]'}

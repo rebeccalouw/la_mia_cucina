@@ -105,7 +105,7 @@ export default function RecipeList({ onSelectRecipe }: RecipeListProps) {
             placeholder="Search recipes by title..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-12 pr-10 py-4 bg-white rounded-[1.5rem] border border-sage/5 shadow-sm focus:ring-4 focus:ring-terracotta/5 focus:border-terracotta/20 outline-none transition-all font-sans text-sage"
+            className="w-full pl-12 pr-10 py-4 bg-white rounded-3xl border border-sage/5 shadow-sm focus:ring-4 focus:ring-terracotta/5 focus:border-terracotta/20 outline-none transition-all font-sans text-sage"
           />
           {searchQuery && (
             <button 
@@ -200,7 +200,7 @@ export default function RecipeList({ onSelectRecipe }: RecipeListProps) {
                 onClick={() => onSelectRecipe(recipe.id)}
                 className="group bg-white rounded-3xl md:rounded-[2.5rem] overflow-hidden shadow-sm hover:shadow-2xl hover:shadow-sage/10 transition-all border border-sage/5 cursor-pointer flex flex-col h-full"
               >
-                <div className="aspect-[16/10] bg-sage/5 relative overflow-hidden">
+                <div className="aspect-16/10 bg-sage/5 relative overflow-hidden">
                   {recipe.image_url ? (
                     <img 
                       src={recipe.image_url} 

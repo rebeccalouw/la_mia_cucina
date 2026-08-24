@@ -1,5 +1,10 @@
 import { Request, Response } from 'express';
 import * as cheerio from 'cheerio';
+import { safeFetchHtml, UnsafeUrlError } from '../lib/safeFetch.ts';
+
+// The client only ever renders the first 5000 characters of this, as a debugging aid when
+// extraction fails, so there is no reason to ship the whole page back.
+const PREVIEW_HTML_CHARS = 5000;
 
 interface ExtractedRecipe {
   title: string;
@@ -49,18 +54,7 @@ export const fetchUrlPreview = async (req: Request, res: Response) => {
   }
 
   try {
-    const response = await fetch(url, {
-      headers: {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
-        'Accept-Language': 'en-US,en;q=0.9',
-      },
-    });
-
-    if (!response.ok) {
-      return res.status(response.status).json({ error: `Failed to fetch URL: ${response.statusText}` });
-    }
-
-    const html = await response.text();
+    const { html } = await safeFetchHtml(url);
     const $ = cheerio.load(html);
     
     let recipeData: any = null;
@@ -256,8 +250,23 @@ export const fetchUrlPreview = async (req: Request, res: Response) => {
       servings: recipeData?.servings || heuristicData.servings,
     };
 
-    res.json({ html, extractedRecipe: finalRecipe.title ? finalRecipe : null });
+    res.json({
+      html: html.slice(0, PREVIEW_HTML_CHARS),
+      extractedRecipe: finalRecipe.title ? finalRecipe : null
+    });
   } catch (err: any) {
+    if (err instanceof UnsafeUrlError) {
+      return res.status(400).json({ error: err.message });
+    }
+
+    if (err?.name === 'TimeoutError' || err?.name === 'AbortError') {
+      return res.status(504).json({ error: 'That site took too long to respond.' });
+    }
+
+    if (err?.status) {
+      return res.status(502).json({ error: err.message });
+    }
+
     console.error('Error fetching URL:', err);
     res.status(500).json({ error: 'Failed to fetch the provided URL.' });
   }

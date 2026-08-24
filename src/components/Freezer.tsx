@@ -389,7 +389,7 @@ export default function Freezer() {
       {/* Add / Edit Modal */}
       <AnimatePresence>
         {isModalOpen && (
-          <div className="fixed inset-0 z-[100] flex items-center justify-center p-6">
+          <div className="fixed inset-0 z-100 flex items-center justify-center p-6">
             <motion.div 
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -482,7 +482,7 @@ export default function Freezer() {
                           initial={{ opacity: 0, y: -10 }}
                           animate={{ opacity: 1, y: 0 }}
                           exit={{ opacity: 0 }}
-                          className="absolute z-[110] left-0 right-0 top-full mt-1 bg-white border border-sage/10 rounded-2xl shadow-xl overflow-hidden"
+                          className="absolute z-110 left-0 right-0 top-full mt-1 bg-white border border-sage/10 rounded-2xl shadow-xl overflow-hidden"
                         >
                           {suggestedCategories.map(cat => (
                             <button

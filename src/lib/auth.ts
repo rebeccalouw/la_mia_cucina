@@ -1,6 +1,12 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 
+// A predictable signing key in production means forgeable sessions, so refuse to start
+// without one. The development fallback keeps local setup a one-liner.
+if (process.env.NODE_ENV === 'production' && !process.env.JWT_SECRET) {
+  throw new Error('JWT_SECRET must be set in production. Add it to the host environment.');
+}
+
 const JWT_SECRET = process.env.JWT_SECRET || 'mia-cucina-jwt-secret-dev';
 
 export function isAuthenticated(req: Request, res: Response, next: NextFunction) {

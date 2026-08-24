@@ -31,9 +31,8 @@ interface FreezerItem {
 interface MealPlan {
   id: number;
   recipe_id?: number | null;
-  freezer_item_id?: number | null;
   recipe_title?: string;
-  freezer_item_name?: string;
+  freezer_item_name?: string | null;
   recipe_image?: string;
   date: string;
   meal_type: string;
@@ -64,6 +63,9 @@ export default function MealPlannerCalendar() {
   const [planningSource, setPlanningSource] = useState<'pantry' | 'freezer'>('pantry');
   const [planningRecipeId, setPlanningRecipeId] = useState<number | null>(null);
   const [planningFreezerItemId, setPlanningFreezerItemId] = useState<number | null>(null);
+  // Set when editing a plan whose freezer item was already consumed: there is no item left
+  // to re-pick, so the name is shown and sent back unchanged.
+  const [planningFreezerName, setPlanningFreezerName] = useState<string | null>(null);
   const [planningMealType, setPlanningMealType] = useState('dinner');
   const [planningNotes, setPlanningNotes] = useState('');
   const [recipeSearch, setRecipeSearch] = useState('');
@@ -74,6 +76,7 @@ export default function MealPlannerCalendar() {
     setEditingPlanId(null);
     setPlanningRecipeId(null);
     setPlanningFreezerItemId(null);
+    setPlanningFreezerName(null);
     setPlanningNotes('');
     setError('');
     setRecipeSearch('');
@@ -86,9 +89,9 @@ export default function MealPlannerCalendar() {
     if (plan.recipe_id) {
       setPlanningSource('pantry');
       setPlanningRecipeId(plan.recipe_id);
-    } else if (plan.freezer_item_id) {
+    } else if (plan.freezer_item_name) {
       setPlanningSource('freezer');
-      setPlanningFreezerItemId(plan.freezer_item_id);
+      setPlanningFreezerName(plan.freezer_item_name);
     }
     setPlanningMealType(plan.meal_type);
     setPlanningNotes(plan.notes || '');
@@ -175,7 +178,7 @@ export default function MealPlannerCalendar() {
   };
 
   const handleSavePlan = async () => {
-    if (!selectedDate || (!planningRecipeId && !planningFreezerItemId && !planningNotes.trim())) return;
+    if (!selectedDate || (!planningRecipeId && !planningFreezerItemId && !planningFreezerName && !planningNotes.trim())) return;
 
     setSaving(true);
     const token = localStorage.getItem('la_mia_cucina_token');
@@ -193,6 +196,7 @@ export default function MealPlannerCalendar() {
         body: JSON.stringify({
           recipeId: planningSource === 'pantry' ? planningRecipeId : null,
           freezerItemId: planningSource === 'freezer' ? planningFreezerItemId : null,
+          freezerItemName: planningSource === 'freezer' && !planningFreezerItemId ? planningFreezerName : null,
           date: selectedDate,
           mealType: planningMealType,
           notes: planningNotes
@@ -288,7 +292,7 @@ export default function MealPlannerCalendar() {
         key={dStr}
         whileHover={{ y: -4 }}
         onClick={() => setSelectedDate(dStr)}
-        className={`min-h-[6rem] md:h-48 p-3 bg-white border border-sage/5 rounded-2xl md:rounded-[2rem] shadow-sm hover:shadow-xl hover:shadow-sage/10 transition-all group flex flex-col relative overflow-hidden cursor-pointer ${isToday ? 'ring-2 ring-terracotta' : ''}`}
+        className={`min-h-24 md:h-48 p-3 bg-white border border-sage/5 rounded-2xl md:rounded-4xl shadow-sm hover:shadow-xl hover:shadow-sage/10 transition-all group flex flex-col relative overflow-hidden cursor-pointer ${isToday ? 'ring-2 ring-terracotta' : ''}`}
       >
         <div className="flex justify-between items-start mb-1 overflow-hidden">
           <div className="flex flex-col md:flex-row md:items-center gap-0 md:gap-2">
@@ -317,7 +321,7 @@ export default function MealPlannerCalendar() {
               <div className="w-6 h-6 md:w-8 md:h-8 rounded-md overflow-hidden shrink-0 border border-white bg-cream flex items-center justify-center">
                 {plan.recipe_id ? (
                   <img src={plan.recipe_image || 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c'} alt="" className="w-full h-full object-cover" referrerPolicy="no-referrer" />
-                ) : plan.freezer_item_id ? (
+                ) : plan.freezer_item_name ? (
                   <Snowflake className="w-4 h-4 md:w-5 md:h-5 text-sage/40" />
                 ) : (
                   <MessageSquare className="w-3 h-3 md:w-4 md:h-4 text-sage/40" />
@@ -325,12 +329,12 @@ export default function MealPlannerCalendar() {
               </div>
               <div className="flex-1 min-w-0">
                 <p className="text-[8px] md:text-[10px] font-bold text-sage truncate leading-tight uppercase tracking-tighter">
-                  {plan.recipe_id ? plan.recipe_title : (plan.freezer_item_id ? plan.freezer_item_name : plan.notes)}
+                  {plan.recipe_id ? plan.recipe_title : (plan.freezer_item_name || plan.notes)}
                 </p>
                 <div className="flex items-center gap-1">
                   <p className={`text-[7px] md:text-[8px] uppercase font-bold tracking-widest leading-none ${
-                      plan.meal_type === 'breakfast' ? 'text-[#B8860B]' :
-                      plan.meal_type === 'lunch' ? 'text-[#B8860B]' :
+                      plan.meal_type === 'breakfast' ? 'text-honey' :
+                      plan.meal_type === 'lunch' ? 'text-honey' :
                       plan.meal_type === 'dinner' ? 'text-terracotta' :
                       'text-terracotta/70'
                     }`}>{plan.meal_type}</p>
@@ -467,7 +471,7 @@ export default function MealPlannerCalendar() {
         <div className="grid grid-cols-7 gap-4">
           {loading ? (
             Array.from({ length: 35 }).map((_, i) => (
-              <div key={i} className="h-48 bg-white/50 border border-sage/5 rounded-[2rem] animate-pulse" />
+              <div key={i} className="h-48 bg-white/50 border border-sage/5 rounded-4xl animate-pulse" />
             ))
           ) : (
             days
@@ -478,7 +482,7 @@ export default function MealPlannerCalendar() {
       {/* Planning Modal */}
       <AnimatePresence>
         {selectedDate && (
-          <div className="fixed inset-0 z-[100] flex items-center justify-center p-3 md:p-6">
+          <div className="fixed inset-0 z-100 flex items-center justify-center p-3 md:p-6">
              <motion.div 
                initial={{ opacity: 0 }}
                animate={{ opacity: 1 }}
@@ -490,7 +494,7 @@ export default function MealPlannerCalendar() {
                initial={{ scale: 0.9, opacity: 0, y: 20 }}
                animate={{ scale: 1, opacity: 1, y: 0 }}
                exit={{ scale: 0.9, opacity: 0, y: 20 }}
-               className="relative w-full max-w-xl bg-white rounded-[2rem] md:rounded-[3.5rem] shadow-2xl overflow-hidden border border-sage/5"
+               className="relative w-full max-w-xl bg-white rounded-4xl md:rounded-[3.5rem] shadow-2xl overflow-hidden border border-sage/5"
              >
                 <div className="px-4 py-4 md:px-6 md:py-5 bg-sage/5 border-b border-sage/5 flex items-center justify-between">
                   <div>
@@ -519,6 +523,7 @@ export default function MealPlannerCalendar() {
                               setEditingPlanId(null);
                               setPlanningRecipeId(null);
                               setPlanningFreezerItemId(null);
+                              setPlanningFreezerName(null);
                             }}
                             className="text-[9px] text-terracotta font-bold uppercase tracking-widest hover:underline flex items-center gap-1"
                           >
@@ -540,7 +545,7 @@ export default function MealPlannerCalendar() {
                             <div className="w-8 h-8 rounded-lg overflow-hidden shrink-0 border border-white bg-cream flex items-center justify-center">
                               {plan.recipe_id ? (
                                 <img src={plan.recipe_image || 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c'} alt="" className="w-full h-full object-cover" referrerPolicy="no-referrer" />
-                              ) : plan.freezer_item_id ? (
+                              ) : plan.freezer_item_name ? (
                                 <Snowflake className={`w-4 h-4 ${editingPlanId === plan.id ? 'text-white/40' : 'text-sage/40'}`} />
                               ) : (
                                 <MessageSquare className={`w-3.5 h-3.5 ${editingPlanId === plan.id ? 'text-white/40' : 'text-sage/40'}`} />
@@ -548,7 +553,7 @@ export default function MealPlannerCalendar() {
                             </div>
                             <div className="flex-1 min-w-0">
                                <p className={`text-[11px] font-bold truncate ${editingPlanId === plan.id ? 'text-white' : 'text-sage'}`}>
-                                 {plan.recipe_id ? plan.recipe_title : (plan.freezer_item_id ? plan.freezer_item_name : 'Custom Note')}
+                                 {plan.recipe_id ? plan.recipe_title : (plan.freezer_item_name || 'Custom Note')}
                                </p>
                                <p className={`text-[8px] uppercase font-bold tracking-widest ${editingPlanId === plan.id ? 'text-white/60' : 'text-terracotta'}`}>{plan.meal_type}</p>
                                {plan.notes && (
@@ -594,7 +599,7 @@ export default function MealPlannerCalendar() {
                           className={`px-2 py-2 rounded-xl text-[9px] font-bold uppercase tracking-widest transition-all border ${
                             planningMealType === type 
                               ? 'bg-terracotta text-cream border-terracotta shadow-md' 
-                              : 'bg-white text-sage/60 border-sage/10 hover:bg-[#B8860B]/5 hover:text-[#B8860B]'
+                              : 'bg-white text-sage/60 border-sage/10 hover:bg-honey/5 hover:text-honey'
                           }`}
                         >
                           {type}
@@ -611,6 +616,7 @@ export default function MealPlannerCalendar() {
                         onClick={() => {
                           setPlanningSource('pantry');
                           setPlanningFreezerItemId(null);
+                          setPlanningFreezerName(null);
                         }}
                         className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-2xl text-[10px] font-bold uppercase tracking-widest border transition-all ${
                           planningSource === 'pantry'
@@ -738,7 +744,7 @@ export default function MealPlannerCalendar() {
                       value={planningNotes}
                       onChange={(e) => setPlanningNotes(e.target.value)}
                       placeholder="e.g., Serve with sweet potato fries and a garden salad..."
-                      className="w-full text-xs bg-cream/30 border border-sage/10 rounded-2xl p-4 outline-none focus:border-sage/30 transition-all font-medium text-sage min-h-[80px] resize-none"
+                      className="w-full text-xs bg-cream/30 border border-sage/10 rounded-2xl p-4 outline-none focus:border-sage/30 transition-all font-medium text-sage min-h-20 resize-none"
                     />
                   </div>
                 </div>

@@ -51,14 +51,25 @@ async function seed() {
     ];
 
     for (const r of recipes) {
+      // `recipes` has no unique constraint, so ON CONFLICT DO NOTHING never fired and every
+      // re-run added another copy. Check for the recipe by title per user instead.
+      const existing = await db.get(
+        'SELECT id FROM recipes WHERE user_id = $1 AND title = $2',
+        [userId, r.title]
+      ) as any;
+
+      if (existing) {
+        console.log(`   skipping "${r.title}" (already seeded)`);
+        continue;
+      }
+
       const result = await db.run(`
         INSERT INTO recipes 
         (user_id, title, description, ingredients, instructions, prep_time, cook_time, servings) 
         VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
-        ON CONFLICT DO NOTHING
         RETURNING id
       `, [userId, r.title, r.description, r.ingredients, r.instructions, r.prep_time, r.cook_time, r.servings]);
-      
+
       if (result.rowCount && result.rowCount > 0 && result.rows[0]) {
         const recipeId = result.rows[0].id;
         for (const catId of r.categories) {

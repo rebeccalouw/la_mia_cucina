@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { motion } from 'motion/react';
 import { 
   Utensils, 
-  Calendar as CalendarIcon, 
   Clock, 
   ChevronRight, 
   ChefHat, 
@@ -173,7 +172,7 @@ export default function Dashboard({ onNavigate }: DashboardProps) {
                   <div className="w-16 h-16 rounded-2xl overflow-hidden border border-cream shadow-sm shrink-0 bg-cream flex items-center justify-center">
                     {meal.recipe_id ? (
                       <img src={meal.recipe_image || meal.image_url} alt="" className="w-full h-full object-cover" referrerPolicy="no-referrer" />
-                    ) : meal.freezer_item_id ? (
+                    ) : meal.freezer_item_name ? (
                       <Snowflake className="w-8 h-8 text-sage/20" />
                     ) : (
                       <MessageSquare className="w-8 h-8 text-sage/20" />
@@ -182,9 +181,9 @@ export default function Dashboard({ onNavigate }: DashboardProps) {
                   <div className="flex-1">
                     <p className="text-[10px] font-bold text-terracotta uppercase tracking-[0.2em] mb-1">{meal.meal_type}</p>
                     <h4 className="text-lg font-serif text-sage">
-                      {meal.recipe_id ? meal.recipe_title : (meal.freezer_item_id ? meal.freezer_item_name : meal.notes)}
+                      {meal.recipe_id ? meal.recipe_title : (meal.freezer_item_name || meal.notes)}
                     </h4>
-                    {((meal.recipe_id || meal.freezer_item_id) && meal.notes) && (
+                    {((meal.recipe_id || meal.freezer_item_name) && meal.notes) && (
                       <p className="text-[10px] text-sage/40 italic mt-1 line-clamp-1">{meal.notes}</p>
                     )}
                   </div>
@@ -192,7 +191,7 @@ export default function Dashboard({ onNavigate }: DashboardProps) {
                     onClick={() => {
                       if (meal.recipe_id) {
                         onNavigate('recipes', meal.recipe_id);
-                      } else if (meal.freezer_item_id) {
+                      } else if (meal.freezer_item_name) {
                         onNavigate('freezer');
                       } else {
                         onNavigate('planner');
@@ -250,7 +249,7 @@ export default function Dashboard({ onNavigate }: DashboardProps) {
                   <div className="flex items-center gap-4 mt-1">
                     <div className="flex items-center gap-1.5 text-[9px] font-bold text-sage/30 uppercase tracking-widest">
                       <Clock className="w-3 h-3" />
-                      {recipe.prep_time + recipe.cook_time} min
+                      {(recipe.prep_time || 0) + (recipe.cook_time || 0)} min
                     </div>
                   </div>
                 </div>
