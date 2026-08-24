@@ -1,0 +1,5 @@
+# Robot Framework API test suite for La Mia Cucina.
+#   python3 -m venv tests/.venv
+#   tests/.venv/bin/pip install -r tests/requirements.txt
+robotframework>=7.0,<8
+robotframework-requests>=0.9.7

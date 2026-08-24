@@ -24,3 +24,9 @@ Thumbs.db
 # IDE/editor
 .vscode/
 .idea/
+
+# Robot Framework test artefacts
+tests/.venv/
+tests/results/
+__pycache__/
+*.pyc

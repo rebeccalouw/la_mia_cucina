@@ -77,6 +77,31 @@ sets it for you.
 - `npm run lint` — type-checks the whole project with `tsc --noEmit` (strict).
 - `npm run seed` — seeds demo data.
 - `npm run clean` — removes `dist/`.
+- `npm run test:api:setup` — creates the Python virtualenv the API tests run from.
+- `npm run test:api` — runs the Robot Framework API suites against a running app.
+
+## Tests
+
+`tests/` holds Robot Framework suites that drive the HTTP API end to end — real requests against
+a running app and a real database, no mocks. Around a hundred tests covering authentication,
+recipes, categories, the freezer, the meal planner, recipe import and image upload, including
+the ownership rules that keep one account's data out of another's.
+
+```bash
+npm run test:api:setup     # once: creates tests/.venv and installs Robot Framework
+npm run dev                # the app has to be running
+npm run test:api           # in another terminal
+```
+
+The suites write to whatever database the app is pointed at, so run them against a development
+database. Each suite registers its own throwaway users and deletes the rows it created; only the
+user records are left behind, since the API has no way to delete an account.
+
+Arguments are forwarded to `robot`, so `npm run test:api -- --include planner` runs one area and
+`npm run test:api -- --exclude network` skips the single test that fetches a public page.
+Results, including a request-by-request `log.html`, land in `tests/results/`.
+
+See [`tests/README.md`](tests/README.md) for the layout and conventions.
 
 ## Architecture
 

@@ -1,0 +1,1 @@
+This file exists so the upload endpoint has something invalid to reject.

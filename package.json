@@ -13,6 +13,8 @@
     "preview": "vite preview",
     "clean": "rm -rf dist",
     "lint": "tsc --noEmit",
+    "test:api": "tests/run_tests.sh",
+    "test:api:setup": "python3 -m venv tests/.venv && tests/.venv/bin/pip install -q -r tests/requirements.txt",
     "seed": "tsx seed.ts"
   },
   "dependencies": {
