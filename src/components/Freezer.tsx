@@ -220,7 +220,7 @@ export default function Freezer() {
       <div className="flex items-baseline justify-between gap-4 pb-3">
         <div className="flex items-center gap-3.5">
           <h3 className="text-[11px] font-semibold uppercase tracking-[0.30em] text-earth">{title}</h3>
-          <span className="font-serif text-[15px] text-sage/45">{String(list.length).padStart(2, '0')}</span>
+          <span className="text-[15px] text-sage/45">{String(list.length).padStart(2, '0')}</span>
         </div>
         <button
           onClick={() => handleOpenModal(type)}
@@ -261,7 +261,7 @@ export default function Freezer() {
               </div>
 
               <div className="shrink-0 text-right">
-                <p className={`font-serif text-2xl leading-none ${daysIn(item.placed_at) > 60 ? 'text-terracotta' : 'text-earth'}`}>
+                <p className={`font-light text-2xl leading-none tracking-[-0.02em] ${daysIn(item.placed_at) > 60 ? 'text-terracotta' : 'text-earth'}`}>
                   {String(daysIn(item.placed_at)).padStart(2, '0')}
                 </p>
                 <p className="micro mt-1">days</p>
@@ -325,7 +325,7 @@ export default function Freezer() {
           className="w-full mt-3 py-6 px-6 border border-dashed border-sage/30 flex items-center justify-center gap-3.5 text-sage/55 hover:bg-sage/5 transition-colors"
         >
           <Plus className="w-4 h-4" />
-          <span className="font-serif italic text-[17px]">
+          <span className="font-light text-[17px]">
             Nothing here yet &mdash; add {type === 'ingredient' ? 'an ingredient' : 'a cooked meal'}
           </span>
         </button>
@@ -341,7 +341,7 @@ export default function Freezer() {
           <p className="label">
             {items.length} {items.length === 1 ? 'thing' : 'things'} on ice
           </p>
-          <h1 className="mt-3 text-[40px] md:text-[56px] leading-none tracking-[-0.025em]">
+          <h1 className="font-serif font-bold mt-3 text-[40px] md:text-[56px] leading-none tracking-[-0.025em]">
             The <span className="italic font-normal text-sage">freezer</span>
           </h1>
         </div>
@@ -398,7 +398,7 @@ export default function Freezer() {
               <div className="px-8 pt-8 pb-5 border-b-2 border-sage/65 flex items-start justify-between gap-4">
                 <div>
                   <p className="label">{editingItem ? 'Editing' : 'Putting something in'}</p>
-                  <h3 className="mt-2.5 font-serif text-[32px] leading-none text-earth">
+                  <h3 className="mt-2.5 font-serif font-bold text-[32px] leading-none text-earth">
                     {formData.type === 'ingredient' ? 'An ingredient' : 'A cooked meal'}
                   </h3>
                 </div>
@@ -479,7 +479,7 @@ export default function Freezer() {
                               key={cat}
                               type="button"
                               onClick={() => handleAddTag(cat)}
-                              className="w-full px-4 py-3 text-left font-serif text-[17px] text-earth border-b border-sage/15 last:border-b-0 hover:bg-sage/5 transition-colors flex items-center justify-between gap-3"
+                              className="w-full px-4 py-3 text-left text-[17px] text-earth border-b border-sage/15 last:border-b-0 hover:bg-sage/5 transition-colors flex items-center justify-between gap-3"
                             >
                               {cat}
                               <Plus className="w-3.5 h-3.5 text-sage/40 shrink-0" />
@@ -515,7 +515,7 @@ export default function Freezer() {
                       </span>
                     ))}
                     {formData.categories.length === 0 && (
-                      <p className="font-serif italic text-[15px] text-earth/40">No categories yet.</p>
+                      <p className="font-light text-[15px] text-earth/40">No categories yet.</p>
                     )}
                   </div>
                 </div>

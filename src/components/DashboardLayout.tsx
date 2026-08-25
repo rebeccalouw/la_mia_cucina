@@ -70,7 +70,7 @@ export default function DashboardLayout({ user, onLogout, children, activeTab, o
               className="text-right group"
             >
               <p className="micro leading-none mb-1.5 group-hover:text-terracotta transition-colors">Chef</p>
-              <p className={`font-serif text-[15px] leading-none transition-colors ${activeTab === 'profile' ? 'text-terracotta' : 'text-sage group-hover:text-terracotta'}`}>
+              <p className={`text-[15px] leading-none transition-colors ${activeTab === 'profile' ? 'text-terracotta' : 'text-sage group-hover:text-terracotta'}`}>
                 {user.name}
               </p>
             </button>
@@ -123,7 +123,7 @@ export default function DashboardLayout({ user, onLogout, children, activeTab, o
                   className="text-left group"
                 >
                   <p className="micro mb-1.5">Chef</p>
-                  <h2 className={`font-serif text-[28px] leading-tight transition-colors ${activeTab === 'profile' ? 'text-terracotta' : 'text-earth group-hover:text-terracotta'}`}>
+                  <h2 className={`text-[28px] leading-tight transition-colors ${activeTab === 'profile' ? 'text-terracotta' : 'text-earth group-hover:text-terracotta'}`}>
                     {user.name}
                   </h2>
                 </button>
@@ -149,7 +149,7 @@ export default function DashboardLayout({ user, onLogout, children, activeTab, o
                       <span className="absolute -left-6 top-0 bottom-0 w-[3px] bg-terracotta" />
                     )}
                     <item.icon className={`w-5 h-5 shrink-0 ${activeTab === item.id ? 'text-terracotta' : 'text-sage'}`} />
-                    <span className={`font-serif text-[21px] ${activeTab === item.id ? 'text-terracotta' : 'text-earth'}`}>
+                    <span className={`text-[21px] ${activeTab === item.id ? 'text-terracotta' : 'text-earth'}`}>
                       {item.label}
                     </span>
                   </button>
@@ -165,7 +165,7 @@ export default function DashboardLayout({ user, onLogout, children, activeTab, o
                     <span className="absolute -left-6 top-0 bottom-0 w-[3px] bg-terracotta" />
                   )}
                   <ChefHat className={`w-5 h-5 shrink-0 ${activeTab === 'profile' ? 'text-terracotta' : 'text-sage'}`} />
-                  <span className={`font-serif text-[21px] ${activeTab === 'profile' ? 'text-terracotta' : 'text-earth'}`}>
+                  <span className={`text-[21px] ${activeTab === 'profile' ? 'text-terracotta' : 'text-earth'}`}>
                     Chef profile
                   </span>
                 </button>

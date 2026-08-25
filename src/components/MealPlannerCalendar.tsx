@@ -300,7 +300,7 @@ export default function MealPlannerCalendar() {
           ) : (
             <span className="md:hidden micro">{dayName}</span>
           )}
-          <span className={`font-serif text-[15px] leading-none ml-auto ${isToday ? 'text-earth' : 'text-earth/55'}`}>
+          <span className={`text-[15px] leading-none ml-auto ${isToday ? 'text-earth' : 'text-earth/55'}`}>
             {label}
           </span>
         </div>
@@ -374,7 +374,7 @@ export default function MealPlannerCalendar() {
           <p className="label">
             {mealPlans.length} {mealPlans.length === 1 ? 'meal' : 'meals'} on the board
           </p>
-          <h1 className="mt-3 text-[36px] md:text-[50px] leading-none tracking-[-0.025em]">
+          <h1 className="font-serif font-bold mt-3 text-[36px] md:text-[50px] leading-none tracking-[-0.025em]">
             {monthName} <span className="italic font-normal text-sage">{year}</span>
           </h1>
         </div>
@@ -481,7 +481,7 @@ export default function MealPlannerCalendar() {
                 <div className="px-6 md:px-9 pt-8 pb-5 border-b-2 border-sage/65 flex items-start justify-between gap-4">
                   <div>
                     <p className="label">{editingPlanId ? 'Changing the plan for' : 'Planning for'}</p>
-                    <h3 className="mt-2.5 font-serif text-[28px] md:text-[36px] leading-tight text-earth">
+                    <h3 className="mt-2.5 font-serif font-bold text-[28px] md:text-[36px] leading-tight text-earth">
                       {new Date(selectedDate).toLocaleDateString('default', { weekday: 'long' })},{' '}
                       <span className="italic font-normal text-sage">
                         {new Date(selectedDate).toLocaleDateString('default', { day: 'numeric', month: 'long' })}
@@ -626,7 +626,7 @@ export default function MealPlannerCalendar() {
                         placeholder={planningSource === 'pantry' ? 'Search your recipes…' : 'Search the freezer…'}
                         value={recipeSearch}
                         onChange={(e) => setRecipeSearch(e.target.value)}
-                        className="w-full bg-transparent border-0 border-b border-sage/30 pb-2.5 font-serif italic text-[17px] text-earth outline-none transition-colors placeholder:text-earth/40 focus:border-terracotta"
+                        className="w-full bg-transparent border-0 border-b border-sage/30 pb-2.5 font-light text-[17px] text-earth outline-none transition-colors placeholder:text-earth/40 focus:border-terracotta"
                       />
                       {planningSource === 'pantry' && (
                         <select
@@ -690,12 +690,12 @@ export default function MealPlannerCalendar() {
                          ))
                        )}
                        {planningSource === 'pantry' && recipes.length === 0 && (
-                         <p className="md:col-span-2 py-5 text-center font-serif italic text-earth/45">
+                         <p className="md:col-span-2 py-5 text-center font-light text-earth/45">
                            Nothing in the box yet.
                          </p>
                        )}
                        {planningSource === 'freezer' && freezerMeals.length === 0 && (
-                         <p className="md:col-span-2 py-5 text-center font-serif italic text-earth/45">
+                         <p className="md:col-span-2 py-5 text-center font-light text-earth/45">
                            No cooked meals in the freezer.
                          </p>
                        )}
@@ -710,14 +710,14 @@ export default function MealPlannerCalendar() {
                       value={planningNotes}
                       onChange={(e) => setPlanningNotes(e.target.value)}
                       placeholder="Double the basil this time"
-                      className="field font-serif italic text-base"
+                      className="field font-light text-base"
                     />
                   </div>
                 </div>
 
                 {/* Fixed Footer Action */}
                 <div className="px-6 md:px-9 py-5 border-t border-sage/20 flex flex-wrap items-center justify-between gap-4">
-                  <p className="font-serif italic text-[15px] text-earth/45">
+                  <p className="font-light text-[15px] text-earth/45">
                     {plansForSelectedDate.length === 0
                       ? 'Nothing planned for this day yet.'
                       : `${plansForSelectedDate.length} already on this day.`}
@@ -741,7 +741,7 @@ export default function MealPlannerCalendar() {
 
       {/* Legend / Upcoming (Sneak Peek) */}
       <div className="hidden md:flex items-center justify-between gap-6 mt-10 pt-6 border-t border-sage/20">
-        <p className="font-serif italic text-lg text-earth/55">
+        <p className="font-light text-lg text-earth/55">
           {todayCount === 0
             ? 'Nothing on the board for today.'
             : `${todayCount} on the board for today.`}

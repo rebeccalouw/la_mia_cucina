@@ -99,7 +99,7 @@ export default function RecipeList({ onSelectRecipe }: RecipeListProps) {
           <p className="label">
             The recipe box &nbsp;&mdash;&nbsp; {recipes.length} {recipes.length === 1 ? 'entry' : 'entries'}
           </p>
-          <h1 className="mt-3 text-[40px] md:text-[64px] leading-none tracking-[-0.025em]">
+          <h1 className="font-serif font-bold mt-3 text-[40px] md:text-[64px] leading-none tracking-[-0.025em]">
             Everything <span className="italic font-normal text-sage">you cook</span>
           </h1>
         </div>
@@ -111,7 +111,7 @@ export default function RecipeList({ onSelectRecipe }: RecipeListProps) {
             placeholder="Search the box…"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="flex-1 min-w-0 bg-transparent border-0 outline-none font-serif italic text-lg text-earth placeholder:text-earth/40"
+            className="flex-1 min-w-0 bg-transparent border-0 outline-none font-light text-lg text-earth placeholder:text-earth/40"
           />
           {searchQuery && (
             <button onClick={() => setSearchQuery('')} className="p-1 -m-1 text-sage/40 hover:text-sage transition-colors">
@@ -149,7 +149,7 @@ export default function RecipeList({ onSelectRecipe }: RecipeListProps) {
 
       {error ? (
         <div className="border border-brick/40 bg-brick/5 text-brick p-8 text-center">
-          <p className="font-serif text-lg">{error}</p>
+          <p className="text-lg">{error}</p>
         </div>
       ) : recipes.length === 0 ? (
         <motion.div
@@ -158,7 +158,7 @@ export default function RecipeList({ onSelectRecipe }: RecipeListProps) {
           className="text-center py-24 px-8 border border-dashed border-sage/30"
         >
           <Utensils className="w-12 h-12 text-sage/25 mx-auto mb-6" strokeWidth={1.1} />
-          <h3 className="font-serif italic text-3xl text-earth/60 mb-3">
+          <h3 className="font-light text-3xl text-earth/60 mb-3">
             {filtering ? 'Nothing here matches' : 'Your recipe box is still empty'}
           </h3>
           <p className="micro">
@@ -201,7 +201,7 @@ export default function RecipeList({ onSelectRecipe }: RecipeListProps) {
                     </div>
                   )}
                   {/* The index tag is notched into the corner, like a plate number. */}
-                  <span className="absolute top-0 left-0 px-3.5 py-2 bg-cream font-serif text-[13px] text-sage">
+                  <span className="absolute top-0 left-0 px-3.5 py-2 bg-cream text-[13px] tracking-[0.06em] text-sage">
                     {String(index + 1).padStart(2, '0')}
                   </span>
                   {recipe.is_imported && (
@@ -218,7 +218,7 @@ export default function RecipeList({ onSelectRecipe }: RecipeListProps) {
                   {recipe.title}
                 </h3>
                 {recipe.description && (
-                  <p className="font-serif italic text-[15px] leading-relaxed text-earth/55 line-clamp-2">
+                  <p className="font-light text-[15px] leading-relaxed text-earth/55 line-clamp-2">
                     {recipe.description}
                   </p>
                 )}

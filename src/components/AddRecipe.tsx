@@ -119,8 +119,8 @@ export default function AddRecipe({ onSuccess }: AddRecipeProps) {
         className="max-w-xl mx-auto my-20 border border-sage/40 bg-sage/6 p-12 text-center"
       >
         <CheckCircle2 className="w-12 h-12 text-sage mx-auto mb-5" strokeWidth={1.2} />
-        <h2 className="font-serif text-4xl text-sage mb-3">Buon appetito</h2>
-        <p className="font-serif italic text-lg text-earth/60">
+        <h2 className="font-serif font-bold text-4xl text-sage mb-3">Buon appetito</h2>
+        <p className="font-light text-lg text-earth/60">
           {formData.title ? `“${formData.title}” is in the box.` : 'It is in the box.'}
         </p>
       </motion.div>
@@ -142,7 +142,7 @@ export default function AddRecipe({ onSuccess }: AddRecipeProps) {
         </button>
       </div>
 
-      <h1 className="text-[40px] md:text-[54px] leading-none tracking-[-0.025em] mb-10">
+      <h1 className="font-serif font-bold text-[40px] md:text-[54px] leading-none tracking-[-0.025em] mb-10">
         Write a <span className="italic font-normal text-sage">new recipe</span>
       </h1>
 
@@ -168,7 +168,7 @@ export default function AddRecipe({ onSuccess }: AddRecipeProps) {
               ) : (
                 <>
                   <ImageIcon className="w-8 h-8 text-sage/30" strokeWidth={1.2} />
-                  <p className="font-serif italic text-[17px] text-sage/55">Drop a photograph here</p>
+                  <p className="font-light text-[17px] text-sage/55">Drop a photograph here</p>
                   <label className="cursor-pointer px-5 py-2.5 bg-cream border border-sage/35 text-sage text-[9px] font-semibold uppercase tracking-[0.24em] hover:bg-sage/5 transition-colors">
                     Choose a file
                     <input type="file" className="hidden" accept="image/*" onChange={handleImageUpload} disabled={uploading} />
@@ -230,7 +230,7 @@ export default function AddRecipe({ onSuccess }: AddRecipeProps) {
                 min="0"
                 value={formData.prep_time}
                 onChange={handleChange}
-                className="w-full bg-transparent border-0 border-b border-sage/30 pb-2 font-serif text-[26px] text-earth outline-none transition-colors placeholder:text-earth/30 focus:border-terracotta"
+                className="w-full bg-transparent border-0 border-b border-sage/30 pb-2 font-light text-[26px] text-earth outline-none transition-colors placeholder:text-earth/30 focus:border-terracotta"
                 placeholder="15"
               />
             </div>
@@ -242,7 +242,7 @@ export default function AddRecipe({ onSuccess }: AddRecipeProps) {
                 min="0"
                 value={formData.cook_time}
                 onChange={handleChange}
-                className="w-full bg-transparent border-0 border-b border-sage/30 pb-2 font-serif text-[26px] text-earth outline-none transition-colors placeholder:text-earth/30 focus:border-terracotta"
+                className="w-full bg-transparent border-0 border-b border-sage/30 pb-2 font-light text-[26px] text-earth outline-none transition-colors placeholder:text-earth/30 focus:border-terracotta"
                 placeholder="45"
               />
             </div>
@@ -254,7 +254,7 @@ export default function AddRecipe({ onSuccess }: AddRecipeProps) {
                 min="1"
                 value={formData.servings}
                 onChange={handleChange}
-                className="w-full bg-transparent border-0 border-b border-sage/30 pb-2 font-serif text-[26px] text-earth outline-none transition-colors placeholder:text-earth/30 focus:border-terracotta"
+                className="w-full bg-transparent border-0 border-b border-sage/30 pb-2 font-light text-[26px] text-earth outline-none transition-colors placeholder:text-earth/30 focus:border-terracotta"
               />
             </div>
           </div>
@@ -309,7 +309,7 @@ export default function AddRecipe({ onSuccess }: AddRecipeProps) {
                 name="description"
                 value={formData.description}
                 onChange={handleChange}
-                className="field font-serif italic text-base"
+                className="field font-light text-base"
                 placeholder="Any special tips?"
               />
             </div>

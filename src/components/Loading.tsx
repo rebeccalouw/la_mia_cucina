@@ -16,7 +16,7 @@ export default function Loading({ message }: { message: string }) {
           />
         ))}
       </div>
-      <p className="font-serif italic text-xl text-earth/55">{message}</p>
+      <p className="font-light text-xl text-earth/55">{message}</p>
     </div>
   );
 }

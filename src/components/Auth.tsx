@@ -126,14 +126,14 @@ export default function Auth({ onSuccess, initialResetToken }: AuthProps) {
           </button>
         </div>
 
-        <h2 className="text-[40px] md:text-[52px] leading-none tracking-[-0.03em]">
+        <h2 className="font-serif font-bold text-[40px] md:text-[52px] leading-none tracking-[-0.03em]">
           {mode === 'login' ? (
             <>Welcome <span className="italic font-normal text-sage">back</span></>
           ) : (
             <>Join the <span className="italic font-normal text-sage">kitchen</span></>
           )}
         </h2>
-        <p className="mt-4 mb-11 font-serif italic text-lg text-earth/55">
+        <p className="mt-4 mb-11 font-light text-lg text-earth/55">
           {mode === 'login' ? 'Let yourself into the kitchen.' : 'Somewhere to keep everything worth cooking twice.'}
         </p>
 
@@ -282,7 +282,7 @@ function AuthShell({ children }: { children: React.ReactNode }) {
             Every recipe<br />worth <span className="italic font-normal">keeping.</span>
           </p>
           <div className="w-[90px] h-[3px] bg-cream/75 my-7" />
-          <p className="max-w-[470px] font-serif italic text-xl leading-relaxed text-cream/80">
+          <p className="max-w-[470px] font-light text-xl leading-relaxed text-cream/80">
             Write them, import them, plan the week around them, and remember what is still in
             the freezer.
           </p>

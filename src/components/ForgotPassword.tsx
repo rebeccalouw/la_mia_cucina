@@ -49,10 +49,10 @@ export default function ForgotPassword({ onBack }: ForgotPasswordProps) {
         Back to sign in
       </button>
 
-      <h2 className="text-[40px] md:text-[52px] leading-none tracking-[-0.03em]">
+      <h2 className="font-serif font-bold text-[40px] md:text-[52px] leading-none tracking-[-0.03em]">
         Locked <span className="italic font-normal text-sage">out</span>
       </h2>
-      <p className="mt-4 mb-11 font-serif italic text-lg text-earth/55">
+      <p className="mt-4 mb-11 font-light text-lg text-earth/55">
         Give us the address you signed up with and we&rsquo;ll send a recovery link.
       </p>
 
@@ -64,8 +64,8 @@ export default function ForgotPassword({ onBack }: ForgotPasswordProps) {
             className="border border-sage/40 bg-sage/6 p-8 text-center"
           >
             <CheckCircle2 className="w-10 h-10 text-sage mx-auto mb-5" strokeWidth={1.2} />
-            <p className="font-serif text-2xl text-sage mb-2">Check your inbox</p>
-            <p className="font-serif italic text-earth/60 leading-relaxed">
+            <p className="text-2xl text-sage mb-2">Check your inbox</p>
+            <p className="font-light text-earth/60 leading-relaxed">
               If an account is registered to that address, a reset link is on its way.
             </p>
           </motion.div>

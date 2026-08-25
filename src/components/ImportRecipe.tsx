@@ -132,7 +132,7 @@ export default function ImportRecipe() {
 
       {/* The link */}
       <form onSubmit={handleFetch} className="flex flex-col lg:flex-row lg:items-end gap-6 lg:gap-8">
-        <h1 className="shrink-0 text-[36px] md:text-[46px] leading-none tracking-[-0.025em]">
+        <h1 className="font-serif font-bold shrink-0 text-[36px] md:text-[46px] leading-none tracking-[-0.025em]">
           Paste a <span className="italic font-normal text-sage">link</span>
         </h1>
         <div className="flex-1 min-w-0 flex items-center gap-3.5 border-b-2 border-sage/65 pb-2.5 focus-within:border-terracotta transition-colors">
@@ -162,7 +162,7 @@ export default function ImportRecipe() {
         >
           <AlertCircle className="w-5 h-5 text-brick shrink-0 mt-0.5" />
           <div>
-            <p className="font-serif text-xl text-brick mb-1">We could not reach that page</p>
+            <p className="text-xl text-brick mb-1">We could not reach that page</p>
             <p className="text-sm text-earth/60">{error}</p>
           </div>
         </motion.div>
@@ -175,8 +175,8 @@ export default function ImportRecipe() {
           className="mt-8 border border-sage/40 bg-sage/6 px-6 py-8 text-center"
         >
           <CheckCircle2 className="w-10 h-10 text-sage mx-auto mb-4" strokeWidth={1.2} />
-          <p className="font-serif text-2xl text-sage mb-1">Imported</p>
-          <p className="font-serif italic text-earth/60">It is in the box now.</p>
+          <p className="text-2xl text-sage mb-1">Imported</p>
+          <p className="font-light text-earth/60">It is in the box now.</p>
         </motion.div>
       )}
 
@@ -190,7 +190,7 @@ export default function ImportRecipe() {
                   Found a recipe &mdash; check it over
                 </p>
               </div>
-              <p className="font-serif italic text-[15px] text-earth/50">
+              <p className="font-light text-[15px] text-earth/50">
                 Everything below is editable before it is saved.
               </p>
             </div>
@@ -277,7 +277,7 @@ export default function ImportRecipe() {
                     value={extractedRecipe.description}
                     onChange={(e) => setExtractedRecipe({ ...extractedRecipe, description: e.target.value })}
                     rows={2}
-                    className="w-full bg-transparent border-0 border-b border-sage/30 pb-2.5 font-serif italic text-[17px] leading-relaxed text-earth/70 outline-none transition-colors resize-none focus:border-terracotta"
+                    className="w-full bg-transparent border-0 border-b border-sage/30 pb-2.5 font-light text-[17px] leading-relaxed text-earth/70 outline-none transition-colors resize-none focus:border-terracotta"
                   />
                 </div>
 
@@ -289,7 +289,7 @@ export default function ImportRecipe() {
                       min="0"
                       value={extractedRecipe.prepTime || 0}
                       onChange={(e) => setExtractedRecipe({ ...extractedRecipe, prepTime: Math.max(0, parseInt(e.target.value) || 0) })}
-                      className="w-full bg-transparent border-0 border-b border-sage/30 pb-2 font-serif text-2xl text-earth outline-none transition-colors focus:border-terracotta"
+                      className="w-full bg-transparent border-0 border-b border-sage/30 pb-2 font-light text-2xl text-earth outline-none transition-colors focus:border-terracotta"
                     />
                   </div>
                   <div className="w-[120px]">
@@ -299,7 +299,7 @@ export default function ImportRecipe() {
                       min="0"
                       value={extractedRecipe.cookTime || 0}
                       onChange={(e) => setExtractedRecipe({ ...extractedRecipe, cookTime: Math.max(0, parseInt(e.target.value) || 0) })}
-                      className="w-full bg-transparent border-0 border-b border-sage/30 pb-2 font-serif text-2xl text-earth outline-none transition-colors focus:border-terracotta"
+                      className="w-full bg-transparent border-0 border-b border-sage/30 pb-2 font-light text-2xl text-earth outline-none transition-colors focus:border-terracotta"
                     />
                   </div>
                   <div className="w-[120px]">
@@ -309,7 +309,7 @@ export default function ImportRecipe() {
                       min="1"
                       value={extractedRecipe.servings || 1}
                       onChange={(e) => setExtractedRecipe({ ...extractedRecipe, servings: Math.max(1, parseInt(e.target.value) || 1) })}
-                      className="w-full bg-transparent border-0 border-b border-sage/30 pb-2 font-serif text-2xl text-earth outline-none transition-colors focus:border-terracotta"
+                      className="w-full bg-transparent border-0 border-b border-sage/30 pb-2 font-light text-2xl text-earth outline-none transition-colors focus:border-terracotta"
                     />
                   </div>
                   <div className="flex-1 min-w-[180px]">
@@ -362,7 +362,7 @@ export default function ImportRecipe() {
               <button onClick={handleClear} className="micro hover:text-sage transition-colors">Clear</button>
             </div>
             <div className="p-6">
-              <p className="font-serif italic text-earth/60 mb-6 border-l-2 border-sage/40 pl-4">
+              <p className="font-light text-earth/60 mb-6 border-l-2 border-sage/40 pl-4">
                 We fetched the page, but it carries no machine-readable recipe. You can still copy what you need
                 out of the text below.
               </p>

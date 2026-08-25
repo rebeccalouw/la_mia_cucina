@@ -99,7 +99,7 @@ export default function RecipeDetail({ recipeId, onBack, onEdit, onDelete }: Rec
     return (
       <div className="max-w-xl mx-auto py-20 text-center">
         <div className="border border-brick/40 bg-brick/5 p-10 mb-8">
-          <p className="font-serif text-2xl text-brick mb-3">{error || 'Something went wrong'}</p>
+          <p className="text-2xl text-brick mb-3">{error || 'Something went wrong'}</p>
           <p className="text-sm text-earth/60">Check your permissions, or try again in a moment.</p>
         </div>
         <button
@@ -155,7 +155,7 @@ export default function RecipeDetail({ recipeId, onBack, onEdit, onDelete }: Rec
             </button>
           ) : (
             <div className="flex items-center gap-2 border border-brick/40 bg-brick/5 pl-4 pr-1.5 py-1.5">
-              <span className="font-serif italic text-sm text-brick">Delete for good?</span>
+              <span className="text-sm text-brick">Delete for good?</span>
               <button
                 onClick={handleDelete}
                 disabled={isDeleting}
@@ -212,15 +212,15 @@ export default function RecipeDetail({ recipeId, onBack, onEdit, onDelete }: Rec
           {/* Numbers, as a ruled band rather than three little cards */}
           <div className="flex border-b border-sage/20">
             <div className="flex-1 py-6 text-center border-r border-sage/20">
-              <p className="font-serif text-3xl leading-none">{recipe.prep_time}<span className="text-sm">m</span></p>
+              <p className="font-light text-3xl leading-none tracking-[-0.02em]">{recipe.prep_time}<span className="text-sm">m</span></p>
               <p className="micro mt-2">Prep</p>
             </div>
             <div className="flex-1 py-6 text-center border-r border-sage/20">
-              <p className="font-serif text-3xl leading-none">{recipe.cook_time}<span className="text-sm">m</span></p>
+              <p className="font-light text-3xl leading-none tracking-[-0.02em]">{recipe.cook_time}<span className="text-sm">m</span></p>
               <p className="micro mt-2">Cook</p>
             </div>
             <div className="flex-1 py-6 text-center">
-              <p className="font-serif text-3xl leading-none">{recipe.servings}</p>
+              <p className="font-light text-3xl leading-none tracking-[-0.02em]">{recipe.servings}</p>
               <p className="micro mt-2">Serves</p>
             </div>
           </div>
@@ -246,14 +246,14 @@ export default function RecipeDetail({ recipeId, onBack, onEdit, onDelete }: Rec
             {recipe.is_imported ? 'Imported' : 'Written here'} &nbsp;&mdash;&nbsp; saved {savedOn}
           </p>
 
-          <h1 className="mt-3.5 text-[40px] md:text-[68px] leading-[0.96] tracking-[-0.025em] text-pretty">
+          <h1 className="font-serif font-bold mt-3.5 text-[40px] md:text-[68px] leading-[0.96] tracking-[-0.025em] text-pretty">
             {recipe.title}
           </h1>
 
           {blurb && (
             <div className="flex gap-5 mt-7 pb-7 border-b-2 border-sage/65">
               <span className="font-serif text-[72px] leading-[0.72] text-terracotta shrink-0">{dropCap}</span>
-              <p className="font-serif italic text-lg md:text-xl leading-relaxed text-earth/62">{blurbRest}</p>
+              <p className="font-light text-lg md:text-xl leading-relaxed text-earth/62">{blurbRest}</p>
             </div>
           )}
 
@@ -264,7 +264,7 @@ export default function RecipeDetail({ recipeId, onBack, onEdit, onDelete }: Rec
           <ol>
             {steps.map((step, index) => (
               <li key={index} className="flex gap-5 md:gap-6 py-5 border-b border-sage/15 last:border-b-0">
-                <span className="font-serif text-2xl leading-none text-sage/40 w-10 shrink-0 pt-1">
+                <span className="font-light text-2xl leading-none text-sage/40 w-10 shrink-0 pt-1">
                   {String(index + 1).padStart(2, '0')}
                 </span>
                 <span className="text-[17px] leading-relaxed text-earth">{step}</span>

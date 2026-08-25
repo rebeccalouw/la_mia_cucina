@@ -124,7 +124,7 @@ export default function CategorySelector({
                     onClick={() => handleSelect(cat.name)}
                     className="w-full flex items-center justify-between gap-3 px-4 py-3 border-b border-sage/15 last:border-b-0 hover:bg-sage/5 transition-colors text-left"
                   >
-                    <span className="font-serif text-[17px] text-earth">{cat.name}</span>
+                    <span className="text-[17px] text-earth">{cat.name}</span>
                     <Plus className="w-4 h-4 text-sage/40 shrink-0" />
                   </button>
                 ))}
@@ -138,13 +138,13 @@ export default function CategorySelector({
                     <Plus className="w-4 h-4 text-terracotta shrink-0" />
                     <div className="min-w-0">
                       <p className="text-[9px] font-semibold text-terracotta uppercase tracking-[0.24em]">Create new</p>
-                      <p className="font-serif text-[17px] text-earth truncate">{input.trim()}</p>
+                      <p className="text-[17px] text-earth truncate">{input.trim()}</p>
                     </div>
                   </button>
                 )}
 
                 {input.trim() !== '' && suggestions.length === 0 && allCategories.some(c => c.name.toLowerCase() === input.trim().toLowerCase() && selectedCategories.includes(c.name)) && (
-                  <div className="px-4 py-4 text-center font-serif italic text-sm text-earth/45">
+                  <div className="px-4 py-4 text-center font-light text-sm text-earth/45">
                     Already added
                   </div>
                 )}

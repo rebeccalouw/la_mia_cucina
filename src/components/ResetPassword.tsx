@@ -57,10 +57,10 @@ export default function ResetPassword({ token, onSuccess }: ResetPasswordProps) 
 
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-      <h2 className="text-[40px] md:text-[52px] leading-none tracking-[-0.03em]">
+      <h2 className="font-serif font-bold text-[40px] md:text-[52px] leading-none tracking-[-0.03em]">
         A new <span className="italic font-normal text-sage">password</span>
       </h2>
-      <p className="mt-4 mb-11 font-serif italic text-lg text-earth/55">
+      <p className="mt-4 mb-11 font-light text-lg text-earth/55">
         Pick something you have not used elsewhere.
       </p>
 
@@ -71,8 +71,8 @@ export default function ResetPassword({ token, onSuccess }: ResetPasswordProps) 
           className="border border-sage/40 bg-sage/6 p-10 text-center"
         >
           <CheckCircle2 className="w-12 h-12 text-sage mx-auto mb-5" strokeWidth={1.2} />
-          <p className="font-serif text-3xl text-sage mb-2">All set</p>
-          <p className="font-serif italic text-earth/60">
+          <p className="text-3xl text-sage mb-2">All set</p>
+          <p className="font-light text-earth/60">
             Your password has been changed. Taking you back to sign in&hellip;
           </p>
         </motion.div>

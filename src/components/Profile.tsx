@@ -100,7 +100,7 @@ export default function Profile({ user, onUpdate }: ProfileProps) {
         <div>
           <p className="label">Your details and your password</p>
           {/* Names are stored as the chef writes them — no honorific is prepended. */}
-          <h1 className="mt-3 text-[40px] md:text-[56px] leading-none tracking-[-0.025em] italic font-normal text-sage">
+          <h1 className="font-serif mt-3 text-[40px] md:text-[56px] leading-none tracking-[-0.025em] italic font-normal text-sage">
             {user.name}
           </h1>
         </div>

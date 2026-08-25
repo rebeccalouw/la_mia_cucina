@@ -92,13 +92,13 @@ export default function Dashboard({ onNavigate, userName }: DashboardProps) {
       <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-10 lg:gap-16">
         <div className="flex-1 min-w-0">
           <p className="label">N&deg; {stats.recipeCount} &nbsp;&mdash;&nbsp; {today}</p>
-          <h1 className="mt-4 text-[44px] md:text-[76px] leading-[0.94] tracking-[-0.025em] text-pretty">
+          <h1 className="font-serif font-bold mt-4 text-[44px] md:text-[76px] leading-[0.94] tracking-[-0.025em] text-pretty">
             <span className="italic font-normal text-sage">{greeting},</span>
             <br />
             {/* Names are stored as the chef writes them — some already carry the honorific. */}
             {userName ? `${userName}.` : 'welcome back.'}
           </h1>
-          <p className="mt-5 max-w-2xl font-serif italic text-lg md:text-xl leading-relaxed text-earth/60">
+          <p className="mt-5 max-w-2xl font-light text-lg md:text-xl leading-relaxed text-earth/60">
             {summary}
           </p>
         </div>
@@ -120,7 +120,7 @@ export default function Dashboard({ onNavigate, userName }: DashboardProps) {
           >
             <span>
               <span className="micro block mb-1">Or</span>
-              <span className="font-serif italic text-lg text-sage">Import from a link</span>
+              <span className="text-lg text-sage">Import from a link</span>
             </span>
             <LinkIcon className="w-5 h-5 text-sage shrink-0" />
           </button>
@@ -135,7 +135,7 @@ export default function Dashboard({ onNavigate, userName }: DashboardProps) {
             onClick={() => onNavigate('recipes')}
             className="flex-1 flex items-baseline gap-4 py-5 sm:pr-10 text-left group"
           >
-            <span className="font-serif text-4xl md:text-5xl leading-none text-earth group-hover:text-terracotta transition-colors">
+            <span className="font-light text-4xl md:text-5xl leading-none tracking-[-0.03em] text-earth group-hover:text-terracotta transition-colors">
               {stats.recipeCount}
             </span>
             <span className="micro leading-relaxed">Recipes<br />in the box</span>
@@ -144,7 +144,7 @@ export default function Dashboard({ onNavigate, userName }: DashboardProps) {
             onClick={() => onNavigate('planner')}
             className="flex-1 flex items-baseline gap-4 py-5 sm:px-10 border-t sm:border-t-0 sm:border-l border-sage/20 text-left group"
           >
-            <span className="font-serif text-4xl md:text-5xl leading-none text-terracotta">
+            <span className="font-light text-4xl md:text-5xl leading-none tracking-[-0.03em] text-terracotta">
               {stats.monthlyMealsCount}
             </span>
             <span className="micro leading-relaxed">Meals planned<br />this month</span>
@@ -153,7 +153,7 @@ export default function Dashboard({ onNavigate, userName }: DashboardProps) {
             onClick={() => onNavigate('planner')}
             className="flex-1 flex items-baseline gap-4 py-5 sm:pl-10 border-t sm:border-t-0 sm:border-l border-sage/20 text-left group"
           >
-            <span className="font-serif text-4xl md:text-5xl leading-none text-earth group-hover:text-terracotta transition-colors">
+            <span className="font-light text-4xl md:text-5xl leading-none tracking-[-0.03em] text-earth group-hover:text-terracotta transition-colors">
               {stats.todayMeals.length}
             </span>
             <span className="micro leading-relaxed">On the board<br />today</span>
@@ -194,7 +194,7 @@ export default function Dashboard({ onNavigate, userName }: DashboardProps) {
                   }}
                   className="w-full flex items-start gap-5 md:gap-7 py-5 border-b border-sage/20 text-left group"
                 >
-                  <span className="hidden md:block w-7 shrink-0 pt-1.5 font-serif text-sm text-sage/40">
+                  <span className="hidden md:block w-7 shrink-0 pt-1.5 text-sm text-sage/40">
                     {String(index + 1).padStart(2, '0')}
                   </span>
                   <div className="w-[110px] md:w-[150px] h-[84px] md:h-28 shrink-0 overflow-hidden bg-sage/5 flex items-center justify-center">
@@ -212,7 +212,7 @@ export default function Dashboard({ onNavigate, userName }: DashboardProps) {
                       {meal.recipe_id ? meal.recipe_title : (meal.freezer_item_name || meal.notes)}
                     </h4>
                     {((meal.recipe_id || meal.freezer_item_name) && meal.notes) && (
-                      <p className="mt-1.5 font-serif italic text-[15px] text-earth/55 line-clamp-1">{meal.notes}</p>
+                      <p className="mt-1.5 font-light text-[15px] text-earth/55 line-clamp-1">{meal.notes}</p>
                     )}
                   </div>
                   <ChevronRight className="hidden sm:block w-5 h-5 mt-2 shrink-0 text-sage/50 group-hover:text-terracotta transition-colors" />
@@ -222,7 +222,7 @@ export default function Dashboard({ onNavigate, userName }: DashboardProps) {
           ) : (
             <div className="border border-dashed border-sage/30 py-14 px-8 text-center">
               <ChefHat className="w-10 h-10 text-sage/25 mx-auto mb-5" />
-              <p className="font-serif italic text-2xl text-earth/60 mb-6">Nothing planned for today</p>
+              <p className="font-light text-2xl text-earth/60 mb-6">Nothing planned for today</p>
               <button onClick={() => onNavigate('planner')} className="btn-ghost">
                 Plan something
               </button>
