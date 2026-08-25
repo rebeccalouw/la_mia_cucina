@@ -96,6 +96,29 @@ A Category Named On A New Item Joins The Freezer Category List
     ${names}=    Evaluate    [c['name'] for c in $response.json()]
     Should Contain    ${names}    ${label}
 
+Another User's Freezer Category Is Not In The List
+    [Documentation]    freezer_categories has no user column, but the list is scoped to the
+    ...    categories in use on the caller's own items, so one account's labels are never
+    ...    offered as suggestions to another.
+    ${label}=    Unique Name    Frozen Category
+    Create A Freezer Item    categories=${{ [$label] }}
+    ${response}=    Authorized GET    /api/freezer/categories    token=${OTHER}[token]
+    ${names}=    Evaluate    [c['name'] for c in $response.json()]
+    Should Not Contain    ${names}    ${label}
+
+A Freezer Category Drops Off The List When Its Last Item Goes
+    [Documentation]    Categories are never deleted, so a label whose items have all gone would
+    ...    otherwise be suggested forever.
+    ${label}=    Unique Name    Frozen Category
+    ${item}=    Create A Freezer Item    categories=${{ [$label] }}
+    ${before}=    Authorized GET    /api/freezer/categories
+    ${names}=    Evaluate    [c['name'] for c in $before.json()]
+    Should Contain    ${names}    ${label}
+    Authorized DELETE    /api/freezer/${item}[id]
+    ${after}=    Authorized GET    /api/freezer/categories
+    ${names}=    Evaluate    [c['name'] for c in $after.json()]
+    Should Not Contain    ${names}    ${label}
+
 The Freezer Category List Is Sorted By Name
     ${response}=    Authorized GET    /api/freezer/categories
     ${names}=    Evaluate    [c['name'] for c in $response.json()]

@@ -1,0 +1,177 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap">
+  <style>
+    body { margin: 0; background-color: #F6F1E7; }
+    * { box-sizing: border-box; }
+    a { color: #B67A5D; } a:hover { color: #59715E; }
+    .paper {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E");
+    }
+  </style>
+</helmet>
+
+<div class="paper" style="width: 1280px; background-color: #F6F1E7; font-family: 'Outfit', system-ui, sans-serif; color: #2D2D2D;">
+
+  <!-- Masthead -->
+  <div>
+    <div style="display: flex; align-items: center; justify-content: space-between; gap: 32px; height: 80px; padding: 0 32px;">
+      <div style="display: flex; align-items: baseline; gap: 16px; flex-shrink: 0;">
+        <div style="font-family: 'Playfair Display', Georgia, serif; font-weight: 700; font-size: 20px; line-height: 1; letter-spacing: 0.3em; text-transform: uppercase; color: #59715E;">La Mia Cucina</div>
+        <div style="font-size: 9px; font-weight: 600; letter-spacing: 0.24em; text-transform: uppercase; color: rgba(89,113,94,0.45);">Est. in your kitchen</div>
+      </div>
+      <div style="display: flex; align-items: center; gap: 28px;">
+        <div style="padding-bottom: 4px; font-size: 11px; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; color: rgba(89,113,94,0.6);">Recipes</div>
+        <div style="padding-bottom: 4px; font-size: 11px; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; color: rgba(89,113,94,0.6);">Add Recipe</div>
+        <div style="padding-bottom: 4px; font-size: 11px; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; color: rgba(89,113,94,0.6);">Import Recipe</div>
+        <div style="padding-bottom: 4px; font-size: 11px; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; color: rgba(89,113,94,0.6);">Meal Planner</div>
+        <div style="padding-bottom: 4px; font-size: 11px; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; color: rgba(89,113,94,0.6);">Freezer</div>
+      </div>
+      <div style="display: flex; align-items: center; gap: 16px; flex-shrink: 0;">
+        <div style="text-align: right;">
+          <div style="font-size: 9px; font-weight: 600; letter-spacing: 0.24em; text-transform: uppercase; color: rgba(89,113,94,0.45); line-height: 1; margin-bottom: 6px;">Chef</div>
+          <div style="font-size: 15px; font-weight: 400; line-height: 1; color: #59715E;">Rebecca</div>
+        </div>
+        <div style="display: flex; align-items: center; justify-content: center; width: 42px; height: 42px; border: 1px solid rgba(89,113,94,0.25); color: rgba(89,113,94,0.5);">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+        </div>
+      </div>
+    </div>
+    <div style="height: 3px; background-color: rgba(89,113,94,0.85);"></div>
+    <div style="height: 3px;"></div>
+    <div style="height: 1px; background-color: rgba(89,113,94,0.2);"></div>
+  </div>
+
+  <!-- Main -->
+  <div style="display: flex; flex-direction: column; gap: 48px; padding: 48px 64px 56px;">
+
+    <!-- Hero -->
+    <div style="display: flex; align-items: flex-end; justify-content: space-between; gap: 64px;">
+      <div style="flex: 1 1 auto; min-width: 0;">
+        <div style="font-size: 10px; font-weight: 600; letter-spacing: 0.28em; text-transform: uppercase; color: rgba(89,113,94,0.6);">N&deg; 34 &nbsp;&mdash;&nbsp; Tuesday, 25 August</div>
+        <div style="margin-top: 16px; font-family: 'Playfair Display', Georgia, serif; font-weight: 700; font-size: 76px; line-height: 0.94; letter-spacing: -0.025em; color: #2D2D2D;">
+          <span style="font-style: italic; font-weight: 400; color: #59715E;">Buongiorno,</span><br>Rebecca.
+        </div>
+        <div style="margin-top: 22px; max-width: 620px; font-size: 19px; font-weight: 300; line-height: 1.6; color: rgba(45,45,45,0.62);">Two plates are on the board today, 34 recipes in the box, 11 meals planned this month.</div>
+      </div>
+
+      <div style="width: 300px; flex-shrink: 0; display: flex; flex-direction: column;">
+        <div style="background-color: #B67A5D; color: #F6F1E7; padding: 24px;">
+          <div style="font-size: 9px; font-weight: 600; letter-spacing: 0.30em; text-transform: uppercase; color: rgba(246,241,231,0.7);">Start something</div>
+          <div style="margin-top: 10px; font-family: 'Playfair Display', Georgia, serif; font-size: 30px; font-weight: 400; line-height: 1.18;">Write a<br>new recipe</div>
+          <div style="margin-top: 18px; display: flex; align-items: center; gap: 12px; font-size: 10px; font-weight: 600; letter-spacing: 0.24em; text-transform: uppercase;">
+            Begin
+            <svg width="20" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+          </div>
+        </div>
+        <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 20px; border: 1px solid rgba(89,113,94,0.28); border-top: 0;">
+          <div>
+            <div style="font-size: 9px; font-weight: 600; letter-spacing: 0.24em; text-transform: uppercase; color: rgba(89,113,94,0.45); margin-bottom: 6px;">Or</div>
+            <div style="font-size: 17px; font-weight: 400; color: #59715E;">Import from a link</div>
+          </div>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#59715E" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0;"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stat rule -->
+    <div>
+      <div style="height: 1px; background-color: rgba(89,113,94,0.2);"></div>
+      <div style="display: flex;">
+        <div style="flex: 1 1 0; display: flex; align-items: baseline; gap: 16px; padding: 20px 40px 20px 0;">
+          <div style="font-size: 52px; font-weight: 300; line-height: 1; letter-spacing: -0.03em; color: #2D2D2D;">34</div>
+          <div style="font-size: 9px; font-weight: 600; letter-spacing: 0.24em; text-transform: uppercase; color: rgba(89,113,94,0.45); line-height: 1.6;">Recipes<br>in the box</div>
+        </div>
+        <div style="flex: 1 1 0; display: flex; align-items: baseline; gap: 16px; padding: 20px 40px; border-left: 1px solid rgba(89,113,94,0.2);">
+          <div style="font-size: 52px; font-weight: 300; line-height: 1; letter-spacing: -0.03em; color: #B67A5D;">11</div>
+          <div style="font-size: 9px; font-weight: 600; letter-spacing: 0.24em; text-transform: uppercase; color: rgba(89,113,94,0.45); line-height: 1.6;">Meals planned<br>this month</div>
+        </div>
+        <div style="flex: 1 1 0; display: flex; align-items: baseline; gap: 16px; padding: 20px 0 20px 40px; border-left: 1px solid rgba(89,113,94,0.2);">
+          <div style="font-size: 52px; font-weight: 300; line-height: 1; letter-spacing: -0.03em; color: #2D2D2D;">2</div>
+          <div style="font-size: 9px; font-weight: 600; letter-spacing: 0.24em; text-transform: uppercase; color: rgba(89,113,94,0.45); line-height: 1.6;">On the board<br>today</div>
+        </div>
+      </div>
+      <div style="height: 2px; background-color: rgba(89,113,94,0.65);"></div>
+    </div>
+
+    <!-- Two columns -->
+    <div style="display: grid; grid-template-columns: 1.6fr 1fr; gap: 64px;">
+
+      <div>
+        <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 16px; margin-bottom: 24px;">
+          <div style="display: flex; align-items: center; gap: 12px;">
+            <div style="width: 8px; height: 8px; border-radius: 999px; background-color: #B67A5D;"></div>
+            <div style="font-size: 11px; font-weight: 600; letter-spacing: 0.30em; text-transform: uppercase; color: #2D2D2D;">Today&rsquo;s Menu</div>
+          </div>
+          <div style="font-size: 10px; font-weight: 600; letter-spacing: 0.22em; text-transform: uppercase; color: #B67A5D;">Open the planner &rarr;</div>
+        </div>
+
+        <div style="display: flex; align-items: flex-start; gap: 28px; padding: 20px 0; border-bottom: 1px solid rgba(89,113,94,0.2);">
+          <div style="width: 28px; flex-shrink: 0; padding-top: 6px; font-size: 14px; font-weight: 400; color: rgba(89,113,94,0.4);">01</div>
+          <div style="width: 150px; height: 112px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; background-color: rgba(89,113,94,0.08);">
+            <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="rgba(89,113,94,0.35)" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3 2v7c0 1.1.9 2 2 2h1a2 2 0 0 0 2-2V2"></path><path d="M6 2v20"></path><path d="M18 2v20"></path><path d="M18 12c2 0 3-1.5 3-4V2c-2 0-3 2-3 5z"></path></svg>
+          </div>
+          <div style="flex: 1 1 auto; min-width: 0;">
+            <div style="font-size: 9px; font-weight: 600; letter-spacing: 0.30em; text-transform: uppercase; color: #B67A5D;">lunch</div>
+            <div style="margin-top: 10px; font-family: 'Playfair Display', Georgia, serif; font-size: 32px; font-weight: 400; line-height: 1.15; color: #2D2D2D;">Ribollita with winter greens</div>
+            <div style="margin-top: 8px; font-size: 15px; font-weight: 300; color: rgba(45,45,45,0.55);">Use the stale sourdough from Sunday</div>
+          </div>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="rgba(89,113,94,0.5)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="margin-top: 8px; flex-shrink: 0;"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+
+        <div style="display: flex; align-items: flex-start; gap: 28px; padding: 20px 0; border-bottom: 1px solid rgba(89,113,94,0.2);">
+          <div style="width: 28px; flex-shrink: 0; padding-top: 6px; font-size: 14px; font-weight: 400; color: rgba(89,113,94,0.4);">02</div>
+          <div style="width: 150px; height: 112px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; background-color: rgba(89,113,94,0.08);">
+            <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="rgba(89,113,94,0.35)" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><line x1="2" y1="12" x2="22" y2="12"></line><line x1="12" y1="2" x2="12" y2="22"></line><path d="m20 16-4-4 4-4"></path><path d="m4 8 4 4-4 4"></path><path d="m16 4-4 4-4-4"></path><path d="m8 20 4-4 4 4"></path></svg>
+          </div>
+          <div style="flex: 1 1 auto; min-width: 0;">
+            <div style="font-size: 9px; font-weight: 600; letter-spacing: 0.30em; text-transform: uppercase; color: #B67A5D;">dinner</div>
+            <div style="margin-top: 10px; font-family: 'Playfair Display', Georgia, serif; font-size: 32px; font-weight: 400; line-height: 1.15; color: #2D2D2D;">Beef rag&ugrave; &mdash; from the freezer</div>
+            <div style="margin-top: 8px; font-size: 15px; font-weight: 300; color: rgba(45,45,45,0.55);">Pull it out at four</div>
+          </div>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="rgba(89,113,94,0.5)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="margin-top: 8px; flex-shrink: 0;"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </div>
+
+      <div>
+        <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 16px; margin-bottom: 24px;">
+          <div style="font-size: 11px; font-weight: 600; letter-spacing: 0.30em; text-transform: uppercase; color: #2D2D2D;">Lately</div>
+          <div style="font-size: 10px; font-weight: 600; letter-spacing: 0.22em; text-transform: uppercase; color: #B67A5D;">All 34 &rarr;</div>
+        </div>
+
+        <div style="display: flex; align-items: center; gap: 16px; padding: 16px 0; border-bottom: 1px solid rgba(89,113,94,0.2);">
+          <div style="width: 56px; height: 56px; flex-shrink: 0; background-color: rgba(89,113,94,0.08);"></div>
+          <div style="flex: 1 1 auto; min-width: 0;">
+            <div style="font-family: 'Playfair Display', Georgia, serif; font-size: 20px; font-weight: 400; line-height: 1.2; color: #2D2D2D;">Saltimbocca alla romana</div>
+            <div style="margin-top: 6px; font-size: 9px; font-weight: 600; letter-spacing: 0.24em; text-transform: uppercase; color: rgba(89,113,94,0.45);">35 min</div>
+          </div>
+        </div>
+        <div style="display: flex; align-items: center; gap: 16px; padding: 16px 0; border-bottom: 1px solid rgba(89,113,94,0.2);">
+          <div style="width: 56px; height: 56px; flex-shrink: 0; background-color: rgba(89,113,94,0.08);"></div>
+          <div style="flex: 1 1 auto; min-width: 0;">
+            <div style="font-family: 'Playfair Display', Georgia, serif; font-size: 20px; font-weight: 400; line-height: 1.2; color: #2D2D2D;">Focaccia genovese</div>
+            <div style="margin-top: 6px; font-size: 9px; font-weight: 600; letter-spacing: 0.24em; text-transform: uppercase; color: rgba(89,113,94,0.45);">190 min</div>
+          </div>
+        </div>
+        <div style="display: flex; align-items: center; gap: 16px; padding: 16px 0; border-bottom: 1px solid rgba(89,113,94,0.2);">
+          <div style="width: 56px; height: 56px; flex-shrink: 0; background-color: rgba(89,113,94,0.08);"></div>
+          <div style="flex: 1 1 auto; min-width: 0;">
+            <div style="font-family: 'Playfair Display', Georgia, serif; font-size: 20px; font-weight: 400; line-height: 1.2; color: #2D2D2D;">Panzanella</div>
+            <div style="margin-top: 6px; font-size: 9px; font-weight: 600; letter-spacing: 0.24em; text-transform: uppercase; color: rgba(89,113,94,0.45);">20 min</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+</x-dc>
+</body>
+</html>

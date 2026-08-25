@@ -1,0 +1,154 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap">
+  <style>
+    body { margin: 0; background-color: #F6F1E7; }
+    * { box-sizing: border-box; }
+    a { color: #B67A5D; } a:hover { color: #59715E; }
+    .paper {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E");
+    }
+  </style>
+</helmet>
+
+<div class="paper" style="width: 1280px; background-color: #F6F1E7; font-family: 'Outfit', system-ui, sans-serif; color: #2D2D2D;">
+
+  <!-- Masthead -->
+  <div>
+    <div style="display: flex; align-items: center; justify-content: space-between; gap: 32px; height: 80px; padding: 0 32px;">
+      <div style="display: flex; align-items: baseline; gap: 16px; flex-shrink: 0;">
+        <div style="font-family: 'Playfair Display', Georgia, serif; font-weight: 700; font-size: 20px; line-height: 1; letter-spacing: 0.3em; text-transform: uppercase; color: #59715E;">La Mia Cucina</div>
+        <div style="font-size: 9px; font-weight: 600; letter-spacing: 0.24em; text-transform: uppercase; color: rgba(89,113,94,0.45);">Est. in your kitchen</div>
+      </div>
+      <div style="display: flex; align-items: center; gap: 28px;">
+        <div style="padding-bottom: 4px; font-size: 11px; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; color: #2D2D2D; border-bottom: 2px solid #B67A5D;">Recipes</div>
+        <div style="padding-bottom: 4px; font-size: 11px; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; color: rgba(89,113,94,0.6);">Add Recipe</div>
+        <div style="padding-bottom: 4px; font-size: 11px; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; color: rgba(89,113,94,0.6);">Import Recipe</div>
+        <div style="padding-bottom: 4px; font-size: 11px; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; color: rgba(89,113,94,0.6);">Meal Planner</div>
+        <div style="padding-bottom: 4px; font-size: 11px; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; color: rgba(89,113,94,0.6);">Freezer</div>
+      </div>
+      <div style="display: flex; align-items: center; gap: 16px; flex-shrink: 0;">
+        <div style="text-align: right;">
+          <div style="font-size: 9px; font-weight: 600; letter-spacing: 0.24em; text-transform: uppercase; color: rgba(89,113,94,0.45); line-height: 1; margin-bottom: 6px;">Chef</div>
+          <div style="font-size: 15px; font-weight: 400; line-height: 1; color: #59715E;">Rebecca</div>
+        </div>
+        <div style="display: flex; align-items: center; justify-content: center; width: 42px; height: 42px; border: 1px solid rgba(89,113,94,0.25); color: rgba(89,113,94,0.5);">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+        </div>
+      </div>
+    </div>
+    <div style="height: 3px; background-color: rgba(89,113,94,0.85);"></div>
+    <div style="height: 3px;"></div>
+    <div style="height: 1px; background-color: rgba(89,113,94,0.2);"></div>
+  </div>
+
+  <!-- Main -->
+  <div style="padding: 48px 64px 56px;">
+
+    <!-- Thin bar -->
+    <div style="display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-bottom: 20px; margin-bottom: 40px; border-bottom: 1px solid rgba(89,113,94,0.2);">
+      <div style="display: flex; align-items: center; gap: 12px; font-size: 10px; font-weight: 600; letter-spacing: 0.26em; text-transform: uppercase; color: rgba(89,113,94,0.6);">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+        Back to recipes
+      </div>
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <div style="display: flex; align-items: center; gap: 8px; padding: 10px 20px; border: 1px solid rgba(89,113,94,0.3); font-size: 9px; font-weight: 600; letter-spacing: 0.24em; text-transform: uppercase; color: #59715E;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg>
+          Edit
+        </div>
+        <div style="display: flex; align-items: center; gap: 8px; padding: 10px 20px; border: 1px solid rgba(178,58,42,0.4); font-size: 9px; font-weight: 600; letter-spacing: 0.24em; text-transform: uppercase; color: #B23A2A;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+          Delete
+        </div>
+      </div>
+    </div>
+
+    <div style="display: grid; grid-template-columns: 453px 1fr; gap: 64px;">
+
+      <!-- Left column -->
+      <div>
+        <div style="position: relative; width: 453px; height: 453px; display: flex; align-items: center; justify-content: center; background-color: rgba(89,113,94,0.05);">
+          <svg width="96" height="96" viewBox="0 0 24 24" fill="none" stroke="rgba(89,113,94,0.2)" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><path d="M6 13.87A4 4 0 0 1 7.41 6a5.11 5.11 0 0 1 1.05-1.54 5 5 0 0 1 7.08 0A5.11 5.11 0 0 1 16.59 6 4 4 0 0 1 18 13.87V21H6Z"></path><line x1="6" y1="17" x2="18" y2="17"></line></svg>
+          <div style="position: absolute; left: 20px; bottom: 20px; display: flex; gap: 8px;">
+            <div style="padding: 6px 14px; background-color: rgba(246,241,231,0.95); font-size: 8px; font-weight: 600; letter-spacing: 0.26em; text-transform: uppercase; color: #59715E;">Soups</div>
+            <div style="padding: 6px 14px; background-color: rgba(246,241,231,0.95); font-size: 8px; font-weight: 600; letter-spacing: 0.26em; text-transform: uppercase; color: #59715E;">Primi</div>
+          </div>
+        </div>
+
+        <!-- Numbers band: now sans -->
+        <div style="display: flex; border-bottom: 1px solid rgba(89,113,94,0.2);">
+          <div style="flex: 1 1 0; padding: 24px 0; text-align: center; border-right: 1px solid rgba(89,113,94,0.2);">
+            <div style="font-size: 30px; font-weight: 300; line-height: 1; letter-spacing: -0.02em; color: #2D2D2D;">20<span style="font-size: 14px; font-weight: 400;">m</span></div>
+            <div style="margin-top: 8px; font-size: 9px; font-weight: 600; letter-spacing: 0.24em; text-transform: uppercase; color: rgba(89,113,94,0.45);">Prep</div>
+          </div>
+          <div style="flex: 1 1 0; padding: 24px 0; text-align: center; border-right: 1px solid rgba(89,113,94,0.2);">
+            <div style="font-size: 30px; font-weight: 300; line-height: 1; letter-spacing: -0.02em; color: #2D2D2D;">25<span style="font-size: 14px; font-weight: 400;">m</span></div>
+            <div style="margin-top: 8px; font-size: 9px; font-weight: 600; letter-spacing: 0.24em; text-transform: uppercase; color: rgba(89,113,94,0.45);">Cook</div>
+          </div>
+          <div style="flex: 1 1 0; padding: 24px 0; text-align: center;">
+            <div style="font-size: 30px; font-weight: 300; line-height: 1; letter-spacing: -0.02em; color: #2D2D2D;">6</div>
+            <div style="margin-top: 8px; font-size: 9px; font-weight: 600; letter-spacing: 0.24em; text-transform: uppercase; color: rgba(89,113,94,0.45);">Serves</div>
+          </div>
+        </div>
+
+        <div style="padding-top: 36px;">
+          <div style="font-size: 10px; font-weight: 600; letter-spacing: 0.30em; text-transform: uppercase; color: #B67A5D; margin-bottom: 20px;">The shopping</div>
+          <div style="display: flex; flex-direction: column; gap: 12px;">
+            <div style="display: flex; align-items: baseline; gap: 14px; font-size: 15px; font-weight: 300; line-height: 1.6; color: rgba(45,45,45,0.85);"><span style="width: 8px; height: 8px; flex-shrink: 0; border: 1px solid rgba(89,113,94,0.45);"></span><span>400g stale sourdough, torn</span></div>
+            <div style="display: flex; align-items: baseline; gap: 14px; font-size: 15px; font-weight: 300; line-height: 1.6; color: rgba(45,45,45,0.85);"><span style="width: 8px; height: 8px; flex-shrink: 0; border: 1px solid rgba(89,113,94,0.45);"></span><span>1 bunch cavolo nero, ribs removed</span></div>
+            <div style="display: flex; align-items: baseline; gap: 14px; font-size: 15px; font-weight: 300; line-height: 1.6; color: rgba(45,45,45,0.85);"><span style="width: 8px; height: 8px; flex-shrink: 0; border: 1px solid rgba(89,113,94,0.45);"></span><span>2 tins cannellini beans</span></div>
+            <div style="display: flex; align-items: baseline; gap: 14px; font-size: 15px; font-weight: 300; line-height: 1.6; color: rgba(45,45,45,0.85);"><span style="width: 8px; height: 8px; flex-shrink: 0; border: 1px solid rgba(89,113,94,0.45);"></span><span>1 onion, 2 carrots, 2 celery sticks</span></div>
+            <div style="display: flex; align-items: baseline; gap: 14px; font-size: 15px; font-weight: 300; line-height: 1.6; color: rgba(45,45,45,0.85);"><span style="width: 8px; height: 8px; flex-shrink: 0; border: 1px solid rgba(89,113,94,0.45);"></span><span>1 tin plum tomatoes</span></div>
+            <div style="display: flex; align-items: baseline; gap: 14px; font-size: 15px; font-weight: 300; line-height: 1.6; color: rgba(45,45,45,0.85);"><span style="width: 8px; height: 8px; flex-shrink: 0; border: 1px solid rgba(89,113,94,0.45);"></span><span>A parmesan rind, if you have one</span></div>
+            <div style="display: flex; align-items: baseline; gap: 14px; font-size: 15px; font-weight: 300; line-height: 1.6; color: rgba(45,45,45,0.85);"><span style="width: 8px; height: 8px; flex-shrink: 0; border: 1px solid rgba(89,113,94,0.45);"></span><span>Good olive oil, for finishing</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right column -->
+      <div>
+        <div style="font-size: 10px; font-weight: 600; letter-spacing: 0.28em; text-transform: uppercase; color: rgba(89,113,94,0.6);">Written here &nbsp;&mdash;&nbsp; saved 14 August</div>
+        <div style="margin-top: 14px; font-family: 'Playfair Display', Georgia, serif; font-weight: 700; font-size: 68px; line-height: 0.96; letter-spacing: -0.025em; color: #2D2D2D;">Ribollita with winter greens</div>
+
+        <div style="display: flex; gap: 20px; margin-top: 28px; padding-bottom: 28px; border-bottom: 2px solid rgba(89,113,94,0.65);">
+          <div style="font-family: 'Playfair Display', Georgia, serif; font-size: 72px; font-weight: 400; line-height: 0.72; color: #B67A5D; flex-shrink: 0;">T</div>
+          <div style="font-size: 19px; font-weight: 300; line-height: 1.6; color: rgba(45,45,45,0.62);">he Tuscan bread soup that gets better the second day &mdash; which is the whole point of making it. Cook it Sunday, eat it Monday.</div>
+        </div>
+
+        <div style="margin-top: 36px; margin-bottom: 24px; font-size: 10px; font-weight: 600; letter-spacing: 0.32em; text-transform: uppercase; color: #B67A5D;">The method</div>
+
+        <div style="display: flex; gap: 24px; padding: 20px 0; border-bottom: 1px solid rgba(89,113,94,0.15);">
+          <div style="width: 40px; flex-shrink: 0; padding-top: 2px; font-size: 20px; font-weight: 300; line-height: 1; color: rgba(89,113,94,0.4);">01</div>
+          <div style="font-size: 17px; font-weight: 300; line-height: 1.65; color: #2D2D2D;">Soften the onion, carrot and celery in a generous slick of oil, slowly, until sweet rather than coloured.</div>
+        </div>
+        <div style="display: flex; gap: 24px; padding: 20px 0; border-bottom: 1px solid rgba(89,113,94,0.15);">
+          <div style="width: 40px; flex-shrink: 0; padding-top: 2px; font-size: 20px; font-weight: 300; line-height: 1; color: rgba(89,113,94,0.4);">02</div>
+          <div style="font-size: 17px; font-weight: 300; line-height: 1.65; color: #2D2D2D;">Add the tomatoes and the parmesan rind. Simmer twenty minutes.</div>
+        </div>
+        <div style="display: flex; gap: 24px; padding: 20px 0; border-bottom: 1px solid rgba(89,113,94,0.15);">
+          <div style="width: 40px; flex-shrink: 0; padding-top: 2px; font-size: 20px; font-weight: 300; line-height: 1; color: rgba(89,113,94,0.4);">03</div>
+          <div style="font-size: 17px; font-weight: 300; line-height: 1.65; color: #2D2D2D;">Tip in the beans with their liquid and the cavolo nero. Cook until the greens collapse.</div>
+        </div>
+        <div style="display: flex; gap: 24px; padding: 20px 0; border-bottom: 1px solid rgba(89,113,94,0.15);">
+          <div style="width: 40px; flex-shrink: 0; padding-top: 2px; font-size: 20px; font-weight: 300; line-height: 1; color: rgba(89,113,94,0.4);">04</div>
+          <div style="font-size: 17px; font-weight: 300; line-height: 1.65; color: #2D2D2D;">Stir the torn bread through and take it off the heat. It should be thick enough to stand a spoon in.</div>
+        </div>
+        <div style="display: flex; gap: 24px; padding: 20px 0;">
+          <div style="width: 40px; flex-shrink: 0; padding-top: 2px; font-size: 20px; font-weight: 300; line-height: 1; color: rgba(89,113,94,0.4);">05</div>
+          <div style="font-size: 17px; font-weight: 300; line-height: 1.65; color: #2D2D2D;">Leave it overnight. Reheat, and finish each bowl with far more olive oil than feels reasonable.</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+</x-dc>
+</body>
+</html>

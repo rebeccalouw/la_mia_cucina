@@ -1,0 +1,42 @@
+{
+  "pages": [
+    { "id": "page-1", "name": "Option A" },
+    { "id": "page-2", "name": "B and C" }
+  ],
+  "artboards": [
+    { "file": "Main.dc.html", "title": "Dashboard", "page": "page-1", "x": 0, "y": 0, "w": 1280, "h": 1080 },
+    { "file": "Recipes.dc.html", "title": "The recipe box", "page": "page-1", "x": 1400, "y": 0, "w": 1280, "h": 1300 },
+    { "file": "RecipeDetail.dc.html", "title": "Recipe", "page": "page-1", "x": 2800, "y": 0, "w": 1280, "h": 1240 },
+    { "file": "Planner.dc.html", "title": "Meal planner", "page": "page-1", "x": 0, "y": 1460, "w": 1280, "h": 1240 },
+    { "file": "Freezer.dc.html", "title": "The freezer", "page": "page-1", "x": 1400, "y": 1460, "w": 1280, "h": 900 },
+    { "file": "QuietModern.dc.html", "title": "B - Quiet Modern - Instrument Serif + Schibsted Grotesk", "page": "page-2", "x": 0, "y": 0, "w": 1280, "h": 1080 },
+    { "file": "KitchenModern.dc.html", "title": "C - Kitchen Modern - Young Serif + Space Grotesk", "page": "page-2", "x": 1400, "y": 0, "w": 1280, "h": 1080 }
+  ],
+  "annotations": [
+    {
+      "id": "note-a",
+      "page": "page-1",
+      "x": 0,
+      "y": -250,
+      "w": 460,
+      "text": "Option A - the rule\n\nSERIF (Playfair Display) - the name of a thing you cook, and nothing else:\nthe wordmark, page headlines, recipe and meal titles, freezer item names, the plan chips in the calendar, and the 'Write a new recipe' card.\n\nSANS (Outfit) - everything else, including every number:\nlabels, nav, buttons, descriptions, method steps, ingredients, times, day numbers, prep/cook/serves, days-in-the-freezer.\n\nWhat changed from the current app: descriptions and notes were serif italic and are now sans; all the numerals were serif and are now sans. Nothing else moves - same palette, same rules, same spacing."
+    },
+    {
+      "id": "note-b",
+      "page": "page-2",
+      "x": 0,
+      "y": -210,
+      "w": 400,
+      "text": "B - Quiet Modern\nInstrument Serif for the hero and every recipe or meal title; Schibsted Grotesk for all UI, labels and numbers. Warm off-white, one olive accent, hairline rules, soft 6-8px radii, no paper grain.\n\nWhy: the serif becomes a signal that something is a dish rather than a decoration. Modern and calm, and it reads well at a glance.\n\nTradeoff: the loudest personality loss - the terracotta block, the double rule and the grain all go. It gets closer to a generic well-made app."
+    },
+    {
+      "id": "note-c",
+      "page": "page-2",
+      "x": 1400,
+      "y": -210,
+      "w": 400,
+      "text": "C - Kitchen Modern\nYoung Serif - chunky and low-contrast - for numerals and titles; Space Grotesk for everything else. Ink masthead band, 2px frames, punchier terracotta, denser grid.\n\nWhy: keeps a strong voice while dropping the delicate high-contrast serif. The numbers finally look like data you can read across the room.\n\nTradeoff: the most work to build, and the most opinionated. Young Serif has one weight and no italic, so the italic asides in the current design have to go."
+    }
+  ],
+  "launch": { "view": "canvas", "page": "page-1" }
+}

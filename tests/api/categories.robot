@@ -1,5 +1,5 @@
 *** Settings ***
-Documentation       /api/categories — the shared recipe category list.
+Documentation       /api/categories — the categories in use on the caller’s recipes.
 
 Resource            ../resources/api.resource
 
@@ -38,14 +38,28 @@ The Category List Is Sorted By Name
     ${sorted}=    Evaluate    sorted($names, key=str.casefold)
     Should Be Equal    ${names}    ${sorted}
 
-Categories Are Shared Between Users Rather Than Owned
-    [Documentation]    The table has no user column: a category created by one account is
-    ...    visible to every account. This records that as intended behaviour.
+Another User's Category Is Not In The List
+    [Documentation]    The table still has no user column — a row created by one account is
+    ...    reachable by every account — but the list is scoped to the categories in use on the
+    ...    caller's own recipes, so one kitchen's labels stay out of another's filter rail.
     ${label}=    Unique Name    Shared
     Create A Recipe    categories=${{ [$label] }}
     ${response}=    Authorized GET    /api/categories    token=${OTHER}[token]
     ${names}=    Evaluate    [c['name'] for c in $response.json()]
+    Should Not Contain    ${names}    ${label}
+
+A Category Drops Off The List When Its Last Recipe Goes
+    [Documentation]    Categories are never deleted, so a label whose recipes have all gone
+    ...    would otherwise sit in the filter rail forever, matching nothing.
+    ${label}=    Unique Name    Orphan
+    ${recipe}=    Create A Recipe    categories=${{ [$label] }}
+    ${before}=    Authorized GET    /api/categories
+    ${names}=    Evaluate    [c['name'] for c in $before.json()]
     Should Contain    ${names}    ${label}
+    Authorized DELETE    /api/recipes/${recipe}[id]
+    ${after}=    Authorized GET    /api/categories
+    ${names}=    Evaluate    [c['name'] for c in $after.json()]
+    Should Not Contain    ${names}    ${label}
 
 
 *** Keywords ***

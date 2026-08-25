@@ -133,7 +133,7 @@ export default function Dashboard({ onNavigate, userName }: DashboardProps) {
         <div className="flex flex-col sm:flex-row">
           <button
             onClick={() => onNavigate('recipes')}
-            className="flex-1 flex items-baseline gap-4 py-5 sm:pr-10 text-left group"
+            className="flex-1 flex items-center gap-4 py-5 sm:pr-10 text-left group"
           >
             <span className="font-light text-4xl md:text-5xl leading-none tracking-[-0.03em] text-earth group-hover:text-terracotta transition-colors">
               {stats.recipeCount}
@@ -142,7 +142,7 @@ export default function Dashboard({ onNavigate, userName }: DashboardProps) {
           </button>
           <button
             onClick={() => onNavigate('planner')}
-            className="flex-1 flex items-baseline gap-4 py-5 sm:px-10 border-t sm:border-t-0 sm:border-l border-sage/20 text-left group"
+            className="flex-1 flex items-center gap-4 py-5 sm:px-10 border-t sm:border-t-0 sm:border-l border-sage/20 text-left group"
           >
             <span className="font-light text-4xl md:text-5xl leading-none tracking-[-0.03em] text-terracotta">
               {stats.monthlyMealsCount}
@@ -151,7 +151,7 @@ export default function Dashboard({ onNavigate, userName }: DashboardProps) {
           </button>
           <button
             onClick={() => onNavigate('planner')}
-            className="flex-1 flex items-baseline gap-4 py-5 sm:pl-10 border-t sm:border-t-0 sm:border-l border-sage/20 text-left group"
+            className="flex-1 flex items-center gap-4 py-5 sm:pl-10 border-t sm:border-t-0 sm:border-l border-sage/20 text-left group"
           >
             <span className="font-light text-4xl md:text-5xl leading-none tracking-[-0.03em] text-earth group-hover:text-terracotta transition-colors">
               {stats.todayMeals.length}

@@ -28,9 +28,23 @@ export const getFreezerItems = async (req: Request, res: Response) => {
   }
 };
 
+/**
+ * Scoped the same way as the recipe categories: freezer_categories is a global table nothing
+ * ever deletes, so listing it whole offered every label any account had typed — and every one
+ * left behind by a deleted item — as an autocomplete suggestion.
+ */
 export const getFreezerCategories = async (req: Request, res: Response) => {
+  const userId = (req as any).user.userId;
+
   try {
-    const categories = await db.all('SELECT * FROM freezer_categories ORDER BY name ASC');
+    const categories = await db.all(`
+      SELECT DISTINCT fc.id, fc.name
+      FROM freezer_categories fc
+      JOIN freezer_item_categories fic ON fic.freezer_category_id = fc.id
+      JOIN freezer_items fi ON fi.id = fic.freezer_item_id
+      WHERE fi.user_id = $1
+      ORDER BY fc.name ASC
+    `, [userId]);
     res.json(categories);
   } catch (err) {
     console.error('Error fetching freezer categories:', err);
