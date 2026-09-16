@@ -57,10 +57,10 @@ export default function ResetPassword({ token, onSuccess }: ResetPasswordProps) 
 
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-      <h2 className="font-serif font-bold text-[40px] md:text-[52px] leading-none tracking-[-0.03em]">
-        A new <span className="italic font-normal text-sage">password</span>
+      <h2 className="dsp text-[38px] md:text-[44px] font-extrabold tracking-[-0.035em] leading-[1.02]">
+        A new password<span className="text-coral">.</span>
       </h2>
-      <p className="mt-4 mb-11 font-light text-lg text-earth/55">
+      <p className="mt-3.5 mb-8 text-[16px] leading-[1.5] text-muted">
         Pick something you have not used elsewhere.
       </p>
 
@@ -68,11 +68,11 @@ export default function ResetPassword({ token, onSuccess }: ResetPasswordProps) 
         <motion.div 
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
-          className="border border-sage/40 bg-sage/6 p-10 text-center"
+          className="card-green p-10 text-center"
         >
-          <CheckCircle2 className="w-12 h-12 text-sage mx-auto mb-5" strokeWidth={1.2} />
-          <p className="text-3xl text-sage mb-2">All set</p>
-          <p className="font-light text-earth/60">
+          <CheckCircle2 className="w-12 h-12 text-green mx-auto mb-4" strokeWidth={1.4} />
+          <p className="dsp text-[28px] font-bold text-green mb-1.5">All set</p>
+          <p className="text-[15px] text-green-ink">
             Your password has been changed. Taking you back to sign in&hellip;
           </p>
         </motion.div>
@@ -80,30 +80,30 @@ export default function ResetPassword({ token, onSuccess }: ResetPasswordProps) 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="space-y-4">
             <div>
-              <label className="micro block mb-2.5">New password &middot; at least 8 characters</label>
-              <div className="flex items-center gap-3 border-b border-sage/30 focus-within:border-terracotta transition-colors">
-                <Lock className="w-[17px] h-[17px] text-sage/45 shrink-0" />
+              <label className="field-label mb-2">New password &middot; at least 8 characters</label>
+              <div className="flex items-center gap-3 rounded-[14px] bg-surface border border-hairline px-4 py-[15px] transition-colors focus-within:border-coral">
+                <Lock className="w-[18px] h-[18px] shrink-0 text-fainter" strokeWidth={2} />
                 <input
                   type="password"
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="flex-1 min-w-0 bg-transparent border-0 pb-2.5 text-[17px] text-earth outline-none placeholder:text-earth/30"
+                  className="flex-1 min-w-0 bg-transparent border-0 outline-none text-[15px] text-ink placeholder:text-placeholder"
                   placeholder="Type a new one"
                 />
               </div>
             </div>
 
             <div>
-              <label className="micro block mb-2.5">Confirm the new password</label>
-              <div className="flex items-center gap-3 border-b border-sage/30 focus-within:border-terracotta transition-colors">
-                <Lock className="w-[17px] h-[17px] text-sage/45 shrink-0" />
+              <label className="field-label mb-2">Confirm the new password</label>
+              <div className="flex items-center gap-3 rounded-[14px] bg-surface border border-hairline px-4 py-[15px] transition-colors focus-within:border-coral">
+                <Lock className="w-[18px] h-[18px] shrink-0 text-fainter" strokeWidth={2} />
                 <input
                   type="password"
                   required
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
-                  className="flex-1 min-w-0 bg-transparent border-0 pb-2.5 text-[17px] text-earth outline-none placeholder:text-earth/30"
+                  className="flex-1 min-w-0 bg-transparent border-0 outline-none text-[15px] text-ink placeholder:text-placeholder"
                   placeholder="Type it again"
                 />
               </div>
@@ -114,7 +114,7 @@ export default function ResetPassword({ token, onSuccess }: ResetPasswordProps) 
             <motion.p
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
-              className="flex items-center gap-3 border border-brick/40 bg-brick/5 text-brick text-sm px-4 py-3"
+              className="flex items-center gap-3 rounded-[14px] border border-brick/30 bg-brick-tint text-brick text-[14px] px-4 py-3"
             >
               <AlertCircle className="w-4 h-4" /> {error}
             </motion.p>
@@ -123,12 +123,12 @@ export default function ResetPassword({ token, onSuccess }: ResetPasswordProps) 
           <button
             type="submit"
             disabled={loading}
-            className="btn-accent w-full py-[19px]"
+            className="btn-primary w-full !rounded-2xl !py-[17px] !text-[15px]"
           >
             {loading ? (
               <Loader2 className="w-5 h-5 animate-spin" />
             ) : (
-              <>Reset Password</>
+              <>Set the new password</>
             )}
           </button>
         </form>

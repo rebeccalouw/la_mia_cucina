@@ -43,16 +43,16 @@ export default function ForgotPassword({ onBack }: ForgotPasswordProps) {
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
       <button
         onClick={onBack}
-        className="flex items-center gap-3 micro hover:text-sage transition-colors mb-9"
+        className="flex items-center gap-2 text-[14px] font-semibold text-muted hover:text-ink transition-colors mb-7"
       >
-        <ArrowLeft className="w-4 h-4" />
+        <ArrowLeft className="w-[18px] h-[18px] text-faint" strokeWidth={2.2} />
         Back to sign in
       </button>
 
-      <h2 className="font-serif font-bold text-[40px] md:text-[52px] leading-none tracking-[-0.03em]">
-        Locked <span className="italic font-normal text-sage">out</span>
+      <h2 className="dsp text-[38px] md:text-[44px] font-extrabold tracking-[-0.035em] leading-[1.02]">
+        Locked out<span className="text-coral">.</span>
       </h2>
-      <p className="mt-4 mb-11 font-light text-lg text-earth/55">
+      <p className="mt-3.5 mb-8 text-[16px] leading-[1.5] text-muted">
         Give us the address you signed up with and we&rsquo;ll send a recovery link.
       </p>
 
@@ -61,11 +61,11 @@ export default function ForgotPassword({ onBack }: ForgotPasswordProps) {
           <motion.div 
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="border border-sage/40 bg-sage/6 p-8 text-center"
+            className="card-green p-8 text-center"
           >
-            <CheckCircle2 className="w-10 h-10 text-sage mx-auto mb-5" strokeWidth={1.2} />
-            <p className="text-2xl text-sage mb-2">Check your inbox</p>
-            <p className="font-light text-earth/60 leading-relaxed">
+            <CheckCircle2 className="w-10 h-10 text-green mx-auto mb-4" strokeWidth={1.4} />
+            <p className="dsp text-[24px] font-bold text-green mb-1.5">Check your inbox</p>
+            <p className="text-[15px] leading-[1.5] text-green-ink">
               If an account is registered to that address, a reset link is on its way.
             </p>
           </motion.div>
@@ -73,15 +73,15 @@ export default function ForgotPassword({ onBack }: ForgotPasswordProps) {
       ) : (
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
-            <label className="micro block mb-2.5">Email address</label>
-            <div className="flex items-center gap-3 border-b border-sage/30 focus-within:border-terracotta transition-colors">
-              <Mail className="w-[17px] h-[17px] text-sage/45 shrink-0" />
+            <label className="field-label mb-2">Email address</label>
+            <div className="flex items-center gap-3 rounded-[14px] bg-surface border border-hairline px-4 py-[15px] transition-colors focus-within:border-coral">
+              <Mail className="w-[18px] h-[18px] shrink-0 text-fainter" strokeWidth={2} />
               <input
                 type="email"
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="flex-1 min-w-0 bg-transparent border-0 pb-2.5 text-[17px] text-earth outline-none placeholder:text-earth/30"
+                className="flex-1 min-w-0 bg-transparent border-0 outline-none text-[15px] text-ink placeholder:text-placeholder"
                 placeholder="chef@lamiacucina.com"
               />
             </div>
@@ -91,7 +91,7 @@ export default function ForgotPassword({ onBack }: ForgotPasswordProps) {
             <motion.p
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
-              className="flex items-center gap-3 border border-brick/40 bg-brick/5 text-brick text-sm px-4 py-3"
+              className="flex items-center gap-3 rounded-[14px] border border-brick/30 bg-brick-tint text-brick text-[14px] px-4 py-3"
             >
               <AlertCircle className="w-4 h-4" /> {error}
             </motion.p>
@@ -100,12 +100,12 @@ export default function ForgotPassword({ onBack }: ForgotPasswordProps) {
           <button
             type="submit"
             disabled={loading}
-            className="btn-accent w-full py-[19px]"
+            className="btn-primary w-full !rounded-2xl !py-[17px] !text-[15px]"
           >
             {loading ? (
               <Loader2 className="w-5 h-5 animate-spin" />
             ) : (
-              <>Send Recovery Link</>
+              <>Send the recovery link</>
             )}
           </button>
         </form>

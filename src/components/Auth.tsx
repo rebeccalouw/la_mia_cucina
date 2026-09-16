@@ -105,92 +105,76 @@ export default function Auth({ onSuccess, initialResetToken }: AuthProps) {
 
   return (
     <AuthShell>
-      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-        {/* Mode is a pair of tabs on a rule, not a link buried at the bottom. */}
-        <div className="flex gap-8 border-b border-sage/25 mb-10">
-          <button
-            onClick={() => mode !== 'login' && switchMode()}
-            className={`pb-3.5 -mb-px text-[10px] font-semibold uppercase tracking-[0.28em] border-b-2 transition-colors ${
-              mode === 'login' ? 'text-earth border-terracotta' : 'text-sage/50 border-transparent hover:text-sage'
-            }`}
-          >
-            Sign in
-          </button>
-          <button
-            onClick={() => mode !== 'register' && switchMode()}
-            className={`pb-3.5 -mb-px text-[10px] font-semibold uppercase tracking-[0.28em] border-b-2 transition-colors ${
-              mode === 'register' ? 'text-earth border-terracotta' : 'text-sage/50 border-transparent hover:text-sage'
-            }`}
-          >
-            Create an account
-          </button>
+      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex flex-col gap-8">
+        <div>
+          <h2 className="dsp text-[38px] md:text-[44px] font-extrabold tracking-[-0.035em] leading-[1.02]">
+            {mode === 'login' ? (
+              <>Welcome<br />back<span className="text-coral">.</span></>
+            ) : (
+              <>Join the<br />kitchen<span className="text-coral">.</span></>
+            )}
+          </h2>
+          <p className="mt-3.5 text-[16px] leading-[1.5] text-muted">
+            {mode === 'login'
+              ? 'Your recipes, your week and your freezer are where you left them.'
+              : 'Somewhere to keep everything worth cooking twice.'}
+          </p>
         </div>
 
-        <h2 className="font-serif font-bold text-[40px] md:text-[52px] leading-none tracking-[-0.03em]">
-          {mode === 'login' ? (
-            <>Welcome <span className="italic font-normal text-sage">back</span></>
-          ) : (
-            <>Join the <span className="italic font-normal text-sage">kitchen</span></>
-          )}
-        </h2>
-        <p className="mt-4 mb-11 font-light text-lg text-earth/55">
-          {mode === 'login' ? 'Let yourself into the kitchen.' : 'Somewhere to keep everything worth cooking twice.'}
-        </p>
-
-        <form onSubmit={handleSubmit} className="space-y-8">
+        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           {mode === 'register' && (
-            <div>
-              <label className="micro block mb-2.5">Name</label>
-              <div className="flex items-center gap-3 border-b border-sage/30 focus-within:border-terracotta transition-colors">
-                <UserIcon className="w-[17px] h-[17px] text-sage/45 shrink-0" />
+            <div className="flex flex-col gap-2">
+              <label className="field-label">Name</label>
+              <div className="flex items-center gap-3 rounded-[14px] bg-surface border border-hairline px-4 py-[15px] transition-colors focus-within:border-coral">
+                <UserIcon className="w-[18px] h-[18px] shrink-0 text-fainter" strokeWidth={2} />
                 <input
                   type="text"
                   required={mode === 'register'}
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  className="flex-1 min-w-0 bg-transparent border-0 pb-2.5 text-[17px] text-earth outline-none placeholder:text-earth/30"
+                  className="flex-1 min-w-0 bg-transparent border-0 outline-none text-[15px] text-ink placeholder:text-placeholder"
                   placeholder="Mario"
                 />
               </div>
             </div>
           )}
 
-          <div>
-            <label className="micro block mb-2.5">Email</label>
-            <div className="flex items-center gap-3 border-b border-sage/30 focus-within:border-terracotta transition-colors">
-              <Mail className="w-[17px] h-[17px] text-sage/45 shrink-0" />
+          <div className="flex flex-col gap-2">
+            <label className="field-label">Email</label>
+            <div className="flex items-center gap-3 rounded-[14px] bg-surface border border-hairline px-4 py-[15px] transition-colors focus-within:border-coral">
+              <Mail className="w-[18px] h-[18px] shrink-0 text-fainter" strokeWidth={2} />
               <input
                 type="email"
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="flex-1 min-w-0 bg-transparent border-0 pb-2.5 text-[17px] text-earth outline-none placeholder:text-earth/30"
+                className="flex-1 min-w-0 bg-transparent border-0 outline-none text-[15px] text-ink placeholder:text-placeholder"
                 placeholder="chef@lamiacucina.com"
               />
             </div>
           </div>
 
-          <div>
-            <div className="flex items-baseline justify-between gap-4 mb-2.5">
-              <label className="micro">Password</label>
+          <div className="flex flex-col gap-2">
+            <div className="flex items-center justify-between gap-3">
+              <label className="field-label">Password</label>
               {mode === 'login' && (
                 <button
                   type="button"
                   onClick={() => setMode('forgot-password')}
-                  className="text-[9px] font-semibold text-terracotta uppercase tracking-[0.22em] hover:text-sage transition-colors"
+                  className="text-[13px] font-semibold text-coral hover:text-green transition-colors"
                 >
                   Forgotten it?
                 </button>
               )}
             </div>
-            <div className="flex items-center gap-3 border-b border-sage/30 focus-within:border-terracotta transition-colors">
-              <Lock className="w-[17px] h-[17px] text-sage/45 shrink-0" />
+            <div className="flex items-center gap-3 rounded-[14px] bg-surface border border-hairline px-4 py-[15px] transition-colors focus-within:border-coral">
+              <Lock className="w-[18px] h-[18px] shrink-0 text-fainter" strokeWidth={2} />
               <input
                 type={showPassword ? 'text' : 'password'}
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="flex-1 min-w-0 bg-transparent border-0 pb-2.5 text-[17px] text-earth outline-none placeholder:text-earth/30"
+                className="flex-1 min-w-0 bg-transparent border-0 outline-none text-[15px] text-ink placeholder:text-placeholder"
                 placeholder="••••••••"
               />
               {/* Masked by default; the eye is the only way to read it back. */}
@@ -199,28 +183,24 @@ export default function Auth({ onSuccess, initialResetToken }: AuthProps) {
                 onClick={() => setShowPassword(!showPassword)}
                 aria-label={showPassword ? 'Hide the password' : 'Show the password'}
                 aria-pressed={showPassword}
-                className="shrink-0 pb-2.5 pl-2 text-sage/45 hover:text-terracotta transition-colors"
+                className="shrink-0 text-fainter hover:text-coral transition-colors"
               >
-                {showPassword ? (
-                  <EyeOff className="w-[17px] h-[17px]" />
-                ) : (
-                  <Eye className="w-[17px] h-[17px]" />
-                )}
+                {showPassword ? <EyeOff className="w-[18px] h-[18px]" /> : <Eye className="w-[18px] h-[18px]" />}
               </button>
             </div>
           </div>
 
           {mode === 'register' && (
-            <div>
-              <label className="micro block mb-2.5">Confirm the password</label>
-              <div className="flex items-center gap-3 border-b border-sage/30 focus-within:border-terracotta transition-colors">
-                <Lock className="w-[17px] h-[17px] text-sage/45 shrink-0" />
+            <div className="flex flex-col gap-2">
+              <label className="field-label">Confirm the password</label>
+              <div className="flex items-center gap-3 rounded-[14px] bg-surface border border-hairline px-4 py-[15px] transition-colors focus-within:border-coral">
+                <Lock className="w-[18px] h-[18px] shrink-0 text-fainter" strokeWidth={2} />
                 <input
                   type="password"
                   required={mode === 'register'}
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
-                  className="flex-1 min-w-0 bg-transparent border-0 pb-2.5 text-[17px] text-earth outline-none placeholder:text-earth/30"
+                  className="flex-1 min-w-0 bg-transparent border-0 outline-none text-[15px] text-ink placeholder:text-placeholder"
                   placeholder="••••••••"
                 />
               </div>
@@ -231,21 +211,33 @@ export default function Auth({ onSuccess, initialResetToken }: AuthProps) {
             <motion.p
               initial={{ opacity: 0, y: -6 }}
               animate={{ opacity: 1, y: 0 }}
-              className="border border-brick/40 bg-brick/5 text-brick text-sm px-4 py-3"
+              className="rounded-[14px] border border-brick/30 bg-brick-tint text-brick text-[14px] px-4 py-3"
             >
               {error}
             </motion.p>
           )}
 
-          <button type="submit" disabled={loading} className="btn-primary w-full py-[19px]">
+          <button
+            type="submit"
+            disabled={loading}
+            className="btn-primary mt-1.5 w-full !rounded-2xl !py-[17px] !text-[15px]"
+          >
             {loading ? (
-              <Loader2 className="w-4 h-4 animate-spin" />
-            ) : mode === 'login' ? (
-              <>Enter the kitchen <ArrowRight className="w-6 h-4" /></>
+              <Loader2 className="w-[18px] h-[18px] animate-spin" />
             ) : (
-              <>Create the account <ArrowRight className="w-6 h-4" /></>
+              <>
+                {mode === 'login' ? 'Enter the kitchen' : 'Create the account'}
+                <ArrowRight className="w-[18px] h-[18px]" strokeWidth={2.4} />
+              </>
             )}
           </button>
+
+          <p className="text-center text-[14px] text-muted">
+            {mode === 'login' ? 'New here? ' : 'Already have an account? '}
+            <button type="button" onClick={switchMode} className="font-bold text-green hover:text-coral transition-colors">
+              {mode === 'login' ? 'Join the kitchen' : 'Sign in'}
+            </button>
+          </p>
         </form>
       </motion.div>
     </AuthShell>
@@ -253,64 +245,49 @@ export default function Auth({ onSuccess, initialResetToken }: AuthProps) {
 }
 
 /**
- * The split: a plated left half that carries the brand, a form on the right.
- * Everything the auth flow renders — sign in, register, forgot, reset — sits
- * inside it, so the panel never flashes away mid-flow.
+ * The split: the form on a white panel, and a warm coral field beside it
+ * carrying the plates. Everything the auth flow renders — sign in, register,
+ * forgot, reset — sits inside it, so the panel never flashes away mid-flow.
  */
 function AuthShell({ children }: { children: React.ReactNode }) {
   return (
-    <div className="min-h-screen flex bg-cream">
-      {/* One flat sage field — the same green as the primary button — framed like a page. */}
-      <div className="hidden lg:flex relative w-[46%] max-w-[700px] shrink-0 flex-col justify-between overflow-hidden bg-sage grain-panel p-14">
-        <div className="absolute top-7 bottom-7 left-7 right-[31px] border border-cream/20 pointer-events-none" />
-        <div className="absolute inset-y-0 right-0 w-[3px] bg-terracotta" />
-
-        <div className="relative flex items-center gap-4">
-          <div className="w-11 h-11 shrink-0 bg-cream/95 flex items-center justify-center">
-            <UtensilsCrossed className="w-6 h-6 text-sage" />
+    <div className="min-h-screen flex bg-page">
+      {/* The statement. Decorative, so it steps aside on a narrow screen. */}
+      <div className="hidden lg:flex w-[46%] max-w-[700px] shrink-0 items-center justify-center bg-ink px-12 py-[54px]">
+        {/* A hairline frame, set in from the edge the way a page is. */}
+        <div className="w-full h-full rounded-[26px] border border-oncoral/12 flex flex-col justify-between px-11 py-11">
+          <div className="flex items-center gap-3">
+            <span className="w-[42px] h-[42px] shrink-0 rounded-[14px] bg-coral flex items-center justify-center">
+              <UtensilsCrossed className="w-[22px] h-[22px] text-oncoral" strokeWidth={1.9} />
+            </span>
+            <span className="dsp text-[19px] font-extrabold tracking-[-0.02em] text-oncoral">La Mia Cucina</span>
           </div>
-          <span className="font-serif font-bold text-[17px] uppercase tracking-[0.30em] text-cream">
-            La Mia Cucina
-          </span>
-        </div>
 
-        <div className="relative">
-          <p className="text-[10px] font-semibold uppercase tracking-[0.32em] text-cream/70">
-            Your kitchen, written down
-          </p>
-          <p className="mt-5 font-serif font-bold text-[66px] leading-[0.98] tracking-[-0.03em] text-cream">
-            Every recipe<br />worth <span className="italic font-normal">keeping.</span>
-          </p>
-          <div className="w-[90px] h-[3px] bg-cream/75 my-7" />
-          <p className="max-w-[470px] font-light text-xl leading-relaxed text-cream/80">
-            Write them, import them, plan the week around them, and remember what is still in
-            the freezer.
-          </p>
+          <div>
+            <p className="micro text-peach">Your kitchen, written down</p>
+            <p className="dsp mt-5 text-[52px] font-extrabold tracking-[-0.04em] leading-[1.02] text-oncoral">
+              Every recipe<br />worth keeping<span className="text-coral">.</span>
+            </p>
+            <span className="block w-[90px] h-[3px] rounded-full bg-coral my-7" />
+            <p className="max-w-[440px] text-[17px] leading-[1.55] text-darkmuted">
+              Write them, import them, plan the week around them, and remember what is still in
+              the freezer.
+            </p>
+          </div>
         </div>
       </div>
 
-      <div className="flex-1 min-w-0 flex flex-col">
-        {/* Below lg the field becomes a masthead band, so the brand survives the breakpoint. */}
-        <div className="lg:hidden relative bg-sage grain-panel px-6 pt-8 pb-[34px]">
-          <div className="absolute inset-x-0 bottom-0 h-[3px] bg-terracotta" />
-          <div className="flex items-center gap-3.5">
-            <div className="w-10 h-10 shrink-0 bg-cream/95 flex items-center justify-center">
-              <UtensilsCrossed className="w-[21px] h-[21px] text-sage" />
-            </div>
-            <span className="font-serif font-bold text-sm uppercase tracking-[0.28em] text-cream">
-              La Mia Cucina
+      <div className="flex-grow min-w-0 flex flex-col justify-center px-6 sm:px-12 lg:px-20 py-12">
+        <div className="w-full max-w-[480px] flex flex-col gap-8">
+          {/* The mark sits on the statement panel from lg up; here it stands in below it. */}
+          <div className="flex lg:hidden items-center gap-3">
+            <span className="w-[42px] h-[42px] shrink-0 rounded-[14px] bg-coral flex items-center justify-center">
+              <UtensilsCrossed className="w-[22px] h-[22px] text-oncoral" strokeWidth={1.9} />
             </span>
+            <span className="dsp text-[19px] font-extrabold tracking-[-0.02em]">La Mia Cucina</span>
           </div>
-          <p className="mt-[26px] text-[9px] font-semibold uppercase tracking-[0.30em] text-cream/70">
-            Your kitchen, written down
-          </p>
-          <p className="mt-3 font-serif font-bold text-[34px] leading-[0.98] tracking-[-0.03em] text-cream">
-            Every recipe<br />worth <span className="italic font-normal">keeping.</span>
-          </p>
-        </div>
 
-        <div className="flex-1 flex flex-col justify-center px-6 sm:px-12 lg:px-24 py-14">
-          <div className="w-full max-w-lg">{children}</div>
+          {children}
         </div>
       </div>
     </div>

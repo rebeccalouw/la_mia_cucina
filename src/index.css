@@ -1,32 +1,69 @@
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,500;0,700;1,400;1,500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
 @import "tailwindcss";
 
+/* La Mia Cucina — coral, sage-green and aubergine on warm white.
+   Two typefaces: Bricolage Grotesque names things (`font-display`), Plus Jakarta
+   Sans carries everything else. Surfaces are rounded cards on a warm page, never
+   shadows; hairlines do the separating. */
 @theme {
-  --font-serif: "Playfair Display", Georgia, serif;
-  --font-sans: "Outfit", system-ui, sans-serif;
+  --font-display: "Bricolage Grotesque", "Trebuchet MS", system-ui, sans-serif;
+  --font-sans: "Plus Jakarta Sans", system-ui, sans-serif;
 
-  --color-cream: #F6F1E7;
-  --color-sage: #59715E;
-  --color-terracotta: #B67A5D;
-  --color-ochre: #E6D5B8;
-  --color-honey: #B8860B;
-  --color-earth: #2D2D2D;
-  --color-brick: #B23A2A;
+  /* Ground */
+  --color-page: #FDFAF4;
+  --color-surface: #FFFFFF;
+  --color-hairline: #EFE7DA;
+  --color-hairline-soft: #F3EDE3;
+  --color-edge: #E2D8C9;
+
+  /* Coral — the primary. Actions, the active place, the accent full stop. */
+  --color-coral: #E24E28;
+  --color-coral-tint: #FFF0EB;
+  --color-coral-ink: #8A6A5E;
+  --color-oncoral: #FFF6EE;
+
+  /* Sage green — confirmation, the freezer, anything settled. */
+  --color-green: #0F8F63;
+  --color-green-tint: #F2F8F2;
+  --color-green-ink: #5C6B5F;
+
+  /* Aubergine ink and its greys. */
+  --color-ink: #33232C;
+  --color-ink-soft: #4A3642;
+  --color-muted: #6B6058;
+  --color-faint: #9A9089;
+  --color-fainter: #C8BFB5;
+  --color-placeholder: #B3A89E;
+
+  /* On the filled aubergine cards. */
+  --color-darkmuted: #C2B0BA;
+  --color-peach: #FFB48F;
+
+  /* Incidentals */
+  --color-avatar: #FFD9A8;
+  --color-avatar-ink: #8A5A18;
+  --color-brick: #C4392B;
+  --color-brick-tint: #FDF1EF;
+
+  /* Amber — a caveat, never an error. */
+  --color-amber: #A87A1E;
+  --color-amber-tint: #FFF6E8;
+  --color-amber-ink: #8A6C2E;
 }
 
 @layer base {
   body {
-    @apply bg-cream text-earth font-sans;
-    /* Paper grain. Inline so nothing has to be fetched. */
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E");
+    @apply bg-page text-ink font-sans antialiased;
   }
 
-  /* Headings no longer imply a serif. The rule is: the serif names a thing you
-     cook — page headlines, recipe, meal and freezer item titles — and the sans
-     carries everything else, every number included. Headlines opt in with
-     `font-serif font-bold`; label-style headings just stay sans. */
   h1, h2, h3, h4, h5, h6 {
-    @apply text-earth;
+    @apply text-ink;
+  }
+
+  /* Bricolage names things you cook: page headlines, recipe, meal and freezer
+     titles, and every big number. Everything else stays in the sans. */
+  .dsp {
+    @apply font-display tracking-[-0.03em];
   }
 
   .no-scrollbar::-webkit-scrollbar {
@@ -39,57 +76,108 @@
 }
 
 @layer components {
-  /* Editorial micro-labels: the small caps that title every band. */
+  /* ── Surfaces ─────────────────────────────────────────────── */
+  .card {
+    @apply rounded-[20px] bg-surface border border-hairline;
+  }
+  .card-sm {
+    @apply rounded-[18px] bg-surface border border-hairline;
+  }
+  .card-dashed {
+    @apply rounded-[20px] border-[1.5px] border-dashed border-edge;
+  }
+  .card-coral {
+    @apply rounded-[20px] bg-coral-tint;
+  }
+  .card-green {
+    @apply rounded-[20px] bg-green-tint;
+  }
+  .card-ink {
+    @apply rounded-[20px] bg-ink text-oncoral;
+  }
+  .rule {
+    @apply h-px bg-hairline;
+  }
+
+  /* ── Type ─────────────────────────────────────────────────── */
+  /* The eyebrow above a headline: 13px, not a tracked-out small cap. */
+  .eyebrow {
+    @apply text-[13px] font-semibold text-faint;
+  }
+  /* The one place small caps survive: pills and column headers. */
   .label {
-    @apply text-[10px] font-semibold uppercase tracking-[0.28em] text-sage/60;
+    @apply text-[11px] font-bold uppercase tracking-[0.04em];
   }
   .micro {
-    @apply text-[9px] font-semibold uppercase tracking-[0.24em] text-sage/45;
+    @apply text-[12px] font-bold uppercase tracking-[0.06em];
+  }
+  .h-page {
+    @apply font-display tracking-[-0.035em] text-[42px] font-extrabold leading-[1.04];
+  }
+  .h-section {
+    @apply font-display tracking-[-0.02em] text-[20px] font-bold leading-tight;
+  }
+  .stat {
+    @apply font-display text-[40px] font-bold tracking-[-0.04em] leading-none;
   }
 
-  /* The auth panel's paper tooth — a shade stronger than the body grain so it reads on sage. */
-  .grain-panel {
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n2'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n2)' opacity='0.09'/%3E%3C/svg%3E");
-  }
-
-  /* Rules do the separating now — not shadows. */
-  .rule {
-    @apply h-px bg-sage/20;
-  }
-  .rule-strong {
-    @apply h-0.5 bg-sage/65;
-  }
-  .panel {
-    @apply bg-white/45 border border-sage/20;
-  }
-
-  /* Buttons: square, flat, 10px / .26em. */
+  /* ── Buttons — 14px rounded rectangles, never uppercase ───── */
   .btn-primary {
-    @apply inline-flex items-center justify-center gap-3 px-6 py-3.5 text-[10px] font-semibold uppercase tracking-[0.26em] bg-sage text-cream transition-colors hover:bg-earth disabled:opacity-50;
-  }
-  .btn-accent {
-    @apply inline-flex items-center justify-center gap-3 px-6 py-3.5 text-[10px] font-semibold uppercase tracking-[0.26em] bg-terracotta text-cream transition-colors hover:bg-sage disabled:opacity-50;
+    @apply inline-flex items-center justify-center gap-2 rounded-[14px] bg-coral px-5 py-[13px] text-[14px] font-bold text-oncoral transition-colors hover:bg-[#C8401E] disabled:opacity-50 disabled:hover:bg-coral;
   }
   .btn-ghost {
-    @apply inline-flex items-center justify-center gap-3 px-6 py-3.5 text-[10px] font-semibold uppercase tracking-[0.26em] border border-sage/30 text-sage transition-colors hover:bg-sage/5 disabled:opacity-50;
+    @apply inline-flex items-center justify-center gap-2 rounded-[14px] bg-surface border border-hairline px-[18px] py-[13px] text-[14px] font-semibold text-muted transition-colors hover:border-fainter hover:text-ink disabled:opacity-50;
+  }
+  .btn-dark {
+    @apply inline-flex items-center justify-center gap-2 rounded-[14px] bg-ink px-5 py-[13px] text-[14px] font-bold text-oncoral transition-colors hover:bg-ink-soft disabled:opacity-50;
+  }
+  .btn-green {
+    @apply inline-flex items-center justify-center gap-2 rounded-[14px] bg-green px-5 py-[13px] text-[14px] font-bold text-white transition-colors hover:bg-[#0C7B55] disabled:opacity-50;
   }
   .btn-danger {
-    @apply inline-flex items-center justify-center gap-3 px-6 py-3.5 text-[10px] font-semibold uppercase tracking-[0.26em] border border-brick/40 text-brick transition-colors hover:bg-brick/5 disabled:opacity-50;
+    @apply inline-flex items-center justify-center gap-2 rounded-[14px] border border-brick/30 px-[18px] py-[13px] text-[14px] font-semibold text-brick transition-colors hover:bg-brick-tint disabled:opacity-50;
+  }
+  .btn-sm {
+    @apply px-4 py-2.5 text-[13px];
+  }
+  /* The small dark pill inside cards ("Choose a file"). */
+  .pill-dark {
+    @apply inline-flex items-center gap-2 rounded-full bg-ink px-4 py-[9px] text-[13px] font-semibold text-oncoral transition-colors hover:bg-ink-soft;
   }
 
-  /* Fields are a rule, not a pill. Focus changes colour, never thickness,
-     so nothing shifts by a pixel when you tab through a form. */
+  /* ── Fields — boxed, 14px radius, coral on focus ──────────── */
+  .field-label {
+    @apply block text-[13px] font-semibold text-muted;
+  }
   .field {
-    @apply w-full bg-transparent border-0 border-b border-sage/30 pb-2.5 text-[17px] text-earth outline-none transition-colors placeholder:text-earth/30 focus:border-terracotta;
+    @apply w-full rounded-[14px] bg-surface border border-hairline px-4 py-[14px] text-[15px] leading-relaxed text-ink outline-none transition-colors placeholder:text-placeholder focus:border-coral;
   }
   .field-box {
-    @apply w-full bg-white/50 border border-sage/25 px-4 py-3 text-[15px] leading-loose text-earth outline-none transition-colors placeholder:text-earth/30 focus:border-terracotta;
+    @apply w-full rounded-[14px] bg-surface border border-hairline px-4 py-[14px] text-[15px] leading-relaxed text-ink outline-none transition-colors placeholder:text-placeholder focus:border-coral;
   }
 
+  /* ── Pills and chips ──────────────────────────────────────── */
+  .tag-coral {
+    @apply inline-flex items-center rounded-full bg-coral-tint px-2.5 py-1 text-[11px] font-bold uppercase tracking-[0.04em] text-coral;
+  }
+  .tag-green {
+    @apply inline-flex items-center rounded-full bg-green-tint px-2.5 py-1 text-[11px] font-bold uppercase tracking-[0.04em] text-green;
+  }
   .chip {
-    @apply inline-flex items-center gap-2 px-3 py-1.5 text-[9px] font-semibold uppercase tracking-[0.22em] border border-sage/30 text-sage/70 transition-colors;
+    @apply inline-flex items-center gap-1.5 rounded-full bg-page border border-hairline px-3.5 py-2 text-[13px] font-semibold text-muted transition-colors hover:border-fainter hover:text-ink;
   }
   .chip-on {
-    @apply inline-flex items-center gap-2 px-3 py-1.5 text-[9px] font-semibold uppercase tracking-[0.22em] bg-terracotta text-cream transition-colors;
+    @apply inline-flex items-center gap-1.5 rounded-full bg-coral px-3.5 py-2 text-[13px] font-semibold text-oncoral transition-colors;
+  }
+  .chip-new {
+    @apply inline-flex items-center gap-1.5 rounded-full bg-page border border-dashed border-edge px-3.5 py-2 text-[13px] font-semibold text-faint transition-colors hover:text-ink;
+  }
+
+  /* ── The left rail ────────────────────────────────────────── */
+  .rail-item {
+    @apply flex items-center gap-3 rounded-[14px] px-3.5 py-[13px] text-[15px] font-medium text-muted transition-colors hover:bg-page hover:text-ink;
+  }
+  .rail-item-on {
+    @apply flex items-center gap-3 rounded-[14px] bg-coral-tint px-3.5 py-[13px] text-[15px] font-semibold text-coral;
   }
 }

@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import Loading from './Loading';
 import {
-  ArrowRight,
   ChevronRight,
   ChefHat,
   Link as LinkIcon,
   Snowflake,
-  MessageSquare
+  MessageSquare,
+  Plus,
 } from 'lucide-react';
 
 interface Stats {
@@ -14,6 +14,7 @@ interface Stats {
   monthlyMealsCount: number;
   todayMeals: any[];
   latestRecipes: any[];
+  openNights: string[];
 }
 
 interface DashboardProps {
@@ -22,6 +23,16 @@ interface DashboardProps {
 }
 
 const plural = (n: number, one: string, many: string) => `${n} ${n === 1 ? one : many}`;
+const iso = (d: Date) => d.toISOString().split('T')[0];
+
+/* Thumbnails carry a warm gradient when a recipe has no photograph, so a card
+   never opens with a grey hole in it. */
+const gradients = [
+  'linear-gradient(140deg, #FFD9A8, #E9A87C)',
+  'linear-gradient(140deg, #DCE9CF, #A9C78B)',
+  'linear-gradient(140deg, #F6D9CF, #E2A38B)',
+  'linear-gradient(140deg, #FFE2B8, #E8BC7A)',
+];
 
 export default function Dashboard({ onNavigate, userName }: DashboardProps) {
   const [stats, setStats] = useState<Stats | null>(null);
@@ -33,34 +44,46 @@ export default function Dashboard({ onNavigate, userName }: DashboardProps) {
 
   const fetchDashboardData = async () => {
     const token = localStorage.getItem('la_mia_cucina_token');
+    const auth = { headers: { Authorization: `Bearer ${token}` } };
     try {
       setLoading(true);
-      
-      const [recipesRes, plannerRes] = await Promise.all([
-        fetch('/api/recipes', { headers: { 'Authorization': `Bearer ${token}` } }),
-        fetch(`/api/planner?start=${new Date().toISOString().split('T')[0]}&end=${new Date().toISOString().split('T')[0]}`, { 
-          headers: { 'Authorization': `Bearer ${token}` } 
-        })
+
+      const today = new Date();
+      const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+      const endOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+
+      // The rest of this week, Monday-start, today included.
+      const weekEnd = new Date(today);
+      weekEnd.setDate(today.getDate() + (7 - ((today.getDay() + 6) % 7) - 1));
+
+      const [recipesRes, plannerRes, monRes, weekRes] = await Promise.all([
+        fetch('/api/recipes', auth),
+        fetch(`/api/planner?start=${iso(today)}&end=${iso(today)}`, auth),
+        fetch(`/api/planner?start=${iso(startOfMonth)}&end=${iso(endOfMonth)}`, auth),
+        fetch(`/api/planner?start=${iso(today)}&end=${iso(weekEnd)}`, auth),
       ]);
 
       const recipes = await recipesRes.json();
       const todayMeals = await plannerRes.json();
-
-      // Get monthly count
-      const startOfMonth = new Date();
-      startOfMonth.setDate(1);
-      const endOfMonth = new Date(startOfMonth.getFullYear(), startOfMonth.getMonth() + 1, 0);
-      
-      const monRes = await fetch(`/api/planner?start=${startOfMonth.toISOString().split('T')[0]}&end=${endOfMonth.toISOString().split('T')[0]}`, {
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
       const monthMeals = await monRes.json();
+      const weekMeals = await weekRes.json();
+
+      const planned = new Set(
+        (Array.isArray(weekMeals) ? weekMeals : []).map((m: any) => String(m.date).split('T')[0])
+      );
+      const openNights: string[] = [];
+      for (let d = new Date(today); d <= weekEnd; d.setDate(d.getDate() + 1)) {
+        if (!planned.has(iso(d))) {
+          openNights.push(d.toLocaleDateString(undefined, { weekday: 'long' }));
+        }
+      }
 
       setStats({
         recipeCount: recipes.length,
         monthlyMealsCount: monthMeals.length,
-        todayMeals: todayMeals,
-        latestRecipes: [...recipes].sort((a, b) => b.id - a.id).slice(0, 3)
+        todayMeals,
+        latestRecipes: [...recipes].sort((a, b) => b.id - a.id).slice(0, 3),
+        openNights,
       });
     } catch (err) {
       console.error('Failed to fetch dashboard data', err);
@@ -78,191 +101,208 @@ export default function Dashboard({ onNavigate, userName }: DashboardProps) {
   const greeting = hour < 12 ? 'Buongiorno' : hour < 18 ? 'Buon pomeriggio' : 'Buonasera';
   const today = now.toLocaleDateString(undefined, { weekday: 'long', day: 'numeric', month: 'long' });
 
-  const summary = [
-    stats.todayMeals.length
-      ? `${plural(stats.todayMeals.length, 'plate is', 'plates are')} on the board today`
-      : 'Nothing is on the board today',
-    `${plural(stats.recipeCount, 'recipe', 'recipes')} in the box`,
-    `${plural(stats.monthlyMealsCount, 'meal', 'meals')} planned this month`,
-  ].join(', ') + '.';
+  const summary =
+    [
+      stats.todayMeals.length
+        ? `${plural(stats.todayMeals.length, 'plate is', 'plates are')} on the board today`
+        : 'Nothing is on the board today',
+      `${plural(stats.recipeCount, 'recipe', 'recipes')} in the box`,
+      `${plural(stats.monthlyMealsCount, 'meal', 'meals')} planned this month`,
+    ].join(', ') + '.';
+
+  const nights = stats.openNights;
+  const nightList =
+    nights.length > 1
+      ? `${nights.slice(0, -1).join(', ')} and ${nights[nights.length - 1]} are still open.`
+      : nights.length === 1
+        ? `${nights[0]} is still open.`
+        : 'Every night left this week is spoken for.';
 
   return (
-    <div className="space-y-10 md:space-y-12">
+    <div className="flex flex-col gap-7 md:gap-[30px]">
       {/* Hero */}
-      <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-10 lg:gap-16">
-        <div className="flex-1 min-w-0">
-          <p className="label">N&deg; {stats.recipeCount} &nbsp;&mdash;&nbsp; {today}</p>
-          <h1 className="font-serif font-bold mt-4 text-[44px] md:text-[76px] leading-[0.94] tracking-[-0.025em] text-pretty">
-            <span className="italic font-normal text-sage">{greeting},</span>
+      <div className="flex flex-col lg:flex-row lg:items-start justify-between gap-7">
+        <div className="flex-grow min-w-0">
+          <p className="eyebrow">{today}</p>
+          <h1 className="dsp mt-2.5 text-[38px] md:text-[52px] font-extrabold tracking-[-0.035em] leading-[1.02] text-pretty">
+            {greeting},
             <br />
             {/* Names are stored as the chef writes them — some already carry the honorific. */}
-            {userName ? `${userName}.` : 'welcome back.'}
+            {userName ? (
+              <>
+                {userName}
+                <span className="text-coral">.</span>
+              </>
+            ) : (
+              <>
+                welcome back<span className="text-coral">.</span>
+              </>
+            )}
           </h1>
-          <p className="mt-5 max-w-2xl font-light text-lg md:text-xl leading-relaxed text-earth/60">
-            {summary}
-          </p>
+          <p className="mt-3.5 max-w-[460px] text-[17px] leading-[1.5] text-muted">{summary}</p>
         </div>
 
-        <div className="w-full lg:w-[300px] shrink-0 flex flex-col">
+        <div className="w-full lg:w-[250px] shrink-0 flex flex-col gap-2.5">
           <button
             onClick={() => onNavigate('add-recipe')}
-            className="bg-terracotta text-cream p-6 text-left transition-colors hover:bg-sage"
+            className="rounded-[20px] bg-coral text-oncoral px-[22px] py-5 flex flex-col gap-2 text-left transition-colors hover:bg-[#C8401E]"
           >
-            <span className="block text-[9px] font-semibold uppercase tracking-[0.30em] text-cream/70">Start something</span>
-            <span className="mt-2.5 block font-serif text-3xl leading-tight">Write a<br />new recipe</span>
-            <span className="mt-4 flex items-center gap-3 text-[10px] font-semibold uppercase tracking-[0.24em]">
-              Begin <ArrowRight className="w-5 h-4" />
+            <Plus className="w-[22px] h-[22px]" strokeWidth={2} />
+            <span className="dsp text-[22px] font-bold tracking-[-0.02em] leading-[1.15]">
+              Write a new recipe
             </span>
           </button>
           <button
             onClick={() => onNavigate('import')}
-            className="border border-t-0 border-sage/28 p-5 flex items-center justify-between gap-3 text-left transition-colors hover:bg-sage/5"
+            className="card px-5 py-4 flex items-center justify-between gap-3 text-left transition-colors hover:border-fainter"
           >
-            <span>
-              <span className="micro block mb-1">Or</span>
-              <span className="text-lg text-sage">Import from a link</span>
-            </span>
-            <LinkIcon className="w-5 h-5 text-sage shrink-0" />
+            <span className="text-[15px] font-semibold">Import from a link</span>
+            <LinkIcon className="w-[18px] h-[18px] shrink-0 text-green" strokeWidth={2} />
           </button>
         </div>
       </div>
 
-      {/* Stat rule */}
-      <div>
-        <div className="rule" />
-        <div className="flex flex-col sm:flex-row">
-          <button
-            onClick={() => onNavigate('recipes')}
-            className="flex-1 flex items-center gap-4 py-5 sm:pr-10 text-left group"
-          >
-            <span className="font-light text-4xl md:text-5xl leading-none tracking-[-0.03em] text-earth group-hover:text-terracotta transition-colors">
-              {stats.recipeCount}
-            </span>
-            <span className="micro leading-relaxed">Recipes<br />in the box</span>
-          </button>
-          <button
-            onClick={() => onNavigate('planner')}
-            className="flex-1 flex items-center gap-4 py-5 sm:px-10 border-t sm:border-t-0 sm:border-l border-sage/20 text-left group"
-          >
-            <span className="font-light text-4xl md:text-5xl leading-none tracking-[-0.03em] text-terracotta">
-              {stats.monthlyMealsCount}
-            </span>
-            <span className="micro leading-relaxed">Meals planned<br />this month</span>
-          </button>
-          <button
-            onClick={() => onNavigate('planner')}
-            className="flex-1 flex items-center gap-4 py-5 sm:pl-10 border-t sm:border-t-0 sm:border-l border-sage/20 text-left group"
-          >
-            <span className="font-light text-4xl md:text-5xl leading-none tracking-[-0.03em] text-earth group-hover:text-terracotta transition-colors">
-              {stats.todayMeals.length}
-            </span>
-            <span className="micro leading-relaxed">On the board<br />today</span>
-          </button>
-        </div>
-        <div className="rule-strong" />
+      {/* The three counts */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <button onClick={() => onNavigate('recipes')} className="card px-6 py-[22px] flex flex-col gap-1.5 text-left">
+          <span className="stat">{stats.recipeCount}</span>
+          <span className="text-[14px] text-muted">Recipes in the box</span>
+        </button>
+        <button onClick={() => onNavigate('planner')} className="card-coral px-6 py-[22px] flex flex-col gap-1.5 text-left">
+          <span className="stat text-coral">{stats.monthlyMealsCount}</span>
+          <span className="text-[14px] text-coral-ink">Meals planned this month</span>
+        </button>
+        <button onClick={() => onNavigate('planner')} className="card-green px-6 py-[22px] flex flex-col gap-1.5 text-left">
+          <span className="stat text-green">{stats.todayMeals.length}</span>
+          <span className="text-[14px] text-green-ink">On the board today</span>
+        </button>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-[1.6fr_1fr] gap-12 lg:gap-16">
-        {/* Today's Meals */}
-        <div>
-          <div className="flex items-baseline justify-between gap-4 mb-6">
-            <div className="flex items-center gap-3">
-              <div className="w-2 h-2 bg-terracotta rounded-full animate-pulse" />
-              <h3 className="text-[11px] font-semibold text-earth uppercase tracking-[0.30em]">Today&rsquo;s Menu</h3>
-            </div>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-[26px]">
+        {/* Today's menu */}
+        <div className="lg:col-span-2 flex flex-col gap-3.5">
+          <div className="flex items-center justify-between gap-3">
+            <h2 className="h-section">Today&rsquo;s menu</h2>
             <button
               onClick={() => onNavigate('planner')}
-              className="text-[10px] font-semibold text-terracotta tracking-[0.22em] uppercase hover:text-sage transition-colors"
+              className="text-[13px] font-semibold text-coral hover:text-green transition-colors"
             >
-              Open the planner &rarr;
+              Open the planner
             </button>
           </div>
 
-          {stats.todayMeals.length > 0 ? (
-            <div>
-              {stats.todayMeals.map((meal, index) => (
+          <div className="flex flex-col gap-3">
+            {stats.todayMeals.map((meal, index) => {
+              const fromFreezer = !meal.recipe_id && meal.freezer_item_name;
+              const image = meal.recipe_image || meal.image_url;
+              return (
                 <button
                   key={meal.id}
                   onClick={() => {
-                    if (meal.recipe_id) {
-                      onNavigate('recipes', meal.recipe_id);
-                    } else if (meal.freezer_item_name) {
-                      onNavigate('freezer');
-                    } else {
-                      onNavigate('planner');
-                    }
+                    if (meal.recipe_id) onNavigate('recipes', meal.recipe_id);
+                    else if (meal.freezer_item_name) onNavigate('freezer');
+                    else onNavigate('planner');
                   }}
-                  className="w-full flex items-start gap-5 md:gap-7 py-5 border-b border-sage/20 text-left group"
+                  className="card p-3.5 flex items-center gap-4 text-left transition-colors hover:border-fainter"
                 >
-                  <span className="hidden md:block w-7 shrink-0 pt-1.5 text-sm text-sage/40">
-                    {String(index + 1).padStart(2, '0')}
+                  <span
+                    className="w-[92px] h-[82px] shrink-0 rounded-[14px] overflow-hidden flex items-center justify-center"
+                    style={{ background: fromFreezer ? 'linear-gradient(140deg, #CFE8D4, #9FC7A8)' : gradients[index % gradients.length] }}
+                  >
+                    {meal.recipe_id && image ? (
+                      <img src={image} alt="" className="w-full h-full object-cover" referrerPolicy="no-referrer" />
+                    ) : fromFreezer ? (
+                      <Snowflake className="w-[26px] h-[26px] text-white" strokeWidth={1.8} />
+                    ) : !meal.recipe_id ? (
+                      <MessageSquare className="w-[26px] h-[26px] text-white" strokeWidth={1.8} />
+                    ) : null}
                   </span>
-                  <div className="w-[110px] md:w-[150px] h-[84px] md:h-28 shrink-0 overflow-hidden bg-sage/5 flex items-center justify-center">
-                    {meal.recipe_id ? (
-                      <img src={meal.recipe_image || meal.image_url} alt="" className="w-full h-full object-cover" referrerPolicy="no-referrer" />
-                    ) : meal.freezer_item_name ? (
-                      <Snowflake className="w-8 h-8 text-sage/25" />
-                    ) : (
-                      <MessageSquare className="w-8 h-8 text-sage/25" />
+                  <span className="flex-grow min-w-0 flex flex-col gap-[5px] items-start">
+                    <span className={fromFreezer ? 'tag-green' : 'tag-coral'}>
+                      {meal.meal_type}
+                      {fromFreezer ? ' · from the freezer' : ''}
+                    </span>
+                    <span className="dsp text-[22px] font-bold tracking-[-0.025em] leading-[1.15] line-clamp-1">
+                      {meal.recipe_id ? meal.recipe_title : meal.freezer_item_name || meal.notes}
+                    </span>
+                    {(meal.recipe_id || meal.freezer_item_name) && meal.notes && (
+                      <span className="text-[14px] text-faint line-clamp-1">{meal.notes}</span>
                     )}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-[9px] font-semibold text-terracotta uppercase tracking-[0.30em]">{meal.meal_type}</p>
-                    <h4 className="mt-2 font-serif text-2xl md:text-[32px] leading-tight text-earth group-hover:text-terracotta transition-colors">
-                      {meal.recipe_id ? meal.recipe_title : (meal.freezer_item_name || meal.notes)}
-                    </h4>
-                    {((meal.recipe_id || meal.freezer_item_name) && meal.notes) && (
-                      <p className="mt-1.5 font-light text-[15px] text-earth/55 line-clamp-1">{meal.notes}</p>
-                    )}
-                  </div>
-                  <ChevronRight className="hidden sm:block w-5 h-5 mt-2 shrink-0 text-sage/50 group-hover:text-terracotta transition-colors" />
+                  </span>
+                  <ChevronRight className="w-5 h-5 shrink-0 text-fainter" strokeWidth={2} />
                 </button>
-              ))}
-            </div>
-          ) : (
-            <div className="border border-dashed border-sage/30 py-14 px-8 text-center">
-              <ChefHat className="w-10 h-10 text-sage/25 mx-auto mb-5" />
-              <p className="font-light text-2xl text-earth/60 mb-6">Nothing planned for today</p>
-              <button onClick={() => onNavigate('planner')} className="btn-ghost">
-                Plan something
+              );
+            })}
+
+            {stats.todayMeals.length === 0 ? (
+              <div className="card-dashed py-14 px-8 flex flex-col items-center gap-4 text-center">
+                <ChefHat className="w-10 h-10 text-fainter" strokeWidth={1.6} />
+                <p className="text-[17px] text-muted">Nothing planned for today</p>
+                <button onClick={() => onNavigate('planner')} className="btn-primary">
+                  Plan something
+                </button>
+              </div>
+            ) : (
+              <button
+                onClick={() => onNavigate('planner')}
+                className="card-dashed py-5 flex items-center justify-center gap-2.5 text-[15px] font-semibold text-faint transition-colors hover:text-ink"
+              >
+                <Plus className="w-[18px] h-[18px]" strokeWidth={2} />
+                Add another plate
               </button>
-            </div>
-          )}
+            )}
+          </div>
         </div>
 
-        {/* Latest Recipes */}
-        <div>
-          <div className="flex items-baseline justify-between gap-4 mb-6">
-            <h3 className="text-[11px] font-semibold text-earth uppercase tracking-[0.30em]">Lately</h3>
+        {/* Lately */}
+        <div className="flex flex-col gap-3.5">
+          <div className="flex items-center justify-between gap-3">
+            <h2 className="h-section">Lately</h2>
             <button
               onClick={() => onNavigate('recipes')}
-              className="text-[10px] font-semibold text-terracotta tracking-[0.22em] uppercase hover:text-sage transition-colors"
+              className="text-[13px] font-semibold text-coral hover:text-green transition-colors"
             >
-              All {stats.recipeCount} &rarr;
+              All {stats.recipeCount}
             </button>
           </div>
 
-          <div>
-            {stats.latestRecipes.map((recipe) => (
+          <div className="flex flex-col gap-3">
+            {stats.latestRecipes.map((recipe, i) => (
               <button
                 key={recipe.id}
                 onClick={() => onNavigate('recipes', recipe.id)}
-                className="w-full flex items-center gap-4 py-4 border-b border-sage/20 text-left group"
+                className="card-sm p-3 flex items-center gap-3 text-left transition-colors hover:border-fainter"
               >
-                <div className="w-14 h-14 shrink-0 overflow-hidden bg-sage/5">
-                  <img src={recipe.image_url} alt="" className="w-full h-full object-cover" referrerPolicy="no-referrer" />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <h4 className="font-serif text-xl leading-tight text-earth group-hover:text-terracotta transition-colors line-clamp-1">
-                    {recipe.title}
-                  </h4>
-                  <p className="micro mt-1.5">
+                <span
+                  className="w-[52px] h-[52px] shrink-0 rounded-xl overflow-hidden"
+                  style={{ background: gradients[i % gradients.length] }}
+                >
+                  {recipe.image_url && (
+                    <img src={recipe.image_url} alt="" className="w-full h-full object-cover" referrerPolicy="no-referrer" />
+                  )}
+                </span>
+                <span className="min-w-0">
+                  <span className="block text-[15px] font-semibold leading-[1.25] line-clamp-1">{recipe.title}</span>
+                  <span className="block mt-[3px] text-[13px] text-faint">
                     {(recipe.prep_time || 0) + (recipe.cook_time || 0)} min
-                  </p>
-                </div>
+                  </span>
+                </span>
               </button>
             ))}
           </div>
+
+          <button
+            onClick={() => onNavigate('planner')}
+            className="card-ink mt-1 p-5 flex flex-col gap-2 text-left"
+          >
+            <span className="label text-peach tracking-[0.06em]">This week</span>
+            <span className="dsp text-[21px] font-bold tracking-[-0.02em] leading-[1.2]">
+              {nights.length
+                ? `${plural(nights.length, 'empty night', 'empty nights')} left to fill`
+                : 'The week is fully planned'}
+            </span>
+            <span className="text-[14px] leading-[1.45] text-darkmuted">{nightList}</span>
+          </button>
         </div>
       </div>
     </div>

@@ -132,14 +132,14 @@ export default function App() {
 
   if (checkingAuth) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-cream">
-        <Loader2 className="w-8 h-8 text-sage animate-spin" />
+      <div className="min-h-screen flex items-center justify-center bg-page">
+        <Loader2 className="w-8 h-8 text-coral animate-spin" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-cream text-earth font-sans selection:bg-terracotta/20">
+    <div className="min-h-screen bg-page text-ink font-sans selection:bg-coral/15">
       <AnimatePresence mode="wait">
         {!user ? (
           <motion.div
@@ -170,7 +170,7 @@ export default function App() {
               )}
 
               {activeTab === 'add-recipe' && (
-                <AddRecipe onSuccess={() => handleTabChange('recipes')} />
+                <AddRecipe onSuccess={() => handleTabChange('recipes')} onCancel={() => handleTabChange('recipes')} />
               )}
 
               {activeTab === 'recipes' && (
@@ -189,9 +189,10 @@ export default function App() {
                       onBack={() => navigate('recipes')} 
                       onEdit={(id) => navigate('recipes', id, id)}
                       onDelete={() => navigate('recipes')}
+                      onPlan={() => handleTabChange('planner')}
                     />
                   ) : (
-                    <RecipeList onSelectRecipe={(id) => navigate('recipes', id)} />
+                    <RecipeList onSelectRecipe={(id) => navigate('recipes', id)} onAddRecipe={() => handleTabChange('add-recipe')} />
                   )}
                 </div>
               )}
@@ -205,11 +206,11 @@ export default function App() {
               )}
 
               {activeTab === 'profile' && (
-                <Profile user={user} onUpdate={setUser} />
+                <Profile user={user} onUpdate={setUser} onLogout={handleLogout} />
               )}
 
               {activeTab === 'freezer' && (
-                <Freezer key="freezer-view" />
+                <Freezer key="freezer-view" onNavigate={handleTabChange} />
               )}
             </AnimatePresence>
           </DashboardLayout>

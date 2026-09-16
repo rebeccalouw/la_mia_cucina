@@ -1,6 +1,6 @@
 /**
  * The house loading state: a short bar chart that reads as a place setting
- * rather than a spinner, under a line of italic serif.
+ * rather than a spinner, in coral and sage-green.
  */
 export default function Loading({ message }: { message: string }) {
   const bars = [14, 26, 34, 20, 10];
@@ -11,12 +11,14 @@ export default function Loading({ message }: { message: string }) {
         {bars.map((height, index) => (
           <span
             key={index}
-            className={`w-1 animate-pulse ${index === 2 ? 'bg-sage' : index < 2 ? 'bg-terracotta' : 'bg-sage/35'}`}
+            className={`w-1.5 rounded-full animate-pulse ${
+              index === 2 ? 'bg-green' : index < 2 ? 'bg-coral' : 'bg-fainter'
+            }`}
             style={{ height, animationDelay: `${index * 120}ms` }}
           />
         ))}
       </div>
-      <p className="font-light text-xl text-earth/55">{message}</p>
+      <p className="text-[17px] text-muted">{message}</p>
     </div>
   );
 }

@@ -8,8 +8,7 @@ import {
   Calendar as CalendarIcon,
   Loader2,
   X,
-  Package,
-  ChefHat,
+  Snowflake,
   Search
 } from 'lucide-react';
 
@@ -26,12 +25,17 @@ interface DBHouseCategory {
   name: string;
 }
 
-export default function Freezer() {
+interface FreezerProps {
+  onNavigate?: (tab: string) => void;
+}
+
+export default function Freezer({ onNavigate }: FreezerProps) {
   const [items, setItems] = useState<FreezerItem[]>([]);
   const [dbCategories, setDbCategories] = useState<DBHouseCategory[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [typeFilter, setTypeFilter] = useState<'all' | 'meal' | 'ingredient'>('all');
   
   // Modal State
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -215,239 +219,274 @@ export default function Freezer() {
   const daysIn = (placedAt: string) =>
     Math.max(0, Math.round((Date.now() - new Date(placedAt).getTime()) / 86_400_000));
 
+  /* One shelf: the cooked meals, or the raw ingredients. */
   const renderSection = (title: string, type: 'ingredient' | 'meal', list: FreezerItem[]) => (
-    <div className="flex-1 min-w-0">
-      <div className="flex items-baseline justify-between gap-4 pb-3">
-        <div className="flex items-center gap-3.5">
-          <h3 className="text-[11px] font-semibold uppercase tracking-[0.30em] text-earth">{title}</h3>
-          <span className="text-[15px] text-sage/45">{String(list.length).padStart(2, '0')}</span>
-        </div>
+    <div className="flex flex-col gap-3.5">
+      <div className="flex items-center justify-between gap-3">
+        <h2 className="h-section">{title} · {list.length}</h2>
         <button
           onClick={() => handleOpenModal(type)}
-          className="text-[9px] font-semibold uppercase tracking-[0.22em] text-terracotta hover:text-sage transition-colors"
+          className="text-[13px] font-semibold text-coral hover:text-green transition-colors"
         >
           Add one
         </button>
       </div>
 
       {list.length > 0 ? (
-        <div className="border-t border-sage/20">
-          {list.map(item => (
-            <motion.div
-              key={item.id}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="flex items-center gap-4 md:gap-5 py-3.5 border-b border-sage/20 group cursor-pointer"
-              onClick={() => handleOpenModal(item.type, item)}
-            >
-              <div className="w-[54px] h-[54px] shrink-0 border border-sage/25 flex items-center justify-center text-sage/55 group-hover:bg-sage group-hover:text-cream group-hover:border-sage transition-colors">
-                {type === 'ingredient' ? <Package className="w-5 h-5" /> : <ChefHat className="w-5 h-5" />}
-              </div>
+        <div className="flex flex-col gap-2.5">
+          {list.map(item => {
+            const old = daysIn(item.placed_at) > 30;
+            return (
+              <motion.div
+                key={item.id}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                onClick={() => handleOpenModal(item.type, item)}
+                className={`rounded-[18px] bg-surface px-[18px] py-[15px] flex items-center gap-4 cursor-pointer transition-colors ${
+                  old ? 'border border-[#F6CFC2]' : 'border border-hairline hover:border-fainter'
+                }`}
+              >
+                <span className={`w-11 h-11 shrink-0 rounded-[14px] flex items-center justify-center ${old ? 'bg-coral-tint' : 'bg-green-tint'}`}>
+                  <Snowflake className={`w-5 h-5 ${old ? 'text-coral' : 'text-green'}`} strokeWidth={1.8} />
+                </span>
 
-              <div className="flex-1 min-w-0">
-                <h4 className="font-serif text-xl leading-tight text-earth group-hover:text-terracotta transition-colors truncate">
-                  {item.name}
-                </h4>
-                <div className="flex flex-wrap items-center gap-2 mt-1.5">
-                  {item.categories?.map(cat => (
-                    <span key={cat} className="px-2.5 py-1 border border-sage/25 text-[8px] font-semibold uppercase tracking-[0.20em] text-sage/60">
-                      {cat}
-                    </span>
-                  ))}
-                  <span className="micro">
-                    In since {new Date(item.placed_at).toLocaleDateString(undefined, { day: 'numeric', month: 'long' })}
+                <span className="flex-grow min-w-0">
+                  <span className="block text-[16px] font-semibold leading-[1.2] truncate">{item.name}</span>
+                  <span className="block mt-[3px] text-[13px] text-faint truncate">
+                    Went in {new Date(item.placed_at).toLocaleDateString(undefined, { day: 'numeric', month: 'long' })}
+                    {item.categories?.length ? ` · ${item.categories.join(', ')}` : ''}
                   </span>
-                </div>
-              </div>
+                </span>
 
-              <div className="shrink-0 text-right">
-                <p className={`font-light text-2xl leading-none tracking-[-0.02em] ${daysIn(item.placed_at) > 60 ? 'text-terracotta' : 'text-earth'}`}>
-                  {String(daysIn(item.placed_at)).padStart(2, '0')}
-                </p>
-                <p className="micro mt-1">days</p>
-              </div>
+                {old && <span className="tag-coral shrink-0 hidden sm:inline-flex">Older than a month</span>}
 
-              <div className="shrink-0" onClick={(e) => e.stopPropagation()}>
-                <AnimatePresence mode="wait">
+                <span className="shrink-0 flex items-center gap-1.5" onClick={(e) => e.stopPropagation()}>
                   {confirmDeleteId === item.id ? (
-                    <motion.div
-                      key="confirm"
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={{ opacity: 0 }}
-                      className="flex items-center gap-1.5"
-                    >
+                    <>
                       <button
                         onClick={() => handleDeleteItem(item.id)}
                         disabled={isDeletingId === item.id}
-                        className="px-3 py-2 bg-brick text-cream text-[9px] font-semibold uppercase tracking-[0.2em] hover:bg-earth transition-colors"
+                        className="rounded-[12px] bg-brick px-3.5 py-2 text-[13px] font-bold text-white transition-colors hover:bg-ink"
                       >
-                        {isDeletingId === item.id ? <Loader2 className="w-3 h-3 animate-spin" /> : 'Delete'}
+                        {isDeletingId === item.id ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : 'Delete'}
                       </button>
                       <button
                         onClick={() => setConfirmDeleteId(null)}
                         disabled={isDeletingId === item.id}
-                        className="px-3 py-2 text-[9px] font-semibold uppercase tracking-[0.2em] text-sage hover:text-earth transition-colors"
+                        className="px-2.5 py-2 text-[13px] font-semibold text-muted hover:text-ink transition-colors"
                       >
                         Keep
                       </button>
-                    </motion.div>
+                    </>
                   ) : (
-                    <motion.div
-                      key="actions"
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={{ opacity: 0 }}
-                      className="flex items-center gap-2"
-                    >
+                    <>
+                      {onNavigate && type === 'meal' && (
+                        <button
+                          onClick={() => onNavigate('planner')}
+                          className="w-9 h-9 rounded-xl bg-page border border-hairline flex items-center justify-center transition-colors hover:border-green/40"
+                          title="Plan it"
+                        >
+                          <CalendarIcon className="w-4 h-4 text-green" strokeWidth={2} />
+                        </button>
+                      )}
                       <button
                         onClick={() => handleOpenModal(item.type, item)}
-                        className="w-[34px] h-[34px] border border-sage/25 flex items-center justify-center text-sage hover:bg-sage/5 transition-colors"
+                        className="w-9 h-9 rounded-xl bg-page border border-hairline flex items-center justify-center transition-colors hover:border-fainter"
+                        title="Edit"
                       >
-                        <Edit3 className="w-3.5 h-3.5" />
+                        <Edit3 className="w-4 h-4 text-muted" strokeWidth={2} />
                       </button>
                       <button
                         onClick={() => setConfirmDeleteId(item.id)}
-                        className="w-[34px] h-[34px] border border-brick/30 flex items-center justify-center text-brick hover:bg-brick/5 transition-colors"
+                        className="w-9 h-9 rounded-xl bg-page border border-hairline flex items-center justify-center transition-colors hover:border-brick/40"
+                        title="Take it out"
                       >
-                        <Trash2 className="w-3.5 h-3.5" />
+                        <Trash2 className="w-4 h-4 text-brick" strokeWidth={2} />
                       </button>
-                    </motion.div>
+                    </>
                   )}
-                </AnimatePresence>
-              </div>
-            </motion.div>
-          ))}
+                </span>
+              </motion.div>
+            );
+          })}
         </div>
       ) : (
         <button
           onClick={() => handleOpenModal(type)}
-          className="w-full mt-3 py-6 px-6 border border-dashed border-sage/30 flex items-center justify-center gap-3.5 text-sage/55 hover:bg-sage/5 transition-colors"
+          className="card-dashed py-6 px-6 flex items-center justify-center gap-2.5 text-[15px] font-semibold text-faint transition-colors hover:text-ink"
         >
-          <Plus className="w-4 h-4" />
-          <span className="font-light text-[17px]">
-            Nothing here yet &mdash; add {type === 'ingredient' ? 'an ingredient' : 'a cooked meal'}
-          </span>
+          <Plus className="w-[18px] h-[18px]" strokeWidth={2} />
+          Nothing here yet — add {type === 'ingredient' ? 'an ingredient' : 'a cooked meal'}
         </button>
       )}
     </div>
   );
 
+  const stale = filteredItems.filter(i => daysIn(i.placed_at) > 30);
+
   return (
-    <div>
+    <div className="flex flex-col gap-7">
       {/* Header */}
-      <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-8 pb-7">
-        <div>
-          <p className="label">
-            {items.length} {items.length === 1 ? 'thing' : 'things'} on ice
+      <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-5">
+        <div className="flex-grow min-w-0">
+          <p className="eyebrow">
+            {items.length} {items.length === 1 ? 'thing' : 'things'} in the freezer
           </p>
-          <h1 className="font-serif font-bold mt-3 text-[40px] md:text-[56px] leading-none tracking-[-0.025em]">
-            The <span className="italic font-normal text-sage">freezer</span>
-          </h1>
+          <h1 className="h-page mt-2 text-[34px] md:text-[42px]">What&rsquo;s in the cold</h1>
         </div>
 
-        {allCategories.length > 0 && (
-          <div className="flex flex-wrap items-center gap-x-6 gap-y-2.5">
-            <button
-              onClick={() => setSelectedCategory(null)}
-              className={`pb-1 text-[10px] font-semibold uppercase tracking-[0.24em] border-b-2 transition-colors ${
-                selectedCategory === null ? 'text-earth border-terracotta' : 'text-sage/55 border-transparent hover:text-sage'
-              }`}
-            >
-              All
-            </button>
-            {allCategories.map(cat => (
+        <div className="flex flex-wrap items-center gap-2 shrink-0">
+          <div className="flex gap-1.5 rounded-[14px] bg-surface border border-hairline p-[5px]">
+            {([['all', 'Everything'], ['meal', 'Meals'], ['ingredient', 'Ingredients']] as const).map(([value, label]) => (
               <button
-                key={cat}
-                onClick={() => setSelectedCategory(cat === selectedCategory ? null : cat)}
-                className={`pb-1 text-[10px] font-semibold uppercase tracking-[0.24em] border-b-2 transition-colors ${
-                  selectedCategory === cat ? 'text-earth border-terracotta' : 'text-sage/55 border-transparent hover:text-sage'
+                key={value}
+                onClick={() => setTypeFilter(value)}
+                className={`rounded-[10px] px-[15px] py-[9px] text-[13px] font-semibold transition-colors ${
+                  typeFilter === value ? 'bg-ink text-oncoral' : 'text-muted hover:text-ink'
                 }`}
               >
-                {cat}
+                {label}
               </button>
             ))}
           </div>
-        )}
+          <button onClick={() => handleOpenModal('meal')} className="btn-primary">
+            <Plus className="w-[17px] h-[17px]" strokeWidth={2.4} />
+            Put something in
+          </button>
+        </div>
       </div>
 
-      <div className="rule-strong" />
+      {/* Eat these first */}
+      {stale.length > 0 && (
+        <div className="card-coral px-[22px] py-[18px] flex flex-wrap items-center gap-3.5">
+          <Snowflake className="w-[22px] h-[22px] shrink-0 text-coral" strokeWidth={1.9} />
+          <div className="flex-grow min-w-0">
+            <p className="text-[15px] font-semibold text-[#B8401F]">
+              {stale.length} {stale.length === 1 ? 'thing has' : 'things have'} been in there over a month
+            </p>
+            <p className="text-[14px] text-[#9A6B5C] mt-0.5">
+              Plan them this week before they turn into a science experiment.
+            </p>
+          </div>
+          {onNavigate && (
+            <button
+              onClick={() => onNavigate('planner')}
+              className="shrink-0 rounded-full bg-coral px-4 py-2.5 text-[13px] font-bold text-oncoral transition-colors hover:bg-[#C8401E]"
+            >
+              Plan them
+            </button>
+          )}
+        </div>
+      )}
 
-      <div className="flex flex-col lg:flex-row gap-12 lg:gap-20 pt-10">
-        {renderSection('Cooked meals', 'meal', meals)}
-        {renderSection('Ingredients', 'ingredient', ingredients)}
-      </div>
+      {/* Category filter */}
+      {allCategories.length > 0 && (
+        <div className="flex flex-wrap items-center gap-2">
+          <button
+            onClick={() => setSelectedCategory(null)}
+            className={selectedCategory === null ? 'chip-on' : 'chip'}
+          >
+            All categories
+          </button>
+          {allCategories.map(cat => (
+            <button
+              key={cat}
+              onClick={() => setSelectedCategory(cat === selectedCategory ? null : cat)}
+              className={selectedCategory === cat ? 'chip-on' : 'chip'}
+            >
+              {cat}
+            </button>
+          ))}
+        </div>
+      )}
 
-      {/* Add / Edit Modal */}
+      {typeFilter !== 'ingredient' && renderSection('Meals', 'meal', meals)}
+      {typeFilter !== 'meal' && renderSection('Ingredients', 'ingredient', ingredients)}
+
+      {/* Add / Edit */}
       <AnimatePresence>
         {isModalOpen && (
-          <div className="fixed inset-0 z-100 flex items-center justify-center p-6">
-            <motion.div 
+          <div className="fixed inset-0 z-100 flex items-center justify-center p-5">
+            <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={handleCloseModal}
-              className="absolute inset-0 bg-earth/40"
+              className="absolute inset-0 bg-ink/40"
             />
-            <motion.div 
-              initial={{ scale: 0.9, opacity: 0, y: 20 }}
+            <motion.div
+              initial={{ scale: 0.96, opacity: 0, y: 16 }}
               animate={{ scale: 1, opacity: 1, y: 0 }}
               exit={{ scale: 0.98, opacity: 0, y: 12 }}
-              className="relative w-full max-w-lg bg-cream border border-sage/30 max-h-[88vh] overflow-y-auto no-scrollbar"
+              className="relative w-full max-w-lg rounded-[22px] bg-page border border-hairline max-h-[88vh] overflow-y-auto no-scrollbar"
             >
-              <div className="px-8 pt-8 pb-5 border-b-2 border-sage/65 flex items-start justify-between gap-4">
+              <div className="px-7 pt-7 pb-5 border-b border-hairline flex items-start justify-between gap-4">
                 <div>
-                  <p className="label">{editingItem ? 'Editing' : 'Putting something in'}</p>
-                  <h3 className="mt-2.5 font-serif font-bold text-[32px] leading-none text-earth">
+                  <p className="eyebrow">{editingItem ? 'Editing' : 'Putting something in'}</p>
+                  <h3 className="dsp mt-1.5 text-[28px] font-extrabold tracking-[-0.035em] leading-tight">
                     {formData.type === 'ingredient' ? 'An ingredient' : 'A cooked meal'}
                   </h3>
                 </div>
                 <button
                   onClick={handleCloseModal}
-                  className="p-2 -mr-2 -mt-1 text-sage/55 hover:text-earth transition-colors"
+                  className="p-2 -mr-2 -mt-1 text-faint hover:text-ink transition-colors"
                 >
                   <X className="w-5 h-5" />
                 </button>
               </div>
 
-              <form onSubmit={handleSave} className="p-8 space-y-7">
+              <form onSubmit={handleSave} className="p-7 flex flex-col gap-4">
                 {error && (
-                  <p className="border border-brick/40 bg-brick/5 text-brick text-sm px-4 py-3">{error}</p>
+                  <p className="rounded-[14px] border border-brick/30 bg-brick-tint text-brick text-[14px] px-4 py-3">{error}</p>
                 )}
 
-                <div>
-                  <label className="micro block mb-2.5">What is it</label>
+                <div className="flex gap-1.5 rounded-[14px] bg-surface border border-hairline p-[5px] self-start">
+                  {(['meal', 'ingredient'] as const).map(t => (
+                    <button
+                      key={t}
+                      type="button"
+                      onClick={() => setFormData({ ...formData, type: t })}
+                      className={`rounded-[10px] px-[15px] py-[9px] text-[13px] font-semibold transition-colors ${
+                        formData.type === t ? 'bg-ink text-oncoral' : 'text-muted hover:text-ink'
+                      }`}
+                    >
+                      {t === 'meal' ? 'A cooked meal' : 'An ingredient'}
+                    </button>
+                  ))}
+                </div>
+
+                <div className="flex flex-col gap-2">
+                  <label className="field-label">What is it</label>
                   <input
                     type="text"
                     required
                     value={formData.name}
-                    onChange={e => setFormData({...formData, name: e.target.value})}
+                    onChange={e => setFormData({ ...formData, name: e.target.value })}
                     placeholder={formData.type === 'ingredient' ? 'Guanciale, 300 g' : 'Minestrone, 2 portions'}
                     className="field"
                   />
                 </div>
 
-                <div>
-                  <label className="micro block mb-2.5">Went in on</label>
-                  <div className="flex items-center gap-3 border-b border-sage/30 focus-within:border-terracotta transition-colors">
-                    <CalendarIcon className="w-4 h-4 text-sage/45 shrink-0" />
+                <div className="flex flex-col gap-2">
+                  <label className="field-label">Went in on</label>
+                  <div className="flex items-center gap-2.5 rounded-[14px] bg-surface border border-hairline px-4 py-[13px] transition-colors focus-within:border-coral">
+                    <CalendarIcon className="w-[17px] h-[17px] shrink-0 text-fainter" strokeWidth={2} />
                     <input
                       type="date"
                       required
                       value={formData.placed_at}
-                      onChange={e => setFormData({...formData, placed_at: e.target.value})}
-                      className="flex-1 min-w-0 bg-transparent border-0 pb-2.5 text-[17px] text-earth outline-none"
+                      onChange={e => setFormData({ ...formData, placed_at: e.target.value })}
+                      className="flex-1 min-w-0 bg-transparent border-0 text-[15px] text-ink outline-none"
                     />
                   </div>
                 </div>
 
-                {/* Categories / Tags */}
-                <div className="space-y-3">
-                  <label className="micro block">Categories</label>
-                  <div className="space-y-2 relative" ref={suggestionRef}>
-                    <div className="flex items-center relative">
-                      <Search className="absolute left-0 top-1.5 w-4 h-4 text-sage/45" />
-                      <input 
+                <div className="flex flex-col gap-2">
+                  <label className="field-label">Categories</label>
+                  <div className="relative flex flex-col gap-2" ref={suggestionRef}>
+                    <div className="flex items-center gap-2.5 rounded-[14px] bg-surface border border-hairline px-4 py-[13px] transition-colors focus-within:border-coral">
+                      <Search className="w-[17px] h-[17px] shrink-0 text-fainter" strokeWidth={2} />
+                      <input
                         type="text"
                         value={categoryInput}
                         onChange={e => {
@@ -462,68 +501,67 @@ export default function Freezer() {
                           }
                         }}
                         placeholder="Search or add…"
-                        className="w-full pl-7 pr-4 pb-2.5 bg-transparent border-0 border-b border-sage/30 focus:border-terracotta outline-none transition-colors text-[15px] text-earth placeholder:text-earth/30"
+                        className="flex-1 min-w-0 bg-transparent border-0 outline-none text-[15px] text-ink placeholder:text-placeholder"
                       />
+                      <button
+                        type="button"
+                        onClick={() => handleAddTag(categoryInput)}
+                        className="shrink-0 text-[13px] font-bold text-coral hover:text-green transition-colors"
+                      >
+                        Add
+                      </button>
                     </div>
 
                     <AnimatePresence>
                       {showSuggestions && suggestedCategories.length > 0 && (
-                        <motion.div 
-                          initial={{ opacity: 0, y: -10 }}
+                        <motion.div
+                          initial={{ opacity: 0, y: -8 }}
                           animate={{ opacity: 1, y: 0 }}
                           exit={{ opacity: 0 }}
-                          className="absolute z-110 left-0 right-0 top-full mt-1 bg-cream border border-sage/30 overflow-hidden"
+                          className="absolute z-110 left-0 right-0 top-full mt-1.5 rounded-[14px] bg-surface border border-hairline overflow-hidden shadow-[0_10px_30px_-18px_rgba(51,35,44,0.35)]"
                         >
                           {suggestedCategories.map(cat => (
                             <button
                               key={cat}
                               type="button"
                               onClick={() => handleAddTag(cat)}
-                              className="w-full px-4 py-3 text-left text-[17px] text-earth border-b border-sage/15 last:border-b-0 hover:bg-sage/5 transition-colors flex items-center justify-between gap-3"
+                              className="w-full px-4 py-3 text-left text-[15px] font-medium text-ink border-b border-hairline-soft last:border-b-0 hover:bg-page transition-colors flex items-center justify-between gap-3"
                             >
                               {cat}
-                              <Plus className="w-3.5 h-3.5 text-sage/40 shrink-0" />
+                              <Plus className="w-4 h-4 text-fainter shrink-0" />
                             </button>
                           ))}
                         </motion.div>
                       )}
                     </AnimatePresence>
-
-                    <button
-                      type="button"
-                      onClick={() => handleAddTag(categoryInput)}
-                      className="btn-ghost w-full py-3"
-                    >
-                      Add category
-                    </button>
                   </div>
-                  
-                  <div className="flex flex-wrap gap-2 pt-2">
+
+                  <div className="flex flex-wrap gap-2 pt-1">
                     {formData.categories.map(cat => (
-                      <span 
-                        key={cat}
-                        className="chip-on"
-                      >
+                      <span key={cat} className="chip-on">
                         {cat}
-                        <button 
+                        <button
                           type="button"
                           onClick={() => removeCategory(cat)}
-                          className="hover:text-earth transition-colors"
+                          className="opacity-70 hover:opacity-100 transition-opacity"
                         >
                           <X className="w-3 h-3" />
                         </button>
                       </span>
                     ))}
                     {formData.categories.length === 0 && (
-                      <p className="font-light text-[15px] text-earth/40">No categories yet.</p>
+                      <p className="text-[14px] text-faint">No categories yet.</p>
                     )}
                   </div>
                 </div>
 
-                <button type="submit" disabled={saving} className="btn-accent w-full py-[19px]">
-                  {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : editingItem ? <Edit3 className="w-4 h-4" /> : <Plus className="w-4 h-4" />}
-                  {editingItem ? 'Save changes' : 'Put it in the freezer'}
-                </button>
+                <div className="pt-1 flex items-center justify-end gap-2">
+                  <button type="button" onClick={handleCloseModal} className="btn-ghost">Cancel</button>
+                  <button type="submit" disabled={saving} className="btn-primary">
+                    {saving ? <Loader2 className="w-[17px] h-[17px] animate-spin" /> : <Plus className="w-[17px] h-[17px]" strokeWidth={2.4} />}
+                    {editingItem ? 'Save the changes' : 'Put it in the freezer'}
+                  </button>
+                </div>
               </form>
             </motion.div>
           </div>

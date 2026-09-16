@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
 import { motion } from 'motion/react';
-import { Save, Loader2, CheckCircle2, Image as ImageIcon } from 'lucide-react';
+import { Check, Loader2, CheckCircle2, Image as ImageIcon } from 'lucide-react';
 import CategorySelector from './CategorySelector';
 
 interface AddRecipeProps {
   onSuccess: () => void;
+  onCancel?: () => void;
 }
 
-export default function AddRecipe({ onSuccess }: AddRecipeProps) {
+export default function AddRecipe({ onSuccess, onCancel }: AddRecipeProps) {
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState('');
@@ -116,11 +117,11 @@ export default function AddRecipe({ onSuccess }: AddRecipeProps) {
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        className="max-w-xl mx-auto my-20 border border-sage/40 bg-sage/6 p-12 text-center"
+        className="max-w-xl mx-auto my-20 card-green p-12 text-center"
       >
-        <CheckCircle2 className="w-12 h-12 text-sage mx-auto mb-5" strokeWidth={1.2} />
-        <h2 className="font-serif font-bold text-4xl text-sage mb-3">Buon appetito</h2>
-        <p className="font-light text-lg text-earth/60">
+        <CheckCircle2 className="w-12 h-12 text-green mx-auto mb-5" strokeWidth={1.4} />
+        <h2 className="dsp text-[34px] font-extrabold text-green mb-2">Buon appetito</h2>
+        <p className="text-[17px] text-green-ink">
           {formData.title ? `“${formData.title}” is in the box.` : 'It is in the box.'}
         </p>
       </motion.div>
@@ -132,71 +133,75 @@ export default function AddRecipe({ onSuccess }: AddRecipeProps) {
       onSubmit={handleSubmit}
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
+      className="flex flex-col gap-7"
     >
-      {/* Thin bar */}
-      <div className="flex flex-wrap items-center justify-between gap-4 pb-5 mb-9 border-b border-sage/20">
-        <p className="label">New entry</p>
-        <button type="submit" disabled={loading} className="btn-accent">
-          {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
-          Save recipe
-        </button>
+      {/* Header: what this is, and the two things you can do about it */}
+      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-5">
+        <div className="flex-grow min-w-0">
+          <p className="eyebrow">New entry</p>
+          <h1 className="h-page mt-2 text-[34px] md:text-[42px]">Write a new recipe</h1>
+        </div>
+        <div className="flex items-center gap-2 shrink-0">
+          {onCancel && (
+            <button type="button" onClick={onCancel} className="btn-ghost">
+              Cancel
+            </button>
+          )}
+          <button type="submit" disabled={loading} className="btn-primary">
+            {loading ? <Loader2 className="w-[17px] h-[17px] animate-spin" /> : <Check className="w-[17px] h-[17px]" strokeWidth={2.4} />}
+            Save the recipe
+          </button>
+        </div>
       </div>
 
-      <h1 className="font-serif font-bold text-[40px] md:text-[54px] leading-none tracking-[-0.025em] mb-10">
-        Write a <span className="italic font-normal text-sage">new recipe</span>
-      </h1>
-
-      <div className="flex flex-col lg:flex-row gap-12 lg:gap-16">
-        {/* Left: the photograph and the categories */}
-        <div className="w-full lg:w-[380px] shrink-0 space-y-9">
-          <div>
-            <p className="text-[10px] font-semibold uppercase tracking-[0.28em] text-terracotta mb-3">
-              The photograph
-            </p>
-            <div className="relative h-[268px] bg-white/35 border border-dashed border-sage/40 overflow-hidden flex flex-col items-center justify-center gap-3.5">
-              {formData.image_url ? (
-                <>
-                  <img src={formData.image_url} alt="Preview" className="absolute inset-0 w-full h-full object-cover" referrerPolicy="no-referrer" />
-                  <button
-                    type="button"
-                    onClick={() => setFormData({ ...formData, image_url: '' })}
-                    className="absolute top-3 right-3 px-3 py-1.5 bg-cream/95 text-brick text-[8px] font-semibold uppercase tracking-[0.22em]"
-                  >
-                    Remove
-                  </button>
-                </>
-              ) : (
-                <>
-                  <ImageIcon className="w-8 h-8 text-sage/30" strokeWidth={1.2} />
-                  <p className="font-light text-[17px] text-sage/55">Drop a photograph here</p>
-                  <label className="cursor-pointer px-5 py-2.5 bg-cream border border-sage/35 text-sage text-[9px] font-semibold uppercase tracking-[0.24em] hover:bg-sage/5 transition-colors">
-                    Choose a file
-                    <input type="file" className="hidden" accept="image/*" onChange={handleImageUpload} disabled={uploading} />
-                  </label>
-                </>
-              )}
-              {uploading && (
-                <div className="absolute inset-0 bg-cream/80 flex items-center justify-center">
-                  <Loader2 className="w-8 h-8 text-sage animate-spin" />
-                </div>
-              )}
-            </div>
-            <div className="mt-5">
-              <label className="micro block mb-2">Or paste an image URL</label>
-              <input
-                name="image_url"
-                value={formData.image_url}
-                onChange={handleChange}
-                className="field text-[15px]"
-                placeholder="https://…"
-              />
-            </div>
+      <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
+        {/* The photograph and the categories */}
+        <div className="lg:col-span-2 flex flex-col gap-4">
+          <div className="relative card-dashed bg-surface h-[250px] overflow-hidden flex flex-col items-center justify-center gap-3">
+            {formData.image_url ? (
+              <>
+                <img src={formData.image_url} alt="Preview" className="absolute inset-0 w-full h-full object-cover" referrerPolicy="no-referrer" />
+                <button
+                  type="button"
+                  onClick={() => setFormData({ ...formData, image_url: '' })}
+                  className="absolute top-3 right-3 rounded-full bg-white/92 px-3.5 py-1.5 text-[12px] font-bold text-brick"
+                >
+                  Remove
+                </button>
+              </>
+            ) : (
+              <>
+                <span className="w-[54px] h-[54px] rounded-[18px] bg-coral-tint flex items-center justify-center">
+                  <ImageIcon className="w-6 h-6 text-coral" strokeWidth={1.8} />
+                </span>
+                <p className="text-[15px] font-semibold">Drop a photograph here</p>
+                <label className="pill-dark cursor-pointer">
+                  Choose a file
+                  <input type="file" className="hidden" accept="image/*" onChange={handleImageUpload} disabled={uploading} />
+                </label>
+                <p className="text-[13px] text-faint">JPEG, PNG or WebP · up to 2 MB</p>
+              </>
+            )}
+            {uploading && (
+              <div className="absolute inset-0 bg-page/85 flex items-center justify-center">
+                <Loader2 className="w-8 h-8 text-coral animate-spin" />
+              </div>
+            )}
           </div>
 
-          <div>
-            <p className="text-[10px] font-semibold uppercase tracking-[0.28em] text-terracotta mb-3">
-              Categories
-            </p>
+          <div className="flex flex-col gap-2">
+            <label className="field-label">Or paste an image URL</label>
+            <input
+              name="image_url"
+              value={formData.image_url}
+              onChange={handleChange}
+              className="field"
+              placeholder="https://…"
+            />
+          </div>
+
+          <div className="card p-5 flex flex-col gap-3.5">
+            <p className="field-label">Categories</p>
             <CategorySelector
               selectedCategories={formData.categories}
               onAddCategory={handleAddCategory}
@@ -205,126 +210,81 @@ export default function AddRecipe({ onSuccess }: AddRecipeProps) {
           </div>
         </div>
 
-        {/* Right: the recipe itself */}
-        <div className="flex-1 min-w-0 space-y-8">
-          <div>
-            <label className="block text-[10px] font-semibold uppercase tracking-[0.28em] text-terracotta mb-3">
-              Title
-            </label>
+        {/* The recipe itself */}
+        <div className="lg:col-span-3 flex flex-col gap-4">
+          <div className="flex flex-col gap-2">
+            <label className="field-label">Title</label>
             <input
               name="title"
               required
               value={formData.title}
               onChange={handleChange}
-              className="w-full bg-transparent border-0 border-b-2 border-sage/30 pb-2.5 font-serif text-[30px] md:text-[34px] text-earth outline-none transition-colors placeholder:text-earth/30 focus:border-terracotta"
-              placeholder="Grandma’s Secret Lasagna"
+              className="field"
+              placeholder="Grandma’s secret lasagna"
             />
           </div>
 
-          <div className="flex flex-wrap gap-8">
-            <div className="w-[130px]">
-              <label className="micro block mb-2">Prep · minutes</label>
-              <input
-                name="prep_time"
-                type="number"
-                min="0"
-                value={formData.prep_time}
-                onChange={handleChange}
-                className="w-full bg-transparent border-0 border-b border-sage/30 pb-2 font-light text-[26px] text-earth outline-none transition-colors placeholder:text-earth/30 focus:border-terracotta"
-                placeholder="15"
-              />
+          <div className="grid grid-cols-3 gap-3">
+            <div className="flex flex-col gap-2">
+              <label className="field-label">Prep · minutes</label>
+              <input name="prep_time" type="number" min="0" value={formData.prep_time} onChange={handleChange} className="field" placeholder="15" />
             </div>
-            <div className="w-[130px]">
-              <label className="micro block mb-2">Cook · minutes</label>
-              <input
-                name="cook_time"
-                type="number"
-                min="0"
-                value={formData.cook_time}
-                onChange={handleChange}
-                className="w-full bg-transparent border-0 border-b border-sage/30 pb-2 font-light text-[26px] text-earth outline-none transition-colors placeholder:text-earth/30 focus:border-terracotta"
-                placeholder="45"
-              />
+            <div className="flex flex-col gap-2">
+              <label className="field-label">Cook · minutes</label>
+              <input name="cook_time" type="number" min="0" value={formData.cook_time} onChange={handleChange} className="field" placeholder="45" />
             </div>
-            <div className="w-[130px]">
-              <label className="micro block mb-2">Serves</label>
-              <input
-                name="servings"
-                type="number"
-                min="1"
-                value={formData.servings}
-                onChange={handleChange}
-                className="w-full bg-transparent border-0 border-b border-sage/30 pb-2 font-light text-[26px] text-earth outline-none transition-colors placeholder:text-earth/30 focus:border-terracotta"
-              />
+            <div className="flex flex-col gap-2">
+              <label className="field-label">Serves</label>
+              <input name="servings" type="number" min="1" value={formData.servings} onChange={handleChange} className="field" />
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div>
-              <div className="flex items-baseline justify-between gap-3 mb-3">
-                <label className="text-[10px] font-semibold uppercase tracking-[0.28em] text-terracotta">Ingredients</label>
-                <span className="micro">One per line</span>
-              </div>
-              <textarea
-                name="ingredients"
-                required
-                rows={9}
-                value={formData.ingredients}
-                onChange={handleChange}
-                className="field-box resize-none"
-                placeholder={'500 g Beef mince\n12 Lasagna sheets\n1 L Béchamel\n…'}
-              />
-            </div>
-            <div>
-              <div className="flex items-baseline justify-between gap-3 mb-3">
-                <label className="text-[10px] font-semibold uppercase tracking-[0.28em] text-terracotta">Method</label>
-                <span className="micro">One step per line</span>
-              </div>
-              <textarea
-                name="instructions"
-                required
-                rows={9}
-                value={formData.instructions}
-                onChange={handleChange}
-                className="field-box resize-none"
-                placeholder={'Brown the mince with the soffritto.\nLayer pasta, ragù and béchamel.\n…'}
-              />
-            </div>
+          <div className="flex flex-col gap-2">
+            <label className="field-label">Ingredients · one per line</label>
+            <textarea
+              name="ingredients"
+              required
+              rows={6}
+              value={formData.ingredients}
+              onChange={handleChange}
+              className="field resize-none min-h-[132px]"
+              placeholder={'500 g beef mince\n12 lasagne sheets\n1 L béchamel\n…'}
+            />
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div>
-              <label className="micro block mb-2">Source URL · optional</label>
-              <input
-                name="source_url"
-                value={formData.source_url}
-                onChange={handleChange}
-                className="field text-[15px]"
-                placeholder="https://original-recipe.com"
-              />
-            </div>
-            <div>
-              <label className="micro block mb-2">Chef’s notes · optional</label>
-              <input
-                name="description"
-                value={formData.description}
-                onChange={handleChange}
-                className="field font-light text-base"
-                placeholder="Any special tips?"
-              />
-            </div>
+          <div className="flex flex-col gap-2">
+            <label className="field-label">Method · one step per line</label>
+            <textarea
+              name="instructions"
+              required
+              rows={6}
+              value={formData.instructions}
+              onChange={handleChange}
+              className="field resize-none min-h-[132px]"
+              placeholder={'Brown the mince with the soffritto.\nLayer pasta, ragù and béchamel.\n…'}
+            />
+          </div>
+
+          <div className="flex flex-col gap-2">
+            <label className="field-label">Source URL · optional</label>
+            <input name="source_url" value={formData.source_url} onChange={handleChange} className="field" placeholder="https://original-recipe.com" />
+          </div>
+
+          <div className="flex flex-col gap-2">
+            <label className="field-label">Chef’s notes · optional</label>
+            <textarea
+              name="description"
+              rows={3}
+              value={formData.description}
+              onChange={handleChange}
+              className="field resize-none min-h-[84px]"
+              placeholder="Any special tips?"
+            />
           </div>
 
           {error && (
-            <p className="border border-brick/40 bg-brick/5 text-brick text-sm px-4 py-3">{error}</p>
+            <p className="rounded-[14px] border border-brick/30 bg-brick-tint text-brick text-[14px] px-4 py-3">{error}</p>
           )}
-
-          <div className="pt-2">
-            <button type="submit" disabled={loading} className="btn-accent w-full py-[19px]">
-              {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
-              Save recipe to the box
-            </button>
-          </div>
         </div>
       </div>
     </motion.form>

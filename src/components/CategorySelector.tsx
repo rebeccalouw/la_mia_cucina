@@ -83,8 +83,8 @@ export default function CategorySelector({
   return (
     <div className="space-y-4" ref={containerRef}>
       <div className="relative">
-        <div className="flex items-center gap-3 border-b border-sage/30 focus-within:border-terracotta transition-colors">
-          <Tag className="w-4 h-4 text-sage/45 shrink-0" />
+        <div className="flex items-center gap-2.5 rounded-[14px] bg-surface border border-hairline px-4 py-[13px] focus-within:border-coral transition-colors">
+          <Tag className="w-4 h-4 text-fainter shrink-0" strokeWidth={2} />
           <input
             type="text"
             value={input}
@@ -103,7 +103,7 @@ export default function CategorySelector({
                 }
               }
             }}
-            className="flex-1 min-w-0 bg-transparent border-0 pb-2.5 text-[15px] text-earth outline-none placeholder:text-earth/30"
+            className="flex-1 min-w-0 bg-transparent border-0 text-[15px] text-ink outline-none placeholder:text-placeholder"
             placeholder="Type to search or add…"
           />
         </div>
@@ -114,7 +114,7 @@ export default function CategorySelector({
               initial={{ opacity: 0, y: -6 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -6 }}
-              className="absolute z-50 w-full mt-1 bg-cream border border-sage/30 overflow-hidden"
+              className="absolute z-50 w-full mt-1.5 rounded-[14px] bg-surface border border-hairline overflow-hidden shadow-[0_10px_30px_-18px_rgba(51,35,44,0.35)]"
             >
               <div className="max-h-60 overflow-y-auto no-scrollbar">
                 {suggestions.map((cat) => (
@@ -122,10 +122,10 @@ export default function CategorySelector({
                     key={cat.id}
                     type="button"
                     onClick={() => handleSelect(cat.name)}
-                    className="w-full flex items-center justify-between gap-3 px-4 py-3 border-b border-sage/15 last:border-b-0 hover:bg-sage/5 transition-colors text-left"
+                    className="w-full flex items-center justify-between gap-3 px-4 py-3 border-b border-hairline-soft last:border-b-0 hover:bg-page transition-colors text-left"
                   >
-                    <span className="text-[17px] text-earth">{cat.name}</span>
-                    <Plus className="w-4 h-4 text-sage/40 shrink-0" />
+                    <span className="text-[15px] font-medium text-ink">{cat.name}</span>
+                    <Plus className="w-4 h-4 text-fainter shrink-0" />
                   </button>
                 ))}
 
@@ -133,18 +133,18 @@ export default function CategorySelector({
                   <button
                     type="button"
                     onClick={handleAddNew}
-                    className="w-full flex items-center gap-3.5 px-4 py-3.5 bg-terracotta/8 hover:bg-terracotta/15 transition-colors text-left border-t border-sage/20"
+                    className="w-full flex items-center gap-3.5 px-4 py-3.5 bg-coral-tint hover:bg-[#FFE4DB] transition-colors text-left border-t border-hairline-soft"
                   >
-                    <Plus className="w-4 h-4 text-terracotta shrink-0" />
+                    <Plus className="w-4 h-4 text-coral shrink-0" />
                     <div className="min-w-0">
-                      <p className="text-[9px] font-semibold text-terracotta uppercase tracking-[0.24em]">Create new</p>
-                      <p className="text-[17px] text-earth truncate">{input.trim()}</p>
+                      <p className="label text-coral">Create new</p>
+                      <p className="text-[15px] font-medium text-ink truncate">{input.trim()}</p>
                     </div>
                   </button>
                 )}
 
                 {input.trim() !== '' && suggestions.length === 0 && allCategories.some(c => c.name.toLowerCase() === input.trim().toLowerCase() && selectedCategories.includes(c.name)) && (
-                  <div className="px-4 py-4 text-center font-light text-sm text-earth/45">
+                  <div className="px-4 py-4 text-center text-[14px] text-faint">
                     Already added
                   </div>
                 )}
@@ -169,7 +169,7 @@ export default function CategorySelector({
               <button
                 type="button"
                 onClick={() => onRemoveCategory(cat)}
-                className="hover:text-earth transition-colors"
+                className="opacity-70 hover:opacity-100 transition-opacity"
               >
                 <X className="w-3 h-3" />
               </button>
