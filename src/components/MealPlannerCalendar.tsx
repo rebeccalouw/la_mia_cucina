@@ -3,7 +3,6 @@ import { motion } from 'motion/react';
 import {
   ChevronLeft,
   ChevronRight,
-  ChefHat,
   Plus,
   X,
   Loader2,
@@ -41,8 +40,10 @@ interface MealPlan {
 export default function MealPlannerCalendar() {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [weekOffset, setWeekOffset] = useState(0);
-  /* The week is the default view, the way the board is actually read. */
-  const [view, setView] = useState<'week' | 'month'>('week');
+  /* Desktop opens on the month, where the whole board fits; a phone has only the week. */
+  const [view, setView] = useState<'week' | 'month'>(
+    () => (window.matchMedia('(min-width: 1024px)').matches ? 'month' : 'week')
+  );
   const [recipes, setRecipes] = useState<Recipe[]>([]);
   const [freezerMeals, setFreezerMeals] = useState<FreezerItem[]>([]);
   const [categories, setCategories] = useState<string[]>([]);
@@ -123,6 +124,31 @@ export default function MealPlannerCalendar() {
   useEffect(() => {
     fetchData();
   }, [currentDate, weekOffset]);
+
+  /* Below lg there is no month view to switch to: a 7x5 grid of tappable days is
+     unreadable on a phone, so the toggle is hidden and the week is the only board.
+     Widening past lg hands the month back, the way the page first opens there. */
+  useEffect(() => {
+    const wide = window.matchMedia('(min-width: 1024px)');
+    const apply = () => setView(wide.matches ? 'month' : 'week');
+    wide.addEventListener('change', apply);
+    return () => wide.removeEventListener('change', apply);
+  }, []);
+
+  /* Planning is a modal: Escape closes it and the page behind it stops scrolling. */
+  useEffect(() => {
+    if (!selectedDate) return;
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') closePlanningModal();
+    };
+    window.addEventListener('keydown', onKeyDown);
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => {
+      window.removeEventListener('keydown', onKeyDown);
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [selectedDate]);
 
   const fetchData = async () => {
     const token = localStorage.getItem('la_mia_cucina_token');
@@ -298,7 +324,7 @@ export default function MealPlannerCalendar() {
             e.stopPropagation();
             handleDeletePlan(plan.id);
           }}
-          className="opacity-0 group-hover/item:opacity-100 absolute -top-1.5 -right-1.5 rounded-full bg-surface border border-brick/30 p-1 text-brick transition-opacity z-10"
+          className="opacity-100 lg:opacity-0 lg:group-hover/item:opacity-100 absolute -top-1.5 -right-1.5 rounded-full bg-surface border border-brick/30 p-1 text-brick transition-opacity z-10"
           title="Take it off the day"
         >
           <X className="w-2.5 h-2.5" />
@@ -351,6 +377,43 @@ export default function MealPlannerCalendar() {
     );
   };
 
+  /* The phone's week: one full-width row per day, the date held in a left column
+     so the meal always starts on the same line down the list. */
+  const renderDayRow = (date: Date) => {
+    const dStr = toLocalDateString(date);
+    const isToday = dStr === toLocalDateString(new Date());
+    const plansForDay = mealPlans.filter(p => p.date === dStr);
+
+    return (
+      <div
+        key={dStr}
+        onClick={() => setSelectedDate(dStr)}
+        className={`rounded-[18px] px-3.5 py-3 flex items-start gap-3 cursor-pointer transition-colors ${
+          isToday
+            ? 'bg-coral-tint border border-[#F6CFC2]'
+            : 'bg-surface border border-hairline'
+        }`}
+      >
+        <div className="w-[46px] shrink-0 flex flex-col">
+          <span className={`text-[11px] font-bold uppercase tracking-[0.06em] ${isToday ? 'text-coral' : 'text-faint'}`}>
+            {date.toLocaleDateString('default', { weekday: 'short' })}
+          </span>
+          <span className={`dsp text-[22px] font-bold tracking-[-0.03em] leading-[1.15] ${isToday ? 'text-coral' : 'text-ink'}`}>
+            {date.getDate()}
+          </span>
+        </div>
+        <div className="flex-grow min-w-0 flex flex-col gap-2">
+          {plansForDay.map(planChip)}
+          {plansForDay.length === 0 && (
+            <div className="rounded-[13px] border-[1.5px] border-dashed border-edge px-3 py-3 flex items-center gap-2 text-[13px] font-semibold text-faint">
+              <Plus className="w-[16px] h-[16px]" strokeWidth={2.2} /> Plan something
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  };
+
   const days = [];
   for (let i = 0; i < startDay; i++) {
     days.push(renderDay(`pad-${i}`, '', true));
@@ -380,115 +443,187 @@ export default function MealPlannerCalendar() {
   const weekLabel = weekOffset === 0 ? 'This week' : weekOffset === 1 ? 'Next week' : weekOffset === -1 ? 'Last week' : `Week ${weekOffset > 0 ? '+' : ''}${weekOffset}`;
 
   return (
-    <div className="flex flex-col gap-7">
-      {/* Header */}
-      <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-5">
-        <div className="flex-grow min-w-0">
-          <p className="eyebrow">{monthName} {year}</p>
-          <h1 className="h-page mt-2 text-[34px] md:text-[42px]">
-            {view === 'week' ? 'The week ahead' : 'The month ahead'}
-          </h1>
+    <>
+      <div className="flex flex-col gap-7">
+        {/* Header */}
+        <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-5">
+          <div className="flex-grow min-w-0">
+            <p className="eyebrow">{monthName} {year}</p>
+            <h1 className="h-page mt-2 text-[34px] md:text-[42px]">
+              {view === 'week' ? 'The week ahead' : 'The month ahead'}
+            </h1>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-2 shrink-0">
+            {/* The month board is a desktop affordance only. */}
+            <div className="hidden lg:flex gap-1 rounded-[14px] bg-surface border border-hairline p-[5px]">
+              {(['week', 'month'] as const).map((v) => (
+                <button
+                  key={v}
+                  onClick={() => setView(v)}
+                  className={`rounded-[10px] px-3.5 py-2 text-[13px] font-semibold capitalize transition-colors ${
+                    view === v ? 'bg-ink text-oncoral' : 'text-muted hover:text-ink'
+                  }`}
+                >
+                  {v}
+                </button>
+              ))}
+            </div>
+
+            <div className="flex flex-grow lg:flex-grow-0 items-center justify-between gap-1 rounded-[14px] bg-surface border border-hairline p-2">
+              <button
+                onClick={() => (view === 'week' ? setWeekOffset(weekOffset - 1) : prevMonth())}
+                className="w-[30px] h-[30px] shrink-0 rounded-[10px] flex items-center justify-center text-muted transition-colors hover:bg-page"
+                title="Back"
+              >
+                <ChevronLeft className="w-[17px] h-[17px]" strokeWidth={2.2} />
+              </button>
+              <button
+                onClick={() => { setWeekOffset(0); setCurrentDate(new Date()); }}
+                className="px-2.5 text-[14px] font-semibold"
+              >
+                {view === 'week' ? weekLabel : 'This month'}
+              </button>
+              <button
+                onClick={() => (view === 'week' ? setWeekOffset(weekOffset + 1) : nextMonth())}
+                className="w-[30px] h-[30px] shrink-0 rounded-[10px] flex items-center justify-center text-muted transition-colors hover:bg-page"
+                title="Forward"
+              >
+                <ChevronRight className="w-[17px] h-[17px]" strokeWidth={2.2} />
+              </button>
+            </div>
+
+            <button
+              onClick={() => setSelectedDate(toLocalDateString(new Date()))}
+              className="btn-primary flex-grow lg:flex-grow-0"
+            >
+              <Plus className="w-[17px] h-[17px]" strokeWidth={2.4} />
+              Plan a meal
+            </button>
+          </div>
         </div>
 
-        <div className="flex flex-wrap items-center gap-2 shrink-0">
-          <div className="flex gap-1 rounded-[14px] bg-surface border border-hairline p-[5px]">
-            {(['week', 'month'] as const).map((v) => (
-              <button
-                key={v}
-                onClick={() => setView(v)}
-                className={`rounded-[10px] px-3.5 py-2 text-[13px] font-semibold capitalize transition-colors ${
-                  view === v ? 'bg-ink text-oncoral' : 'text-muted hover:text-ink'
-                }`}
-              >
-                {v}
-              </button>
-            ))}
+        {/* The board and the three cards beside it */}
+        <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_260px] gap-5 items-start">
+          <div className="min-w-0">
+            {/* The week — stacked rows on a phone, seven columns from lg up */}
+            {view === 'week' && (
+              <>
+                <div className="flex flex-col gap-2.5 lg:hidden">
+                  {loading
+                    ? Array.from({ length: 7 }).map((_, i) => (
+                        <div key={i} className="rounded-[18px] bg-surface border border-hairline h-[86px] animate-pulse" />
+                      ))
+                    : weekDays.map(renderDayRow)}
+                </div>
+                <div className="hidden lg:grid grid-cols-7 gap-2.5">
+                  {loading
+                    ? Array.from({ length: 7 }).map((_, i) => (
+                        <div key={i} className="rounded-[20px] bg-surface border border-hairline min-h-[210px] animate-pulse" />
+                      ))
+                    : weekDays.map(date => renderDay(toLocalDateString(date), date.getDate()))}
+                </div>
+              </>
+            )}
+
+            {/* The month */}
+            {view === 'month' && (
+              <div>
+                <div className="grid grid-cols-7 gap-2.5 mb-2.5">
+                  {dayNames.map(day => (
+                    <span key={day} className="text-[12px] font-bold uppercase tracking-[0.08em] text-faint">{day}</span>
+                  ))}
+                </div>
+                <div className="grid grid-cols-7 gap-2.5">
+                  {loading
+                    ? Array.from({ length: 35 }).map((_, i) => (
+                        <div key={i} className="rounded-[20px] bg-surface border border-hairline min-h-[118px] animate-pulse" />
+                      ))
+                    : days}
+                </div>
+              </div>
+            )}
           </div>
 
-          <div className="flex items-center gap-1 rounded-[14px] bg-surface border border-hairline p-2">
-            <button
-              onClick={() => (view === 'week' ? setWeekOffset(weekOffset - 1) : prevMonth())}
-              className="w-[30px] h-[30px] rounded-[10px] flex items-center justify-center text-muted transition-colors hover:bg-page"
-              title="Back"
-            >
-              <ChevronLeft className="w-[17px] h-[17px]" strokeWidth={2.2} />
-            </button>
-            <button
-              onClick={() => { setWeekOffset(0); setCurrentDate(new Date()); }}
-              className="px-2.5 text-[14px] font-semibold"
-            >
-              {view === 'week' ? weekLabel : 'This month'}
-            </button>
-            <button
-              onClick={() => (view === 'week' ? setWeekOffset(weekOffset + 1) : nextMonth())}
-              className="w-[30px] h-[30px] rounded-[10px] flex items-center justify-center text-muted transition-colors hover:bg-page"
-              title="Forward"
-            >
-              <ChevronRight className="w-[17px] h-[17px]" strokeWidth={2.2} />
-            </button>
-          </div>
+          <div className="flex flex-col gap-4">
+            <div className="rounded-[22px] bg-surface border border-hairline p-[22px] flex flex-col gap-3.5">
+              <h3 className="dsp text-[18px] font-bold tracking-[-0.02em]">This month</h3>
+              <div className="flex items-baseline gap-2.5">
+                <span className="stat text-coral">{monthPlans.length}</span>
+                <span className="text-[14px] text-muted">meals planned</span>
+              </div>
+              <div className="h-2 rounded-full bg-hairline-soft overflow-hidden">
+                <div className="h-2 rounded-full bg-coral" style={{ width: `${monthProgress}%` }} />
+              </div>
+              <p className="text-[13px] leading-[1.45] text-faint">
+                {monthProgress}% of {monthName}’s days have something on them.
+              </p>
+            </div>
 
-          <button
-            onClick={() => setSelectedDate(toLocalDateString(new Date()))}
-            className="btn-primary"
-          >
-            <Plus className="w-[17px] h-[17px]" strokeWidth={2.4} />
-            Plan a meal
-          </button>
+            <div className="rounded-[22px] bg-ink text-oncoral p-[22px] flex flex-col gap-2.5">
+              <span className="micro text-peach">Gaps</span>
+              <span className="dsp text-[21px] font-bold tracking-[-0.02em] leading-[1.2]">
+                {openNights.length
+                  ? `${openNights.length} empty ${openNights.length === 1 ? 'day' : 'days'} left to fill`
+                  : 'The week is fully planned'}
+              </span>
+              <span className="text-[14px] leading-[1.45] text-darkmuted">{openNightList}</span>
+            </div>
+
+            <div className="rounded-[22px] bg-green-tint p-[22px] flex flex-col gap-2.5">
+              <span className="micro text-green">From the freezer</span>
+              <span className="text-[14px] leading-[1.5] text-green-ink">
+                Plan a frozen portion and it leaves the freezer list automatically.
+              </span>
+            </div>
+          </div>
         </div>
       </div>
 
-      {/* The week */}
-      {view === 'week' && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-7 gap-2.5">
-          {loading
-            ? Array.from({ length: 7 }).map((_, i) => (
-                <div key={i} className="rounded-[20px] bg-surface border border-hairline min-h-[210px] animate-pulse" />
-              ))
-            : weekDays.map(date => renderDay(toLocalDateString(date), date.getDate()))}
-        </div>
-      )}
+      {/* Planning — a modal over the board on desktop, a sheet up from the bottom on a phone */}
+      {selectedDate && (
+        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center sm:p-6">
+          <div
+            className="absolute inset-0 bg-ink/40"
+            onClick={closePlanningModal}
+            aria-hidden="true"
+          />
+          <motion.div
+            role="dialog"
+            aria-modal="true"
+            aria-label={`${editingPlanId ? 'Changing' : 'Planning'} ${new Date(selectedDate).toLocaleDateString('default', { weekday: 'long', day: 'numeric', month: 'long' })}`}
+            initial={{ opacity: 0, y: 24 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="relative w-full h-[88vh] sm:h-auto sm:max-h-[86vh] sm:max-w-[660px] bg-surface border border-hairline rounded-t-[26px] sm:rounded-[24px] flex flex-col overflow-hidden shadow-[0_28px_64px_-24px_rgba(51,35,44,0.45)]"
+          >
+            {/* The grabber, so the sheet reads as one you can pull down */}
+            <div className="sm:hidden shrink-0 pt-2.5 flex justify-center">
+              <span className="w-[42px] h-1 rounded-full bg-fainter" />
+            </div>
 
-      {/* The month */}
-      {view === 'month' && (
-        <div>
-          <div className="grid grid-cols-7 gap-2.5 mb-2.5">
-            {dayNames.map(day => (
-              <span key={day} className="text-[12px] font-bold uppercase tracking-[0.08em] text-faint">{day}</span>
-            ))}
-          </div>
-          <div className="grid grid-cols-7 gap-2.5">
-            {loading
-              ? Array.from({ length: 35 }).map((_, i) => (
-                  <div key={i} className="rounded-[20px] bg-surface border border-hairline min-h-[118px] animate-pulse" />
-                ))
-              : days}
-          </div>
-        </div>
-      )}
-
-      {/* The panel and the three cards */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 items-start">
-        <div className="lg:col-span-2">
-          {selectedDate ? (
-            <motion.div
-              initial={{ opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="rounded-[22px] bg-surface border border-hairline px-6 py-[22px] flex flex-col gap-4"
-            >
-              <div className="flex items-center justify-between gap-3">
-                <h2 className="h-section">
+            <div className="shrink-0 flex items-start justify-between gap-3 px-5 sm:px-6 py-4 border-b border-hairline">
+              <div className="min-w-0">
+                <h2 className="h-section text-[17px] sm:text-[20px]">
                   {editingPlanId ? 'Changing' : 'Planning'}{' '}
                   {new Date(selectedDate).toLocaleDateString('default', { weekday: 'long', day: 'numeric', month: 'long' })}
                 </h2>
-                <button
-                  onClick={closePlanningModal}
-                  className="text-[13px] font-semibold text-faint hover:text-ink transition-colors"
-                >
-                  Close
-                </button>
+                <p className="mt-[3px] text-[13px] text-faint capitalize">
+                  {planningMealType}
+                  {plansForSelectedDate.length > 0
+                    ? ` · ${plansForSelectedDate.length} already on this day`
+                    : ' · nothing on this day yet'}
+                </p>
               </div>
+              <button
+                onClick={closePlanningModal}
+                className="shrink-0 w-[34px] h-[34px] rounded-xl bg-page border border-hairline flex items-center justify-center text-muted transition-colors hover:text-ink"
+                title="Close"
+              >
+                <X className="w-4 h-4" strokeWidth={2.2} />
+              </button>
+            </div>
 
+            <div className="flex-grow min-h-0 overflow-y-auto px-5 sm:px-6 py-4 flex flex-col gap-4">
               {/* Already on this day */}
               {plansForSelectedDate.length > 0 && (
                 <div className="flex flex-col gap-2">
@@ -593,7 +728,7 @@ export default function MealPlannerCalendar() {
                       setPlanningFreezerItemId(null);
                       setPlanningFreezerName(null);
                     }}
-                    className={`rounded-[10px] px-3.5 py-2 text-[13px] font-semibold transition-colors ${
+                    className={`flex-1 rounded-[10px] px-3.5 py-2 text-[13px] font-semibold transition-colors ${
                       planningSource === 'pantry' ? 'bg-ink text-oncoral' : 'text-muted hover:text-ink'
                     }`}
                   >
@@ -604,7 +739,7 @@ export default function MealPlannerCalendar() {
                       setPlanningSource('freezer');
                       setPlanningRecipeId(null);
                     }}
-                    className={`rounded-[10px] px-3.5 py-2 text-[13px] font-semibold transition-colors ${
+                    className={`flex-1 rounded-[10px] px-3.5 py-2 text-[13px] font-semibold transition-colors ${
                       planningSource === 'freezer' ? 'bg-ink text-oncoral' : 'text-muted hover:text-ink'
                     }`}
                   >
@@ -613,8 +748,9 @@ export default function MealPlannerCalendar() {
                 </div>
               </div>
 
+              {/* The category chips cost three rows on a phone, where search is enough. */}
               {planningSource === 'pantry' && categories.length > 0 && (
-                <div className="flex flex-wrap gap-2">
+                <div className="hidden sm:flex flex-wrap gap-2">
                   {['All', ...categories].map(cat => (
                     <button
                       key={cat}
@@ -628,7 +764,7 @@ export default function MealPlannerCalendar() {
               )}
 
               {/* What you can add */}
-              <div className="flex flex-col gap-2.5 max-h-[300px] overflow-y-auto no-scrollbar">
+              <div className="flex flex-col gap-2.5">
                 {planningSource === 'pantry'
                   ? filteredRecipes.map((recipe, i) => (
                       <button
@@ -709,67 +845,27 @@ export default function MealPlannerCalendar() {
                   className="field"
                 />
               </div>
-
-              <div className="pt-1 flex flex-wrap items-center justify-between gap-3">
-                <p className="text-[14px] text-faint">
-                  {plansForSelectedDate.length === 0
-                    ? 'Nothing planned for this day yet.'
-                    : `${plansForSelectedDate.length} already on this day.`}
-                </p>
-                <div className="flex items-center gap-2">
-                  <button onClick={closePlanningModal} className="btn-ghost">Cancel</button>
-                  <button
-                    onClick={handleSavePlan}
-                    disabled={saving || (!planningRecipeId && !planningFreezerItemId && !planningFreezerName && !planningNotes.trim())}
-                    className="btn-primary"
-                  >
-                    {saving ? <Loader2 className="w-[17px] h-[17px] animate-spin" /> : <Check className="w-[17px] h-[17px]" strokeWidth={2.4} />}
-                    {editingPlanId ? 'Save the change' : 'Add to the day'}
-                  </button>
-                </div>
-              </div>
-            </motion.div>
-          ) : (
-            <div className="card-dashed min-h-[180px] flex flex-col items-center justify-center gap-3 text-center px-8 py-10">
-              <ChefHat className="w-10 h-10 text-fainter" strokeWidth={1.5} />
-              <p className="text-[17px] text-muted">Pick a day above to plan something for it.</p>
             </div>
-          )}
+
+            <div className="shrink-0 flex items-center justify-between gap-3 px-5 sm:px-6 py-3.5 border-t border-hairline">
+              <p className="hidden sm:block text-[14px] text-faint">
+                {plansForSelectedDate.length === 0
+                  ? 'Nothing planned for this day yet.'
+                  : `${plansForSelectedDate.length} already on this day.`}
+              </p>
+              <button onClick={closePlanningModal} className="btn-ghost shrink-0">Cancel</button>
+              <button
+                onClick={handleSavePlan}
+                disabled={saving || (!planningRecipeId && !planningFreezerItemId && !planningFreezerName && !planningNotes.trim())}
+                className="btn-primary flex-grow sm:flex-grow-0"
+              >
+                {saving ? <Loader2 className="w-[17px] h-[17px] animate-spin" /> : <Check className="w-[17px] h-[17px]" strokeWidth={2.4} />}
+                {editingPlanId ? 'Save the change' : 'Add to the day'}
+              </button>
+            </div>
+          </motion.div>
         </div>
-
-        <div className="flex flex-col gap-4">
-          <div className="rounded-[22px] bg-surface border border-hairline p-[22px] flex flex-col gap-3.5">
-            <h3 className="dsp text-[18px] font-bold tracking-[-0.02em]">This month</h3>
-            <div className="flex items-baseline gap-2.5">
-              <span className="stat text-coral">{monthPlans.length}</span>
-              <span className="text-[14px] text-muted">meals planned</span>
-            </div>
-            <div className="h-2 rounded-full bg-hairline-soft overflow-hidden">
-              <div className="h-2 rounded-full bg-coral" style={{ width: `${monthProgress}%` }} />
-            </div>
-            <p className="text-[13px] leading-[1.45] text-faint">
-              {monthProgress}% of {monthName}’s days have something on them.
-            </p>
-          </div>
-
-          <div className="rounded-[22px] bg-ink text-oncoral p-[22px] flex flex-col gap-2.5">
-            <span className="micro text-peach">Gaps</span>
-            <span className="dsp text-[21px] font-bold tracking-[-0.02em] leading-[1.2]">
-              {openNights.length
-                ? `${openNights.length} empty ${openNights.length === 1 ? 'day' : 'days'} left to fill`
-                : 'The week is fully planned'}
-            </span>
-            <span className="text-[14px] leading-[1.45] text-darkmuted">{openNightList}</span>
-          </div>
-
-          <div className="rounded-[22px] bg-green-tint p-[22px] flex flex-col gap-2.5">
-            <span className="micro text-green">From the freezer</span>
-            <span className="text-[14px] leading-[1.5] text-green-ink">
-              Plan a frozen portion and it leaves the freezer list automatically.
-            </span>
-          </div>
-        </div>
-      </div>
-    </div>
+      )}
+    </>
   );
 }
